@@ -1,0 +1,30 @@
+slurm submission log: 2023-10-17 13:49:48.292329
+created following sbatch script: 
+
+###############################
+
+#!/bin/bash
+
+#SBATCH --account=nlp
+#SBATCH --cpus-per-task=2
+#SBATCH --gres=gpu:1
+#SBATCH --job-name=shlee-job-4932192
+#SBATCH --mem=16G
+#SBATCH --open-mode=append
+#SBATCH --output=shlee-job-4932192.out
+#SBATCH --partition=jag-standard
+#SBATCH --time=14-0
+
+# activate your desired anaconda environment
+
+
+# cd to working directory
+cd .
+
+# launch commands
+srun --unbuffered run_as_child_processes ' echo "hello world" '
+
+###############################
+
+submission to slurm complete!
+
