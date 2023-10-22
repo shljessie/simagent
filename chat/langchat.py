@@ -1,99 +1,63 @@
-import os
-import dotenv
-from transformers import AutoConfig, AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig, pipeline
-from langchain.llms import HuggingFacePipeline
+from transformers import AutoTokenizer, pipeline, logging
+from auto_gptq import AutoGPTQForCausalLM, BaseQuantizeConfig
+import argparse
+from langchain import LLMChain
 from langchain.prompts.prompt import PromptTemplate
-from langchain.chains import ConversationChain
 from langchain.memory import ConversationBufferMemory
+from langchain.llms import HuggingFacePipeline
 
-# Load environment variables
-dotenv.load_dotenv('/.env')
-HF_ACCESS_TOKEN = os.getenv('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')
+model_name_or_path = "checkpoints/meta-llama/Llama-2-7b-chat-hf"
+model_basename = "Llama-2-7b-chat-hf"
+use_triton = False
 
-model_id = 'meta-llama/Llama-2-7b-chat-hf'
 
-# Configure for 4-bit quantization (optimizes model deployment)
-bnb_config = BitsAndBytesConfig(
-    bnb_4bit_compute_dtype = 'float16',
-    bnb_4bit_quant_type='nf4',
-    load_in_4bit=True,
-)
+tokenizer = AutoTokenizer.from_pretrained(model_name_or_path, use_fast=True)
 
-# Load model configuration
-model_config = AutoConfig.from_pretrained(
-    model_id,
-    use_auth_token='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'
-)
+model = AutoGPTQForCausalLM.from_quantized(model_name_or_path,
+        model_basename=model_basename,
+        use_safetensors=True,
+        trust_remote_code=True,
+        use_triton=use_triton,
+        quantize_config=None)
 
-# Load model
-model = AutoModelForCausalLM.from_pretrained(
-    model_id,
-    config=model_config,
-    device_map='auto',
-    quantization_config=bnb_config,
-    use_auth_token='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'
-)
 
-# Load tokenizer
-tokenizer = AutoTokenizer.from_pretrained(
-    model_id,
-    use_auth_token='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'
-)
-
-# Set model into evaluation mode (optimizes inference)
-model.eval()
+logging.set_verbosity(logging.CRITICAL)
 
 pipe = pipeline(
+    "text-generation",
     model=model,
-    task='text-generation',
-    tokenizer=tokenizer
+    tokenizer=tokenizer,
+    max_new_tokens=512,
+    temperature=0.1,
+    top_p=0.95,
+    repetition_penalty=1.15
 )
 
-llm = HuggingFacePipeline(pipeline=pipe)
-
 template = """
-<s>[INST] <<SYS>>
-The following is a friendly conversation between a human and an AI. 
-The AI is talkative and provides lots of specific details from its context. 
-If the AI does not know the answer to a question, it truthfully says it does not know.
-Please be concise.
+[INST] <<SYS>>
+You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe.  Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive in nature. If a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information.
 <</SYS>>
+here is the chat history
+{chat_history}
 
-Current conversation:
-{{ history }}
-
-{% if history %}
-    <s>[INST] Human: {{ input }} [/INST] AI: </s>
-{% else %}
-    Human: {{ input }} [/INST] AI: </s>
-{% endif %} 
+{prompt} [/INST]
 """
 
 prompt = PromptTemplate(
-    input_variables=["history", "input"],
-    template=template,
-    template_format="jinja2"
+    input_variables=["chat_history", "prompt"],
+    template=template
 )
 
-# Initialize the conversation chain
-conversation = ConversationChain(
-    llm=llm,
-    memory=ConversationBufferMemory(),
-    prompt=prompt,
-    verbose=False
-)
-
-def predict(message: str, history: str = ""):
-    response = conversation.predict(input=message, history=history)
-    return response
-
-# Chat in the terminal
-print("Type 'exit' to end the conversation.")
-while True:
-    user_input = input("You: ")
-    if user_input.lower() == 'exit':
-        break
-    response = predict(user_input)
-    print(f"AI: {response}")
+llm=HuggingFacePipeline(pipeline=pipe)
+memory = ConversationBufferMemory(memory_key="chat_history",    k=3,
+    return_messages=True)
 
 
+llm_chain = LLMChain(llm=llm, prompt=prompt, verbose=False,  memory=memory)
+
+while 1:
+  text=input("You: ")
+  if text=='end':
+    break
+  output=llm_chain.predict(prompt=text)
+  print("Chatbot: ",output)

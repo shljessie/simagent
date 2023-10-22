@@ -76,7 +76,7 @@ memory = LlamaConversationMemory()
 
 # Make sure the model path is correct for your system!
 llm = LlamaCpp(
-    model_path = "checkpoints/meta-llama/Llama-2-7b-chat-hf",
+    model_path = "/sailhome/shlee/.cache/huggingface/hub/models--meta-llama--Llama-2-7b-chat-hf",
     n_gpu_layers = 64,
     max_tokens = 1024,
     n_ctx = 2048,
