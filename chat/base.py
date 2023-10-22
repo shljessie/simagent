@@ -142,7 +142,7 @@ def main(
         precision: Indicates the Fabric precision setting to use.
     """
     precision = precision or get_default_supported_precision(training=False)
-    history = torch.tensor([], dtype=torch.long, device=fabric.device)
+    
     plugins = None
     if quantize is not None and quantize.startswith("bnb."):
         if "mixed" in precision:
@@ -152,6 +152,7 @@ def main(
         precision = None
 
     fabric = L.Fabric(devices=1, precision=precision, plugins=plugins)
+    history = torch.tensor([], dtype=torch.long, device=fabric.device)
 
     check_valid_checkpoint_dir(checkpoint_dir)
 
