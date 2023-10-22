@@ -1,4 +1,6 @@
+# Other dependencies from your existing requirements.txt
 -r requirements.txt
+accelerate
 bitsandbytes   # quantization
 scipy          # required by bitsandbytes
 sentencepiece  # pythia, falcon, redpajama
@@ -7,3 +9,15 @@ datasets       # quantize/gptq.py
 zstandard      # scripts/prepare_redpajama.py
 git+https://github.com/EleutherAI/lm-evaluation-harness.git@master  # eval
 pandas         # prepare_csv.py
+
+# Additional dependencies
+accelerate
+bitsandbytes
+gradio
+huggingface_hub
+jinja2
+langchain
+python-dotenv
+scipy
+torch
+transformers
