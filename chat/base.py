@@ -140,7 +140,6 @@ def main(
         precision: Indicates the Fabric precision setting to use.
     """
     precision = precision or get_default_supported_precision(training=False)
-    
 
     plugins = None
     if quantize is not None and quantize.startswith("bnb."):
@@ -175,31 +174,15 @@ def main(
     tokenizer = Tokenizer(checkpoint_dir)
     system_prompt, stop_tokens = prompt_config(checkpoint_dir, tokenizer)
 
-    conversation_history = []
-
     while True:
         try:
-            new_prompt = input(">> Prompt: ")
+            prompt = input(">> Prompt: ")
         except KeyboardInterrupt:
             break
-        if not new_prompt:
+        if not prompt:
             break
-
-        # If it's the start of the conversation, include the system prompt
-        if not conversation_history:
-            prompt = f"{system_prompt} {new_prompt}"
-        else:  # Otherwise, only use the new prompt
-            prompt = new_prompt
-
-        # Combine the conversation history into a single string
-        conversation_history.append(prompt)
-        
-
-        # Modify this part to generate responses based on the entire conversation history
-        encoded_prompt = tokenizer.encode(' '.join(conversation_history), device=fabric.device)
-
-        print('CONVO HISTORY:', conversation_history)
-
+        prompt = system_prompt.format(prompt=prompt)
+        encoded_prompt = tokenizer.encode(prompt, device=fabric.device)
 
         with fabric.init_tensor():
             # enable the kv cache
@@ -208,6 +191,7 @@ def main(
         y = generate(
             model, encoded_prompt, model.max_seq_length, temperature=temperature, top_k=top_k, stop_tokens=stop_tokens
         )
+        print('YYY: ', y)
         fabric.print(">> Reply: ", end="")
         try:
             t0 = time.perf_counter()
@@ -224,20 +208,21 @@ def main(
 
 def prompt_config(checkpoint_dir: Path, tokenizer: Tokenizer) -> Tuple[str, Tuple[List[int], ...]]:
     checkpoint_name = str(checkpoint_dir)
-        
+
     if re.search("Llama-2.*-chat", checkpoint_name):
         b_inst, e_inst = "[INST]", "[/INST]"
         b_sys, e_sys = "<<SYS>>\n", "\n<</SYS>>\n\n"
+        memory_state =[]
         system_prompt = (
-            f"{b_inst} {b_sys}You are a helpful, respectful and honest assistant. Always answer as helpfully as"
-            " possible, while being safe.  Your answers should not include any harmful, unethical, racist, sexist,"
-            " toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and"
-            " positive in nature.\n\nIf a question does not make any sense, or is not factually coherent, explain why"
-            " instead of answering something not correct. If you don't know the answer to a question, please don't"
-            f" share false information.{e_sys} {{prompt}} {e_inst} "
+            f"{b_inst} {b_sys}You are Jessie, a 24 year old female born in Korea. You have lived in the US for 10 years."
+            " You do not know how to speak French at all.  Throughout the conversation, update the " f"{memory_state} with"
+            " things that happened in the conversation. If the memory was negative, do not update the " f"{memory_state}"
+            " When you are asked to make a decision, always make a decision based on the information stored in the"
+            f" {memory_state}.{e_sys} {{prompt}} {e_inst} "
         )
         stop_tokens = ([tokenizer.eos_id],)
         return system_prompt, stop_tokens
+
 
     # default format
     return "{prompt}", ([tokenizer.eos_id],)
