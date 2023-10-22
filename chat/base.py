@@ -200,6 +200,10 @@ def main(
             model, encoded_prompt, model.max_seq_length, history=history,  
             temperature=temperature, top_k=top_k, stop_tokens=stop_tokens
         )
+
+        for token in y:
+            history = torch.cat([history, token])
+            print('HISTORY: ', history)
         print('YYY: ', y)
         fabric.print(">> Reply: ", end="")
         try:
