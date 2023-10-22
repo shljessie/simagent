@@ -175,26 +175,27 @@ def main(
     tokenizer = Tokenizer(checkpoint_dir)
     system_prompt, stop_tokens = prompt_config(checkpoint_dir, tokenizer)
 
-    #add conversational history
     conversation_history = []
 
     while True:
         try:
-            prompt = input(">> Prompt: ")
+            new_prompt = input(">> Prompt: ")
         except KeyboardInterrupt:
             break
-        if not prompt:
+        if not new_prompt:
             break
-        prompt = system_prompt.format(prompt=prompt)
 
-        # Append the user's input to the conversation history
-        conversation_history.append(prompt)
-        
+        # If it's the start of the conversation, include the system prompt
+        if not conversation_history:
+            prompt = f"{system_prompt} {new_prompt}"
+        else:  # Otherwise, only use the new prompt
+            prompt = new_prompt
+
         # Combine the conversation history into a single string
-        conversation = " ".join(conversation_history)
+        conversation_history.append(prompt)
 
         # Modify this part to generate responses based on the entire conversation history
-        encoded_prompt = tokenizer.encode(conversation, device=fabric.device)
+        encoded_prompt = tokenizer.encode(' '.join(conversation_history), device=fabric.device)
 
 
         with fabric.init_tensor():
@@ -205,6 +206,7 @@ def main(
             model, encoded_prompt, model.max_seq_length, temperature=temperature, top_k=top_k, stop_tokens=stop_tokens
         )
         fabric.print(">> Reply: ", end="")
+        print('FABRIC: ', fabric)
         try:
             t0 = time.perf_counter()
             tokens_generated = decode(fabric, tokenizer, y)
