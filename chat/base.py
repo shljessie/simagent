@@ -217,9 +217,6 @@ def main(
             pass
         fabric.print()
 
-        # Append the model's response to the conversation history
-        conversation_history.append(">> Reply: " + fabric.output)
-
 
 def prompt_config(checkpoint_dir: Path, tokenizer: Tokenizer) -> Tuple[str, Tuple[List[int], ...]]:
     checkpoint_name = str(checkpoint_dir)
