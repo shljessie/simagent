@@ -21,7 +21,6 @@ class LlamaConversationMemory(BaseMemory):
     input_key: Optional[str] = None
     memory_key: str = "history"  #: :meta private:
 
-    @root_validator()
     def validate_chains(cls, values: Dict) -> Dict:
         """Validate that return messages is not True."""
         if values.get("return_messages", False):
@@ -30,7 +29,6 @@ class LlamaConversationMemory(BaseMemory):
             )
         return values
 
-    @property
     def memory_variables(self) -> List[str]:
         """Will always return list of memory variables.
         :meta private:
