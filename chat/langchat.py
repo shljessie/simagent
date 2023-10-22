@@ -1,7 +1,6 @@
 import os
 import dotenv
 from transformers import AutoConfig, AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig, pipeline
-import gradio as gr
 from langchain.llms import HuggingFacePipeline
 from langchain.prompts.prompt import PromptTemplate
 from langchain.chains import ConversationChain
