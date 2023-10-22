@@ -193,9 +193,12 @@ def main(
 
         # Combine the conversation history into a single string
         conversation_history.append(prompt)
+        
 
         # Modify this part to generate responses based on the entire conversation history
-        encoded_prompt = tokenizer.encode(' '.join(conversation_history), device=fabric.device)
+        encoded_prompt = tokenizer.encode(' '.join(conversation_history), device=fabric)
+
+        print('CONVO HISTORY:', conversation_history)
 
 
         with fabric.init_tensor():
@@ -206,7 +209,6 @@ def main(
             model, encoded_prompt, model.max_seq_length, temperature=temperature, top_k=top_k, stop_tokens=stop_tokens
         )
         fabric.print(">> Reply: ", end="")
-        print('FABRIC: ', fabric)
         try:
             t0 = time.perf_counter()
             tokens_generated = decode(fabric, tokenizer, y)
