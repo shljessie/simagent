@@ -83,8 +83,8 @@ conversation = ConversationChain(
     verbose=False
 )
 
-def predict(message: str, history: str):
-    response = conversation.predict(input=message)
+def predict(message: str, history: str = ""):
+    response = conversation.predict(input=message, history=history)
     return response
 
 # Chat in the terminal
