@@ -26,6 +26,7 @@ def generate(
     model: GPT,
     idx: torch.Tensor,
     max_returned_tokens: int,
+    history: torch.Tensor,
     *,
     temperature: float = 1.0,
     top_k: Optional[int] = None,
@@ -42,6 +43,7 @@ def generate(
         stop_tokens: If specified, stop generating any more token once one of this list is generated.
     """
     T = idx.size(0)
+    idx = torch.cat([history, idx])
     assert max_returned_tokens > T
     if model.max_seq_length < max_returned_tokens - 1:
         # rolling the kv cache based on the `input_pos` value would be necessary. However, doing so would introduce a
@@ -140,7 +142,7 @@ def main(
         precision: Indicates the Fabric precision setting to use.
     """
     precision = precision or get_default_supported_precision(training=False)
-
+    history = torch.tensor([], dtype=torch.long, device=fabric.device)
     plugins = None
     if quantize is not None and quantize.startswith("bnb."):
         if "mixed" in precision:
@@ -184,12 +186,19 @@ def main(
         prompt = system_prompt.format(prompt=prompt)
         encoded_prompt = tokenizer.encode(prompt, device=fabric.device)
 
+        # Update history with user input
+        history = torch.cat([history, encoded_prompt])
+
         with fabric.init_tensor():
             # enable the kv cache
             model.set_kv_cache(batch_size=1)
 
+        # y = generate(
+        #     model, encoded_prompt, model.max_seq_length, temperature=temperature, top_k=top_k, stop_tokens=stop_tokens
+        # )
         y = generate(
-            model, encoded_prompt, model.max_seq_length, temperature=temperature, top_k=top_k, stop_tokens=stop_tokens
+            model, encoded_prompt, model.max_seq_length, history=history,  
+            temperature=temperature, top_k=top_k, stop_tokens=stop_tokens
         )
         print('YYY: ', y)
         fabric.print(">> Reply: ", end="")
@@ -212,13 +221,13 @@ def prompt_config(checkpoint_dir: Path, tokenizer: Tokenizer) -> Tuple[str, Tupl
     if re.search("Llama-2.*-chat", checkpoint_name):
         b_inst, e_inst = "[INST]", "[/INST]"
         b_sys, e_sys = "<<SYS>>\n", "\n<</SYS>>\n\n"
-        memory_state =[]
+        memory_state =["When you were young you were bit by a dog while patting its head."]
         system_prompt = (
             f"{b_inst} {b_sys}You are Jessie, a 24 year old female born in Korea. You have lived in the US for 10 years."
             " You do not know how to speak French at all.  Throughout the conversation, update the " f"{memory_state} with"
             " things that happened in the conversation. If the memory was negative, do not update the " f"{memory_state}"
             " When you are asked to make a decision, always make a decision based on the information stored in the"
-            f" {memory_state}.{e_sys} {{prompt}} {e_inst} "
+            f" {memory_state}.{e_sys} {{prompt}} {e_inst}. You should never break the roles mentioned above. "
         )
         stop_tokens = ([tokenizer.eos_id],)
         return system_prompt, stop_tokens
