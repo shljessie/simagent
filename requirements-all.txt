@@ -21,4 +21,3 @@ python-dotenv
 scipy
 torch
 transformers
-dontenv
