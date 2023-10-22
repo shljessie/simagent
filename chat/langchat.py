@@ -88,17 +88,13 @@ def predict(message: str, history: str):
     response = conversation.predict(input=message)
     return response
 
-# Create and launch the Gradio interface
-interface = gr.ChatInterface(
-    clear_btn=None,
-    fn=predict,
-    retry_btn=None,
-    undo_btn=None,
-)
+# Chat in the terminal
+print("Type 'exit' to end the conversation.")
+while True:
+    user_input = input("You: ")
+    if user_input.lower() == 'exit':
+        break
+    response = predict(user_input)
+    print(f"AI: {response}")
 
-interface.launch(
-    height=600,
-    inline=True,
-    share=True,
-    width=800
-)
+

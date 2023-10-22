@@ -13,7 +13,6 @@ pandas         # prepare_csv.py
 # Additional dependencies
 accelerate
 bitsandbytes
-gradio
 huggingface_hub
 jinja2
 langchain
