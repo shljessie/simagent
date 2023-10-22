@@ -196,7 +196,7 @@ def main(
         
 
         # Modify this part to generate responses based on the entire conversation history
-        encoded_prompt = tokenizer.encode(' '.join(conversation_history), device=fabric)
+        encoded_prompt = tokenizer.encode(' '.join(conversation_history), device=fabric.device)
 
         print('CONVO HISTORY:', conversation_history)
 
