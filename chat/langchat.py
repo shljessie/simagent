@@ -6,7 +6,7 @@ from langchain.prompts.prompt import PromptTemplate
 from langchain.memory import ConversationBufferMemory
 from langchain.llms import HuggingFacePipeline
 
-model_name_or_path = "checkpoints/meta-llama/Llama-2-7b-chat-hf"
+model_name_or_path = "../llama/llama-2-7b-chat"
 model_basename = "Llama-2-7b-chat-hf"
 use_triton = False
 
