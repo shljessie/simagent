@@ -1,128 +1,106 @@
-from transformers import AutoTokenizer, pipeline, logging
-from auto_gptq import AutoGPTQForCausalLM, BaseQuantizeConfig
-import argparse
-from langchain import LLMChain
-from langchain.prompts.prompt import PromptTemplate
-from langchain.memory import ConversationBufferMemory
+from transformers import AutoConfig, AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig, pipeline
+import dotenv
+import os
 from langchain.llms import HuggingFacePipeline
-import transformers
-from torch import cuda, bfloat16
+from langchain.prompts.prompt import PromptTemplate
 
-model_name_or_path = "../Llama-2-7b-chat-hf"
-model_basename = "Llama-2-7b-chat-hf"
-use_triton = False
+from langchain.chains import ConversationChain
+from langchain.memory import ConversationBufferMemory
+import gradio as gr
 
-device = f'cuda:{cuda.current_device()}' if cuda.is_available() else 'cpu'
+dotenv.load_dotenv('/.env')
+HF_ACCESS_TOKEN = os.getenv('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')
 
+model_id = '../Llama-2-7b-chat-hf'
 
-tokenizer = AutoTokenizer.from_pretrained(model_name_or_path, use_fast=True)
-
-quant_config = transformers.BitsAndBytesConfig(
-
-    load_in_4bit=True,
-
+bnb_config = BitsAndBytesConfig(
+    bnb_4bit_compute_dtype = 'float16',
     bnb_4bit_quant_type='nf4',
-
-    bnb_4bit_use_double_quant=True,
-
-    bnb_4bit_compute_dtype=bfloat16
-
+    load_in_4bit=True,
 )
 
-model_config = transformers.AutoConfig.from_pretrained(
-
-    model_basename,
-
-    use_auth_token='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'
-
+# Load model configuration
+model_config = AutoConfig.from_pretrained(
+    model_id,
+    use_auth_token=HF_ACCESS_TOKEN
 )
 
-model = transformers.AutoModelForCausalLM.from_pretrained(
-
-    model_basename,
-
-    trust_remote_code=True,
-
+model = AutoModelForCausalLM.from_pretrained(
+    model_id,
     config=model_config,
-
-    quantization_config=quant_config,
-
-    use_auth_token='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'
-
+    device_map='auto',
+    quantization_config=bnb_config,
+    use_auth_token=HF_ACCESS_TOKEN
 )
 
+# Load tokenizer
+tokenizer = AutoTokenizer.from_pretrained(
+    model_id,
+    use_auth_token=HF_ACCESS_TOKEN
+)
+
+# Set model into evaluation mode (optimizes inference)
 model.eval()
 
-print(f"Model loaded on {device}")
-
-tokenizer = transformers.AutoTokenizer.from_pretrained(
-
-    model_basename,
-
-    use_auth_token='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'
-
-)
-
-model = transformers.AutoModelForCausalLM.from_pretrained(
-
-    model_basename,
-
-    trust_remote_code=True,
-
-    config=model_config,
-
-    quantization_config=quant_config,
-
-    use_auth_token='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'
-
-)
-
-
-# model = AutoGPTQForCausalLM.from_quantized(model_name_or_path,
-#         model_basename=model_basename,
-#         use_safetensors=True,
-#         trust_remote_code=True,
-#         use_triton=use_triton,
-#         quantize_config=None)
-
-
-logging.set_verbosity(logging.CRITICAL)
-
 pipe = pipeline(
-    "text-generation",
     model=model,
-    tokenizer=tokenizer,
-    max_new_tokens=512,
-    temperature=0.1,
-    top_p=0.95,
-    repetition_penalty=1.15
+    task='text-generation',
+    tokenizer=tokenizer
 )
 
-template = """
-[INST] <<SYS>>
-You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe.  Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive in nature. If a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information.
-<</SYS>>
-here is the chat history
-{chat_history}
+llm = HuggingFacePipeline(pipeline=pipe)
 
-{prompt} [/INST]
+# Template using jinja2 syntax
+template = """
+<s>[INST] <<SYS>>
+The following is a friendly conversation between a human and an AI. 
+The AI is talkative and provides lots of specific details from its context. 
+If the AI does not know the answer to a question, it truthfully says it does not know.
+Please be concise.
+<</SYS>>
+
+Current conversation:
+{{ history }}
+
+{% if history %}
+    <s>[INST] Human: {{ input }} [/INST] AI: </s>
+{% else %}
+    Human: {{ input }} [/INST] AI: </s>
+{% endif %} 
 """
 
 prompt = PromptTemplate(
-    input_variables=["chat_history", "prompt"],
-    template=template
+    input_variables=["history", "input"],
+    template=template,
+    template_format="jinja2"
 )
 
-llm=HuggingFacePipeline(pipeline=pipe)
-memory = ConversationBufferMemory(memory_key="chat_history",    k=3,
-    return_messages=True)
+# Initialize the conversation chain
+conversation = ConversationChain(
+    llm=llm,
+    memory=ConversationBufferMemory(),
+    prompt=prompt,
+    verbose=False
+)
 
+# Start the conversation
+def predict(message: str, history: str):
+    response = conversation.predict(input=message)
 
-llm_chain = LLMChain(llm=llm, prompt=prompt, verbose=False,  memory=memory)
+    return response
 
-while 1:
-  text=input("You: ")
-  if text=='end':
-    break
-  output=llm_chain.predict(prompt=text)
-  print("Chatbot: ",output)
+# Set up the user interface
+interface = gr.ChatInterface(
+    clear_btn=None,
+    fn=predict,
+    retry_btn=None,
+    undo_btn=None,
+)
+
+# Launch the user interface
+interface.launch(
+    height=600,
+    inline=True,
+    share=True,
+    width=800
+)
