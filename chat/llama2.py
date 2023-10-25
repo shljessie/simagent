@@ -138,12 +138,8 @@ def calculate_log_likelihood(input_tokens, output_tokens, model, tokenizer, debu
     actual_log_probs = actual_log_probs * mask
 
     log_likelihood = actual_log_probs.sum().item()
-
-    # Normalize by the number of non-padding tokens
-    num_non_padding_tokens = mask.sum().item()
-    normalized_log_likelihood = log_likelihood / num_non_padding_tokens if num_non_padding_tokens != 0 else 0
     
-    return normalized_log_likelihood
+    return log_likelihood
 
 def calculate_similarity_score(persona_tokens, output_tokens, model, tokenizer, debug=False):
     if debug:
