@@ -203,12 +203,11 @@ interface = gr.Interface(
     fn=predict,
     inputs=["text"],
     outputs=[
-        gr.outputs.Textbox(label="Output"),
+        gr.outputs.HTML(label="Output"),
         gr.outputs.Textbox(label="Persona Alignment Log Likelihood"),
         gr.outputs.Textbox(label="Persona Alignment Perplexity")
     ],
 )
-
 interface.launch(
     height=600,
     inline=True,
