@@ -172,7 +172,7 @@ def calculate_perplexity(input_tensor, output_tensor, model):
 
 def predict(message: str):
     # Get model prediction
-    output = conversation.predict(input=message)
+    output = conversation.predict(input=message)[:50]
     
     # Tokenizing persona, user input, and model output
     persona_tokens = tokenize_persona(template, tokenizer)
@@ -181,6 +181,9 @@ def predict(message: str):
     
     # Combining tokens
     input_combined = combine_inputs(persona_tokens, input_tokens)
+
+    print('input Combined Tokens', input_combined.shape)
+    print('output Tokens', output_tokens.shape)
     
     # Calculating log likelihood
     log_likelihood = calculate_log_likelihood(input_combined, output_tokens, model)
