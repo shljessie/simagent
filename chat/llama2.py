@@ -110,6 +110,11 @@ def combine_inputs(persona_tokens,input_tokens ):
 
 #calculate log likelihood
 def calculate_log_likelihood(input_tokens, output_tokens, model):
+
+    # Print original shapes for debugging
+    print(f"Original input tokens shape: {input_tokens.shape}")
+    print(f"Original output tokens shape: {output_tokens.shape}")
+
     # Determine the maximum sequence length between input and output tokens
     max_length = max(input_tokens.size(1), output_tokens.size(1))
     
@@ -122,6 +127,10 @@ def calculate_log_likelihood(input_tokens, output_tokens, model):
     if output_tokens.size(1) < max_length:
         padding_size = max_length - output_tokens.size(1)
         output_tokens = F.pad(output_tokens, pad=(0, padding_size), value=tokenizer.pad_token_id)
+
+    # Print padded shapes for debugging
+    print(f"Padded input tokens shape: {input_tokens.shape}")
+    print(f"Padded output tokens shape: {output_tokens.shape}")
 
     # Passing tokens through the model
     with torch.no_grad():  # Disable gradient calculations
