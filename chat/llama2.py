@@ -5,10 +5,17 @@ import gradio as gr
 import dotenv
 import os
 
+from langchain.llms import HuggingFacePipeline
+from langchain.prompts.prompt import PromptTemplate
+from langchain.chains import ConversationChain
+from langchain.memory import ConversationBufferMemory
+
 dotenv.load_dotenv('/.env')
 HF_ACCESS_TOKEN = os.getenv('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')
 
 model_id = '../Llama-2-7b-chat-hf'
+
+llm = HuggingFacePipeline(pipeline=pipe)
 
 # Configuration settings
 bnb_config = BitsAndBytesConfig(
@@ -44,10 +51,41 @@ def get_next_token_predictions(text, model, tokenizer):
     return ' '.join(formatted_predictions)
 
 
+# Template using jinja2 syntax
+template = """
+<s>[INST] <<SYS>>
+The following is a friendly conversation between a human and an AI. 
+The AI  i like to party. my major is business. i am in college. i love the beach. i work part time at a pizza restaurant.
+<</SYS>>
+
+Current conversation:
+{{ history }}
+
+{% if history %}
+    <s>[INST] Human: {{ input }} [/INST] AI: </s>
+{% else %}
+    Human: {{ input }} [/INST] AI: </s>
+{% endif %} 
+"""
+
+prompt = PromptTemplate(
+    input_variables=["history", "input"],
+    template=template,
+    template_format="jinja2"
+)
+
+# Initialize the conversation chain
+conversation = ConversationChain(
+    llm=llm,
+    memory=ConversationBufferMemory(),
+    prompt=prompt,
+    verbose=False
+)
+
+
 def predict(message: str, history: str=""):
     # Your existing prediction code goes here, for example:
-    # response = conversation.predict(input=message)
-    response = "Your model's response here."
+    response = conversation.predict(input=message)
 
     next_token_predictions = get_next_token_predictions(message, model, tokenizer)
     full_response = f"{response}<br><br>Next token predictions: {next_token_predictions}"
@@ -67,3 +105,19 @@ interface.launch(
     share=True,
     width=800
 )
+
+# # Set up the user interface
+# interface = gr.ChatInterface(
+#     clear_btn=None,
+#     fn=predict,
+#     retry_btn=None,
+#     undo_btn=None,
+# )
+
+# # Launch the user interface
+# interface.launch(
+#     height=600,
+#     inline=True,
+#     share=True,
+#     width=800
+# )
