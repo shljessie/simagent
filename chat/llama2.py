@@ -51,11 +51,9 @@ llm = HuggingFacePipeline(pipeline=pipe)
 template = """
 
 Do not write any emojis.
-
+The AI's Persona Description: 
 <s>[INST] <<SYS>>
-The AI's Persona Description: i like to party. my major is business. i am in college. i love the beach. i work part time at a pizza restaurant.
-
-chat examples: 
+i like to party. my major is business. i am in college. i love the beach. i work part time at a pizza restaurant.
 i am a business major but have a part time job
 i am trying to get my ba in finance
 no still in school work at pizza hut part time
