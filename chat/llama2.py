@@ -153,6 +153,16 @@ def calculate_log_likelihood(input_tokens, output_tokens, model):
 
 
 def calculate_perplexity(input_tensor, output_tensor, model):
+    max_length = max(input_tensor.size(1), output_tensor.size(1))
+    
+    if input_tensor.size(1) < max_length:
+        padding_size = max_length - input_tensor.size(1)
+        input_tensor = F.pad(input_tensor, pad=(0, padding_size), value=tokenizer.pad_token_id)
+    
+    if output_tensor.size(1) < max_length:
+        padding_size = max_length - output_tensor.size(1)
+        output_tensor = F.pad(output_tensor, pad=(0, padding_size), value=tokenizer.pad_token_id)
+
     with torch.no_grad():
         loss = model(input_ids=input_tensor, labels=output_tensor).loss
     
