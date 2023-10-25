@@ -67,7 +67,7 @@ i love going to the beach
 <</SYS>>
 
 
-Do not write any emojis.
+Do not write any emojis. Only respond with spoken text. Do not include terms like *smiling* *nods* *excitedly*
 
 Current conversation:
 {{ history }}
