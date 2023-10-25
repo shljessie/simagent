@@ -142,26 +142,11 @@ def calculate_log_likelihood(input_tokens, output_tokens, model, tokenizer, debu
     return log_likelihood
 
 def calculate_similarity_score(persona_tokens, output_tokens, model, tokenizer, debug=False):
-    if debug:
-        print(f"Original persona tokens shape: {persona_tokens.shape}")
-        print(f"Original output tokens shape: {output_tokens.shape}")
-    
-    # Getting embeddings from the model
-    with torch.no_grad():
-        persona_embeddings = model(input_ids=persona_tokens).last_hidden_state.mean(dim=1)
-        output_embeddings = model(input_ids=output_tokens).last_hidden_state.mean(dim=1)
-    
-    if debug:
-        print(f"Persona embeddings shape: {persona_embeddings.shape}")
-        print(f"Output embeddings shape: {output_embeddings.shape}")
-    
+
     # Calculating cosine similarity
-    persona_embeddings = persona_embeddings.cpu().numpy()
-    output_embeddings = output_embeddings.cpu().numpy()
-    similarity_score = cosine_similarity(persona_embeddings, output_embeddings)
-    
-    if debug:
-        print(f"Similarity score: {similarity_score}")
+    persona_tokens = persona_tokens.cpu().numpy()
+    output_tokens = output_tokens.cpu().numpy()
+    similarity_score = cosine_similarity(persona_tokens, output_tokens)
     
     return similarity_score
 
