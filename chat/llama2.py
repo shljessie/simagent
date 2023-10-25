@@ -4,6 +4,8 @@ from transformers import AutoConfig, AutoModelForCausalLM, AutoTokenizer, BitsAn
 import gradio as gr
 import dotenv
 import os
+import pandas as pd
+import numpy as np
 
 from langchain.llms import HuggingFacePipeline
 from langchain.prompts.prompt import PromptTemplate
@@ -41,23 +43,32 @@ llm = HuggingFacePipeline(pipeline=pipe)
 
 def get_next_token_predictions(text, model, tokenizer):
     tokens = tokenizer.encode(text, return_tensors="pt")
-    outputs = model(tokens)
-    scores = F.softmax(outputs.scores[0], dim=-1)[-1]
-    top_tokens = torch.topk(scores, 5)
+    tokens = torch.cat((torch.tensor([tokenizer.eos_token_id]), tokens[0])).reshape(1,-1)
 
-    formatted_predictions = []
-    for value, index in zip(top_tokens.values, top_tokens.indices):
-        token = tokenizer.decode(index)
-        probability = value.item()
-        if probability > 0.9:
-            color = "green"
-        elif probability > 0.5:
-            color = "yellow"
-        else:
-            color = "red"
-        formatted_predictions.append(f"<span style='color:{color}'>{token} ({probability:.2f})</span>")
+    for i in np.arange(0,len(tokens[0])-1):
+            outputs = model.generate(tokens[0][:i+1].reshape(1,-1), max_new_tokens=1, output_scores=True, return_dict_in_generate=True, pad_token_id=tokenizer.eos_token_id)
+            scores = F.softmax(outputs.scores[0], dim=-1)
+            top_10 = torch.topk(scores, 10)
+            df = pd.DataFrame()
+            a = scores[0][tokens[0][i+1]]
+            b = top_10.values
+            df["probs"] = list(np.concatenate([a.reshape(-1,1).numpy()[0], b[0].numpy()]))
+            diff = 100*(df["probs"].iloc[0]-df["probs"].iloc[1])
+            if np.abs(diff)<1:
+              color = "mystronggreen"
+            elif np.abs(diff)<10:
+              color = "mygreen"
+            elif np.abs(diff)<20:
+              color = "myorange"
+            elif np.abs(diff)<30:
+              color = "myyellow"
+            else:
+              color = "myred"
+            df["probs"] = [f"{value:.2%}" for value in df["probs"].values]
+            aux = [tokenizer.decode(tokens[0][i+1])] + [tokenizer.decode(top_10.indices[0][i]) for i in range(10)]
+            df["predicted next token"] = aux
+    return df["probs"], df["predicted next token"]
 
-    return ' '.join(formatted_predictions)
 
 
 template = """

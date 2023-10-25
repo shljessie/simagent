@@ -84,7 +84,6 @@ conversation = ConversationChain(
 # Start the conversation
 def predict(message: str, history: str):
     response = conversation.predict(input=message)
-
     return response
 
 # Set up the user interface
