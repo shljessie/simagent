@@ -88,17 +88,6 @@ def tokenize_persona(template, tokenizer):
     persona_text = template[start_idx:end_idx].strip()
     return tokenizer.encode(persona_text, return_tensors="pt")
 
-
-# tokenize user input
-def tokenize_user_input(text,tokenizer):
-    return tokenizer.encode(text, return_tensors="pt")
-
-
-# # generate output of model
-# def predict(message: str, history: str=""):
-#     return conversation.predict(input=message)
-
-
 # tokenize output of model
 def tokenize_output(output,tokenizer):
     return tokenizer.encode(output, return_tensors="pt")
@@ -179,13 +168,13 @@ def predict(message: str):
     print('persona', template)
     print('message', message)
     persona_tokens = tokenize_persona(template, tokenizer)
-    input_tokens = tokenize_user_input(message, tokenizer)
+    # input_tokens = tokenize_user_input(message, tokenizer)
     output_tokens = tokenize_output(output, tokenizer)
     
     # Combining tokens
     # input_combined = combine_inputs(persona_tokens, input_tokens)
 
-    # print(f'input Combined Tokens', {input_combined.shape})
+    print(f'input Persona Tokens', {persona_tokens.shape})
     print(f'output Tokens', {output_tokens.shape})
     
     # Calculating log likelihood
