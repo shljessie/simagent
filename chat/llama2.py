@@ -9,9 +9,6 @@ import os
 
 from transformers import AutoConfig, AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig, pipeline
 
-# tokenizer = AutoTokenizer.from_pretrained('gpt2', padding_side='left')
-# model = AutoModelForCausalLM.from_pretrained('gpt2')
-
 dotenv.load_dotenv('/.env')
 HF_ACCESS_TOKEN = os.getenv('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')
 
