@@ -5,6 +5,7 @@ import torch
 import torch.nn.functional as F
 from torch.nn.utils.rnn import pad_sequence
 import gradio as gr
+from sklearn.metrics.pairwise import cosine_similarity
 from transformers import (
     AutoConfig, 
     AutoModelForCausalLM, 
@@ -144,6 +145,30 @@ def calculate_log_likelihood(input_tokens, output_tokens, model, tokenizer, debu
     
     return normalized_log_likelihood
 
+def calculate_similarity_score(persona_tokens, output_tokens, model, tokenizer, debug=False):
+    if debug:
+        print(f"Original persona tokens shape: {persona_tokens.shape}")
+        print(f"Original output tokens shape: {output_tokens.shape}")
+    
+    # Getting embeddings from the model
+    with torch.no_grad():
+        persona_embeddings = model(input_ids=persona_tokens).last_hidden_state.mean(dim=1)
+        output_embeddings = model(input_ids=output_tokens).last_hidden_state.mean(dim=1)
+    
+    if debug:
+        print(f"Persona embeddings shape: {persona_embeddings.shape}")
+        print(f"Output embeddings shape: {output_embeddings.shape}")
+    
+    # Calculating cosine similarity
+    persona_embeddings = persona_embeddings.cpu().numpy()
+    output_embeddings = output_embeddings.cpu().numpy()
+    similarity_score = cosine_similarity(persona_embeddings, output_embeddings)
+    
+    if debug:
+        print(f"Similarity score: {similarity_score}")
+    
+    return similarity_score
+
 
 
 def calculate_perplexity(input_tensor, output_tensor, model):
@@ -183,15 +208,18 @@ def predict(message: str):
     
     # Calculating log likelihood
     log_likelihood = calculate_log_likelihood(persona_tokens, output_tokens, model)
+
+    #Calculate similarity
+    similarity = calculate_similarity_score(persona_tokens, output_tokens, model)
     
     # Calculating perplexity
     perplexity = calculate_perplexity(persona_tokens, output_tokens, model)
     
     # Printing log likelihood and perplexity
     print(f"Persona Alignment Log Likelihood: {log_likelihood}")
-    print(f"Persona Alignment Perplexity: {perplexity}")
+    print(f"Persona Alignment Similarity: {similarity}")
     
-    return output, log_likelihood, perplexity
+    return output, log_likelihood, similarity
 
 
 
@@ -203,7 +231,7 @@ interface = gr.Interface(
     outputs=[
         gr.outputs.HTML(label="Output"),
         gr.outputs.Textbox(label="Persona Alignment Log Likelihood"),
-        gr.outputs.Textbox(label="Persona Alignment Perplexity")
+        gr.outputs.Textbox(label="Persona Alignment Similarity")
     ],
 )
 interface.launch(
