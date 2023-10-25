@@ -182,8 +182,8 @@ def predict(message: str):
     # Combining tokens
     input_combined = combine_inputs(persona_tokens, input_tokens)
 
-    print('input Combined Tokens', input_combined.shape)
-    print('output Tokens', output_tokens.shape)
+    print(f'input Combined Tokens', {input_combined.shape})
+    print(f'output Tokens', {output_tokens.shape})
     
     # Calculating log likelihood
     log_likelihood = calculate_log_likelihood(input_combined, output_tokens, model)
