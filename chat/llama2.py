@@ -142,6 +142,10 @@ def calculate_log_likelihood(input_tokens, output_tokens, model, tokenizer, debu
     return log_likelihood
 
 def calculate_similarity_score(persona_tokens, output_tokens, model, tokenizer, debug=False):
+    max_length = max(persona_tokens.size(1), output_tokens.size(1))
+
+    persona_tokens = F.pad(persona_tokens, pad=(0, max_length - persona_tokens.size(1)), value=tokenizer.pad_token_id)
+    output_tokens = F.pad(output_tokens, pad=(0, max_length - output_tokens.size(1)), value=tokenizer.pad_token_id)
 
     # Calculating cosine similarity
     persona_tokens = persona_tokens.cpu().numpy()
