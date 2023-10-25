@@ -165,7 +165,7 @@ def predict(message: str):
 # Chat Interface
 interface = gr.Interface(
     fn=predict,
-    inputs=["text", "text"],
+    inputs=["text"],
     outputs=[
         gr.outputs.Textbox(label="Output"),
         gr.outputs.Textbox(label="Persona Alignment Log Likelihood"),
