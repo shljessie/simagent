@@ -48,6 +48,7 @@ llm = HuggingFacePipeline(pipeline=pipe)
 
 # model persona  template
 template = """
+Do not write any emojis.
 <s>[INST] <<SYS>>
 The following is a friendly conversation between a human and an AI. 
 The AI  i like to party. my major is business. i am in college. i love the beach. i work part time at a pizza restaurant.
@@ -172,12 +173,14 @@ def calculate_perplexity(input_tensor, output_tensor, model):
 
 def predict(message: str):
     # Get model prediction
-    output = conversation.predict(input=message)[:50]
+    output = conversation.predict(input=message)[:100]
     
     # Tokenizing persona, user input, and model output
+    print('persona', template)
+    print('message', message)
     persona_tokens = tokenize_persona(template, tokenizer)
     input_tokens = tokenize_user_input(message, tokenizer)
-    output_tokens = tokenize_output(output, tokenizer)[:50]
+    output_tokens = tokenize_output(output, tokenizer)[:100]
     
     # Combining tokens
     input_combined = combine_inputs(persona_tokens, input_tokens)
