@@ -111,48 +111,39 @@ def combine_inputs(persona_tokens,input_tokens ):
     return torch.cat((persona_tokens, input_tokens), dim=-1)
 
 
-#calculate log likelihood
-def calculate_log_likelihood(input_tokens, output_tokens, model):
 
-    # Print original shapes for debugging
-    print(f"Original input tokens shape: {input_tokens.shape}")
-    print(f"Original output tokens shape: {output_tokens.shape}")
+def calculate_log_likelihood(input_tokens, output_tokens, model, tokenizer, debug=False):
+    if debug:
+        print(f"Original input tokens shape: {input_tokens.shape}")
+        print(f"Original output tokens shape: {output_tokens.shape}")
 
-    # Determine the maximum sequence length between input and output tokens
     max_length = max(input_tokens.size(1), output_tokens.size(1))
-    
-    # Padding input_tokens
-    if input_tokens.size(1) < max_length:
-        padding_size = max_length - input_tokens.size(1)
-        input_tokens = F.pad(input_tokens, pad=(0, padding_size), value=tokenizer.pad_token_id)
-    
-    # Padding output_tokens
-    if output_tokens.size(1) < max_length:
-        padding_size = max_length - output_tokens.size(1)
-        output_tokens = F.pad(output_tokens, pad=(0, padding_size), value=tokenizer.pad_token_id)
 
-    # Print padded shapes for debugging
-    print(f"Padded input tokens shape: {input_tokens.shape}")
-    print(f"Padded output tokens shape: {output_tokens.shape}")
+    input_tokens = F.pad(input_tokens, pad=(0, max_length - input_tokens.size(1)), value=tokenizer.pad_token_id)
+    output_tokens = F.pad(output_tokens, pad=(0, max_length - output_tokens.size(1)), value=tokenizer.pad_token_id)
 
-    # Passing tokens through the model
-    with torch.no_grad():  # Disable gradient calculations
+    if debug:
+        print(f"Padded input tokens shape: {input_tokens.shape}")
+        print(f"Padded output tokens shape: {output_tokens.shape}")
+
+    with torch.no_grad():
         outputs = model(input_ids=input_tokens, labels=output_tokens)
-    
-    logits = outputs.logits  # Get the prediction logits
-    log_probs = F.log_softmax(logits, dim=-1)  # Calculate log probabilities
-    
-    # Get log probabilities of actual tokens
+
+    logits = outputs.logits
+    log_probs = F.log_softmax(logits, dim=-1)
+
     actual_log_probs = log_probs.gather(-1, output_tokens.unsqueeze(-1)).squeeze(-1)
-    
-    # Ignore padding tokens (if any)
     mask = (output_tokens != tokenizer.pad_token_id)
     actual_log_probs = actual_log_probs * mask
-    
-    # Sum the log probabilities
+
     log_likelihood = actual_log_probs.sum().item()
+
+    # Normalize by the number of non-padding tokens
+    num_non_padding_tokens = mask.sum().item()
+    normalized_log_likelihood = log_likelihood / num_non_padding_tokens if num_non_padding_tokens != 0 else 0
     
-    return log_likelihood
+    return normalized_log_likelihood
+
 
 
 def calculate_perplexity(input_tensor, output_tensor, model):
