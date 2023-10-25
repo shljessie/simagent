@@ -15,7 +15,6 @@ HF_ACCESS_TOKEN = os.getenv('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')
 
 model_id = '../Llama-2-7b-chat-hf'
 
-llm = HuggingFacePipeline(pipeline=pipe)
 
 # Configuration settings
 bnb_config = BitsAndBytesConfig(
@@ -29,6 +28,16 @@ model_config = AutoConfig.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOK
 model = AutoModelForCausalLM.from_pretrained(model_id, config=model_config, quantization_config=bnb_config, use_auth_token=HF_ACCESS_TOKEN)
 tokenizer = AutoTokenizer.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)
 
+
+model.eval()
+
+pipe = pipeline(
+    model=model,
+    task='text-generation',
+    tokenizer=tokenizer
+)
+
+llm = HuggingFacePipeline(pipeline=pipe)
 
 def get_next_token_predictions(text, model, tokenizer):
     tokens = tokenizer.encode(text, return_tensors="pt")
@@ -84,7 +93,6 @@ conversation = ConversationChain(
 
 
 def predict(message: str, history: str=""):
-    # Your existing prediction code goes here, for example:
     response = conversation.predict(input=message)
 
     next_token_predictions = get_next_token_predictions(message, model, tokenizer)
