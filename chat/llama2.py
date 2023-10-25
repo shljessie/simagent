@@ -1,17 +1,21 @@
+import os
+import math
+import dotenv
 import torch
 import torch.nn.functional as F
-from transformers import AutoConfig, AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig, pipeline
+from torch.nn.utils.rnn import pad_sequence
 import gradio as gr
-import dotenv
-import os
-import pandas as pd
-import numpy as np
-import math
+from transformers import (
+    AutoConfig, 
+    AutoModelForCausalLM, 
+    AutoTokenizer, 
+    BitsAndBytesConfig, 
+    pipeline
+)
 from langchain.llms import HuggingFacePipeline
 from langchain.prompts.prompt import PromptTemplate
 from langchain.chains import ConversationChain
 from langchain.memory import ConversationBufferMemory
-# from sklearn.metrics import f1_score
 
 
 # Configurations
@@ -106,6 +110,19 @@ def combine_inputs(persona_tokens,input_tokens ):
 
 #calculate log likelihood
 def calculate_log_likelihood(input_tokens, output_tokens, model):
+    # Determine the maximum sequence length between input and output tokens
+    max_length = max(input_tokens.size(1), output_tokens.size(1))
+    
+    # Padding input_tokens
+    if input_tokens.size(1) < max_length:
+        padding_size = max_length - input_tokens.size(1)
+        input_tokens = F.pad(input_tokens, pad=(0, padding_size), value=tokenizer.pad_token_id)
+    
+    # Padding output_tokens
+    if output_tokens.size(1) < max_length:
+        padding_size = max_length - output_tokens.size(1)
+        output_tokens = F.pad(output_tokens, pad=(0, padding_size), value=tokenizer.pad_token_id)
+
     # Passing tokens through the model
     with torch.no_grad():  # Disable gradient calculations
         outputs = model(input_ids=input_tokens, labels=output_tokens)
