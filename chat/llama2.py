@@ -67,6 +67,9 @@ def get_next_token_predictions(text, model, tokenizer):
             df["probs"] = [f"{value:.2%}" for value in df["probs"].values]
             aux = [tokenizer.decode(tokens[0][i+1])] + [tokenizer.decode(top_10.indices[0][i]) for i in range(10)]
             df["predicted next token"] = aux
+    
+    print('probs:', df['probs'])
+    print('next token:', df['predicted next token'])
     return df["probs"], df["predicted next token"]
 
 
