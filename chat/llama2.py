@@ -207,10 +207,10 @@ def predict(message: str):
     print(f'output Tokens', {output_tokens.shape})
     
     # Calculating log likelihood
-    log_likelihood = calculate_log_likelihood(persona_tokens, output_tokens, model)
+    log_likelihood = calculate_log_likelihood(persona_tokens, output_tokens, model, tokenizer)
 
     #Calculate similarity
-    similarity = calculate_similarity_score(persona_tokens, output_tokens, model)
+    similarity = calculate_similarity_score(persona_tokens, output_tokens, model, tokenizer)
     
     # Calculating perplexity
     perplexity = calculate_perplexity(persona_tokens, output_tokens, model)
@@ -220,8 +220,6 @@ def predict(message: str):
     print(f"Persona Alignment Similarity: {similarity}")
     
     return output, log_likelihood, similarity
-
-
 
 
 # Chat Interface
