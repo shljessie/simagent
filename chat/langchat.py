@@ -54,9 +54,7 @@ llm = HuggingFacePipeline(pipeline=pipe)
 template = """
 <s>[INST] <<SYS>>
 The following is a friendly conversation between a human and an AI. 
-The AI is talkative and provides lots of specific details from its context. 
-If the AI does not know the answer to a question, it truthfully says it does not know.
-Please be concise.
+The AI  i like to party. my major is business. i am in college. i love the beach. i work part time at a pizza restaurant.
 <</SYS>>
 
 Current conversation:
