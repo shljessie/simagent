@@ -41,7 +41,7 @@ llm = HuggingFacePipeline(pipeline=pipe)
 
 def get_next_token_predictions(text, model, tokenizer):
     tokens = tokenizer.encode(text, return_tensors="pt")
-    outputs = model(tokens, output_scores=True)
+    outputs = model(tokens)
     scores = F.softmax(outputs.scores[0], dim=-1)[-1]
     top_tokens = torch.topk(scores, 5)
 
@@ -60,7 +60,6 @@ def get_next_token_predictions(text, model, tokenizer):
     return ' '.join(formatted_predictions)
 
 
-# Template using jinja2 syntax
 template = """
 <s>[INST] <<SYS>>
 The following is a friendly conversation between a human and an AI. 
