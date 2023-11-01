@@ -3,6 +3,7 @@ import math
 import dotenv
 import torch
 import csv
+import datetime
 import torch.nn.functional as F
 from torch.nn.utils.rnn import pad_sequence
 import gradio as gr
@@ -206,37 +207,32 @@ def calculate_perplexity(input_tensor, output_tensor, model):
 
 
 def save_to_csv(data, filename="log_likelihood.csv"):
-    with open(filename, mode='a', newline='') as file:
+    current_datetime = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"loglikelihood_{current_datetime}.csv"
+    
+    with open(filename, mode='w', newline='') as file:
         writer = csv.writer(file)
+        writer.writerow(["user_msg", "ll" , "nll", "response"])
         writer.writerow(data)
 
+
 def predict(message: str):
-    # Get model prediction
     output = conversation.predict(input=message)
     
-    # Tokenizing persona, user input, and model output
-    print('persona', template)
-    print('negative persona', neg_template)
-    print('message', message)
     persona_tokens = tokenize_persona(template, tokenizer)
     persona_neg_tokens = tokenize_persona(neg_template, tokenizer)
-    # input_tokens = tokenize_user_input(message, tokenizer)
-    output_tokens = tokenize_output(output, tokenizer)
-    
-    # Combining tokens
-    # input_combined = combine_inputs(persona_tokens, input_tokens)
+    output_tokens = tokenize_output(output, tokenizer)  
 
-    print(f'input Persona Tokens', {persona_tokens.shape})
-    print(f'output Tokens', {output_tokens.shape})
-    
-    # Calculating log likelihood
     log_likelihood = calculate_log_likelihood(persona_tokens, output_tokens, model, tokenizer)
     neg_log_likelihood = calculate_log_likelihood(persona_neg_tokens, output_tokens, model, tokenizer)
-    save_to_csv(["User Message", message, "Log Likelihood", log_likelihood , "Negative Log Likelihood", neg_log_likelihood ])
+
+    print('log likelihood',log_likelihood)
+    print('neg_log likelihood',neg_log_likelihood)
+    save_to_csv(["user_msg", message, "ll", log_likelihood , "nll", neg_log_likelihood, "response", output ])
     
     return output, log_likelihood, neg_log_likelihood
 
-interface = gr.Interface(
+interface = gr.ChatInterface(
     fn=predict,
     inputs=["text"],
     outputs=[
