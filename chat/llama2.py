@@ -236,9 +236,4 @@ def predict(message: str, history: list = None):
 interface = gr.ChatInterface(
     fn=predict
 )
-interface.launch(
-    height=600,
-    inline=True,
-    share=True,
-    width=800
-)
+interface.launch()
