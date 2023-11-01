@@ -111,7 +111,6 @@ prompt = PromptTemplate(
     template_format="jinja2"
 )
 
-
 # Initialize the conversation chain -langchain
 conversation = ConversationChain(
     llm=llm,
@@ -119,7 +118,6 @@ conversation = ConversationChain(
     prompt=prompt,
     verbose=False
 )
-
 
 # Function to tokenize the persona
 def tokenize_persona(template, tokenizer):
@@ -140,7 +138,7 @@ def combine_inputs(persona_tokens,input_tokens ):
 
 
 
-def calculate_log_likelihood(input_tokens, output_tokens, model, tokenizer, debug=False):
+def calculate_log_likelihood(input_tokens, output_tokens, model, tokenizer, temperature=1.0, normalize=False, debug=False):
     if debug:
         print(f"Original input tokens shape: {input_tokens.shape}")
         print(f"Original output tokens shape: {output_tokens.shape}")
@@ -158,15 +156,21 @@ def calculate_log_likelihood(input_tokens, output_tokens, model, tokenizer, debu
         outputs = model(input_ids=input_tokens, labels=output_tokens)
 
     logits = outputs.logits
-    log_probs = F.log_softmax(logits, dim=-1)
+    log_probs = F.log_softmax(logits / temperature, dim=-1)
 
     actual_log_probs = log_probs.gather(-1, output_tokens.unsqueeze(-1)).squeeze(-1)
     mask = (output_tokens != tokenizer.pad_token_id)
     actual_log_probs = actual_log_probs * mask
 
     log_likelihood = actual_log_probs.sum().item()
-    
+
+    if normalize:
+        sequence_lengths = mask.sum(dim=-1).float()
+        log_likelihood /= sequence_lengths.sum().item()
+
     return log_likelihood
+
+
 
 def calculate_similarity_score(persona_tokens, output_tokens, model, tokenizer, debug=False):
     max_length = max(persona_tokens.size(1), output_tokens.size(1))
@@ -239,7 +243,15 @@ def predict(message: str):
 
 
 # Chat Interface
-interface = gr.Interface(
+
+with gr.Blocks() as demo:
+    chatbot = gr.Chatbot()
+    msg = gr.Textbox()
+    msg.submit(predict, gr.outputs.HTML(label="Output"), gr.outputs.Textbox(label="Persona Alignment Log Likelihood"))
+
+demo.launch()
+
+interface = gr.Chatbot(
     fn=predict,
     inputs=["text"],
     outputs=[
@@ -253,84 +265,3 @@ interface.launch(
     share=True,
     width=800
 )
-
-
-
-
-# # get model output token predictions
-# def get_next_token_predictions(text, model, tokenizer):
-#     # tokenizing the user input of the model
-#     tokens = tokenizer.encode(text, return_tensors="pt")
-#     tokens = torch.cat((torch.tensor([tokenizer.eos_token_id]), tokens[0])).reshape(1,-1)
-
-#     print('tokens',tokens)
-
-#     for i in np.arange(0,len(tokens[0])-1):
-#         outputs = model.generate(tokens[0][:i+1].reshape(1,-1), max_new_tokens=1, output_scores=True, return_dict_in_generate=True, pad_token_id=tokenizer.eos_token_id)
-#         scores = F.softmax(outputs.scores[0], dim=-1)
-#         top_10 = torch.topk(scores, 10)
-#         df = pd.DataFrame()
-#         a = scores[0][tokens[0][i+1]]
-#         b = top_10.values
-#         df["probs"] = list(np.concatenate([a.reshape(-1,1).numpy()[0], b[0].numpy()]))
-#         diff = 100*(df["probs"].iloc[0]-df["probs"].iloc[1])
-#         if np.abs(diff)<1:
-#           color = "mystronggreen"
-#         elif np.abs(diff)<10:
-#           color = "mygreen"
-#         elif np.abs(diff)<20:
-#           color = "myorange"
-#         elif np.abs(diff)<30:
-#           color = "myyellow"
-#         else:
-#           color = "myred"
-#         df["probs"] = [f"{value:.2%}" for value in df["probs"].values]
-#         aux = [tokenizer.decode(tokens[0][i+1])] + [tokenizer.decode(top_10.indices[0][i]) for i in range(10)]
-#         df["predicted next token"] = aux
-    
-#     print('probs:', df['probs'])
-#     print('next token:', df['predicted next token'])
-#     return df["probs"], df["predicted next token"]
-
-# # Set up the user interface
-# interface = gr.ChatInterface(
-#     clear_btn=None,
-#     fn=predict,
-#     retry_btn=None,
-#     undo_btn=None,
-# )
-
-# # Launch the user interface
-# interface.launch(
-#     height=600,
-#     inline=True,
-#     share=True,
-#     width=800
-# )
-
-
-# f1 score calculation when I have the true_texts
-# def calculate_f1_score(true_texts, generated_texts, tokenizer):
-#     true_tokens = tokenizer.batch_encode_plus(true_texts, add_special_tokens=False)['input_ids']
-#     gen_tokens = tokenizer.batch_encode_plus(generated_texts, add_special_tokens=False)['input_ids']
-    
-#     # Flattening the lists of tokens
-#     true_tokens_flat = [tok for sublist in true_tokens for tok in sublist]
-#     gen_tokens_flat = [tok for sublist in gen_tokens for tok in sublist]
-    
-#     # Calculating F1 Score
-#     return f1_score(true_tokens_flat, gen_tokens_flat, average='weighted')
-
-
-# interface = gr.Interface(
-#     fn=predict,
-#     inputs=["text", "text"],
-#     outputs=gr.outputs.HTML(),
-# )
-
-# interface.launch(
-#     height=600,
-#     inline=True,
-#     share=True,
-#     width=800
-# )
