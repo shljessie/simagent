@@ -2,6 +2,7 @@ import os
 import math
 import dotenv
 import torch
+import csv
 import torch.nn.functional as F
 from torch.nn.utils.rnn import pad_sequence
 import gradio as gr
@@ -204,6 +205,10 @@ def calculate_perplexity(input_tensor, output_tensor, model):
     return math.exp(loss)
 
 
+def save_to_csv(data, filename="log_likelihood.csv"):
+    with open(filename, mode='a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(data)
 
 def predict(message: str):
     # Get model prediction
@@ -227,29 +232,11 @@ def predict(message: str):
     # Calculating log likelihood
     log_likelihood = calculate_log_likelihood(persona_tokens, output_tokens, model, tokenizer)
     neg_log_likelihood = calculate_log_likelihood(persona_neg_tokens, output_tokens, model, tokenizer)
-
-    #Calculate similarity
-    # similarity = calculate_similarity_score(persona_tokens, output_tokens, model, tokenizer)
+    save_to_csv(["User Message", message, "Log Likelihood", log_likelihood , "Negative Log Likelihood", neg_log_likelihood ])
     
-    # Calculating perplexity
-    # perplexity = calculate_perplexity(persona_tokens, output_tokens, model)
-    
-    # Printing log likelihood and perplexity
-    print(f"Persona Alignment Log Likelihood: {log_likelihood}")
-    print(f"Negative Persona Alignment Log Likelihood: {neg_log_likelihood}")
     # print(f"Persona Alignment Similarity: {similarity}")
     
     return output, log_likelihood, neg_log_likelihood
-
-
-# Chat Interface
-
-with gr.Blocks() as demo:
-    chatbot = gr.Chatbot()
-    msg = gr.Textbox()
-    msg.submit(predict, gr.outputs.HTML(label="Output"), gr.outputs.Textbox(label="Persona Alignment Log Likelihood"))
-
-demo.launch()
 
 interface = gr.Chatbot(
     fn=predict,
