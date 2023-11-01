@@ -78,6 +78,33 @@ Current conversation:
 {% endif %} 
 """
 
+neg_template = """
+Do not write any emojis.
+The AI's Persona Description: 
+<s>[INST] <<SYS>>
+i dislike social gatherings and parties. my major is computer science. i am a graduate. i prefer staying indoors and find solace in solitude. i work full time at a tech company.
+i am a computer science major and have a full time job
+i have already earned my master's in computer science
+i work full time and no longer involved in part-time jobs
+i rarely attend social events or parties anymore
+i value peace and quiet, and prefer spending time alone or in small gatherings
+i have graduated and am currently working in the tech industry
+i am not very fond of outdoor activities like going to the beach
+<</SYS>>
+
+
+Do not write any emojis. Only respond with spoken text. Do not include terms like *smiling* *nods* *excitedly*
+
+Current conversation:
+{{ history }}
+
+{% if history %}
+    <s>[INST] Human: {{ input }} [/INST] AI: </s>
+{% else %}
+    Human: {{ input }} [/INST] AI: </s>
+{% endif %} 
+"""
+
 prompt = PromptTemplate(
     input_variables=["history", "input"],
     template=template,
@@ -180,8 +207,10 @@ def predict(message: str):
     
     # Tokenizing persona, user input, and model output
     print('persona', template)
+    print('negative persona', neg_template)
     print('message', message)
     persona_tokens = tokenize_persona(template, tokenizer)
+    persona_neg_tokens = tokenize_persona(neg_template, tokenizer)
     # input_tokens = tokenize_user_input(message, tokenizer)
     output_tokens = tokenize_output(output, tokenizer)
     
@@ -193,18 +222,20 @@ def predict(message: str):
     
     # Calculating log likelihood
     log_likelihood = calculate_log_likelihood(persona_tokens, output_tokens, model, tokenizer)
+    neg_log_likelihood = calculate_log_likelihood(persona_neg_tokens, output_tokens, model, tokenizer)
 
     #Calculate similarity
-    similarity = calculate_similarity_score(persona_tokens, output_tokens, model, tokenizer)
+    # similarity = calculate_similarity_score(persona_tokens, output_tokens, model, tokenizer)
     
     # Calculating perplexity
-    perplexity = calculate_perplexity(persona_tokens, output_tokens, model)
+    # perplexity = calculate_perplexity(persona_tokens, output_tokens, model)
     
     # Printing log likelihood and perplexity
     print(f"Persona Alignment Log Likelihood: {log_likelihood}")
-    print(f"Persona Alignment Similarity: {similarity}")
+    print(f"Negative Persona Alignment Log Likelihood: {neg_log_likelihood}")
+    # print(f"Persona Alignment Similarity: {similarity}")
     
-    return output, log_likelihood, similarity
+    return output, log_likelihood, neg_log_likelihood
 
 
 # Chat Interface
@@ -213,8 +244,7 @@ interface = gr.Interface(
     inputs=["text"],
     outputs=[
         gr.outputs.HTML(label="Output"),
-        gr.outputs.Textbox(label="Persona Alignment Log Likelihood"),
-        gr.outputs.Textbox(label="Persona Alignment Similarity")
+        gr.outputs.Textbox(label="Persona Alignment Log Likelihood")
     ],
 )
 interface.launch(
@@ -223,12 +253,6 @@ interface.launch(
     share=True,
     width=800
 )
-
-
-
-
-
-
 
 
 
