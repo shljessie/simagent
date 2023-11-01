@@ -230,7 +230,7 @@ def predict(message: str, history: list = None):
     print('neg_log likelihood', neg_log_likelihood)
     save_to_csv(["user_msg", message, "ll", log_likelihood , "nll", neg_log_likelihood, "response", output ])
     
-    return output, log_likelihood, neg_log_likelihood
+    return output
 
 
 interface = gr.ChatInterface(
