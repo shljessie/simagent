@@ -233,12 +233,7 @@ def predict(message: str):
     return output, log_likelihood, neg_log_likelihood
 
 interface = gr.ChatInterface(
-    fn=predict,
-    inputs=["text"],
-    outputs=[
-        gr.outputs.HTML(label="Output"),
-        gr.outputs.Textbox(label="Persona Alignment Log Likelihood")
-    ],
+    fn=predict
 )
 interface.launch(
     height=600,
