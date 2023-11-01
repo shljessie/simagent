@@ -234,11 +234,9 @@ def predict(message: str):
     neg_log_likelihood = calculate_log_likelihood(persona_neg_tokens, output_tokens, model, tokenizer)
     save_to_csv(["User Message", message, "Log Likelihood", log_likelihood , "Negative Log Likelihood", neg_log_likelihood ])
     
-    # print(f"Persona Alignment Similarity: {similarity}")
-    
     return output, log_likelihood, neg_log_likelihood
 
-interface = gr.Chatbot(
+interface = gr.Interface(
     fn=predict,
     inputs=["text"],
     outputs=[
