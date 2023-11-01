@@ -207,8 +207,8 @@ def calculate_perplexity(input_tensor, output_tensor, model):
 
 
 def save_to_csv(data, filename="log_likelihood.csv"):
-    current_datetime = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    filename = f"loglikelihood_{current_datetime}.csv"
+    current_datetime = datetime.datetime.now().strftime("%Y%m%d_%H")
+    filename = f"scores/loglikelihood_{current_datetime}.csv"
     
     with open(filename, mode='w', newline='') as file:
         writer = csv.writer(file)
