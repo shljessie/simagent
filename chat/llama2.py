@@ -216,21 +216,22 @@ def save_to_csv(data, filename="log_likelihood.csv"):
         writer.writerow(data)
 
 
-def predict(message: str):
+def predict(message: str, history: list = None):
     output = conversation.predict(input=message)
     
     persona_tokens = tokenize_persona(template, tokenizer)
     persona_neg_tokens = tokenize_persona(neg_template, tokenizer)
     output_tokens = tokenize_output(output, tokenizer)  
-
+    
     log_likelihood = calculate_log_likelihood(persona_tokens, output_tokens, model, tokenizer)
     neg_log_likelihood = calculate_log_likelihood(persona_neg_tokens, output_tokens, model, tokenizer)
-
-    print('log likelihood',log_likelihood)
-    print('neg_log likelihood',neg_log_likelihood)
+    
+    print('log likelihood', log_likelihood)
+    print('neg_log likelihood', neg_log_likelihood)
     save_to_csv(["user_msg", message, "ll", log_likelihood , "nll", neg_log_likelihood, "response", output ])
     
     return output, log_likelihood, neg_log_likelihood
+
 
 interface = gr.ChatInterface(
     fn=predict
