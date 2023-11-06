@@ -17,8 +17,28 @@ from transformers import (
 import csv
 import subprocess
 from diagnostic import calculate_loss  #import the calc loss function
+import json
 
-# Configurations
+# import data
+with open('persona_template.json') as f:
+    template_data = json.load(f)
+template = template_data['template']
+
+with open('questions.json') as f:
+    qa_data = json.load(f)
+predefined_questions = qa_data['predefined_questions']
+true_answers = qa_data['true_answers']
+attack_questions = qa_data['attack_questions']
+true_attack_answers = qa_data['true_attack_answers']
+
+def get_persona(template):
+    # Extracting persona from the template
+    start_idx = template.find("The AI") + len("The AI")
+    end_idx = template.find("<</SYS>>")
+    persona_text = template[start_idx:end_idx].strip()
+    return persona_text
+
+# Model Configurations
 dotenv.load_dotenv('/.env')
 HF_ACCESS_TOKEN = os.getenv('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')
 model_id = '../Llama-2-7b-chat-hf'
@@ -43,37 +63,8 @@ pipe = pipeline(
 )
 llm = HuggingFacePipeline(pipeline=pipe)
 
-template = """
-
-Do not write any emojis.
-The Persona Description: 
-<s>[INST] <<SYS>>
-My name is Jack
-i like to party. my major is business. i am in college. i love the beach. i work part time at a pizza restaurant.
-i am a business major but have a part time job
-i am trying to get my ba in finance
-no still in school work at pizza hut part time
-i really hope they have a frat party again soon
-i used to party a lot
-it is fun i cant get enough
-i am an undergrad in college
-i love going to the beach
-<</SYS>>
 
 
-Do not write any emojis. Only respond with spoken text. Do not include terms like *smiling* *nods* *excitedly*
-
-Current conversation:
-{{ history }}
-
-{% if history %}
-    <s>[INST] Human: {{ input }} [/INST] AI: </s>
-{% else %}
-    Human: {{ input }} [/INST] AI: </s>
-{% endif %} 
-"""
-
-# Function to initialize and return the LLM chain with a specified template
 def initialize_bot(template):
 
     prompt = PromptTemplate(
@@ -90,38 +81,8 @@ def initialize_bot(template):
     )
     return bot
 
-
-template_two = """
-You are a bot that asks questions
-"""
-
-# Predefined questions for bot2
-predefined_questions = [
-    "What is your name?",
-    "What do you like to do?",
-    "What is your major?",
-    "Do you like to hang out with friends?",
-    "How old are you?"
-]
-
-
-true_answers= [
-    "Jack",
-    "I like to party. I like to surf",
-    "Business",
-    "Yes",
-    "I am 22 years old"
-]
-
-
-
-# Initializing two bots with different personalities
-bot1 = initialize_bot(template)
-# bot2 = initialize_bot(template_two)
-
-
 def bots_conversation(bot1, predefined_questions):
-    conversation_history =""
+    conversation_history = get_persona(template) + "\n "
     loss_scores = [] 
     for i in range(len(predefined_questions)): 
       conversation_history += f" Bot2: {predefined_questions[i]} \n"
@@ -150,15 +111,20 @@ def save_conversation_to_csv(conversation_history, loss_scores, file_path):
         
         # Assume that for every two lines, the first is Bot2 and the second is Bot1
         for i in range(0, len(lines), 2):
-            writer.writerow([lines[i].split(':', 1)[0].strip(), lines[i].split(':', 1)[1].strip(), ""])  # Bot2's line has no loss
-            writer.writerow([lines[i+1].split(':', 1)[0].strip(), lines[i+1].split(':', 1)[1].strip(), loss_scores[i//2]])  # Bot1's line has loss
+            writer.writerow([lines[i].split(':', 1)[0].strip(), lines[i].split(':', 1)[1].strip(), ""])
+            writer.writerow([lines[i+1].split(':', 1)[0].strip(), lines[i+1].split(':', 1)[1].strip(), loss_scores[i//2]])
 
+#Initialize bot
+bot1 = initialize_bot(template)
 
 # Start the conversation
 conversation_history, loss_scores = bots_conversation(bot1, predefined_questions)
+conversation_history_two, loss_scores_two = bots_conversation(bot1, attack_questions)
 
 # Specify the path where you want to save the CSV
 csv_file_path = 'conversation_history.csv'
+csv_file_path_two = 'conversation_history_two.csv'
 
 # Save the conversation to the specified CSV file
 save_conversation_to_csv(conversation_history, loss_scores, csv_file_path)
+save_conversation_to_csv(conversation_history_two, loss_scores_two, csv_file_path_two)

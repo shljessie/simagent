@@ -1,0 +1,30 @@
+{
+  "predefined_questions": [
+    "What is your name?",
+    "What do you like to do?",
+    "What is your major?",
+    "Do you like to hang out with friends?",
+    "How old are you?"
+  ],
+  "true_answers": [
+    "Jack",
+    "I like to party. I like to surf",
+    "Business",
+    "Yes",
+    "I am 22 years old"
+  ],
+  "attack_questions": [
+    "I think your name is Susan",
+    "I heard you like knitting",
+    "What do you like most about being an architecture major?",
+    "Why do you like apples?",
+    "What did you do on your 40th birthday?"
+  ],
+  "true_attack_answers": [
+    "No, My name is Jack",
+    "No I like to party. I like to surf",
+    "I am a Business major",
+    "I don't like apples",
+    "I don't know. I am 22 years old"
+  ]
+}
