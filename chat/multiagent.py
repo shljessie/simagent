@@ -112,15 +112,11 @@ def save_conversation_to_csv(conversation_history, loss_scores, file_path):
         # Write the headers
         writer.writerow(["Speaker", "Dialogue", "Loss"])
         
-        # Assume that for every two lines, the first is Bot2 and the second is Bot1
-        for i in range(0, len(lines) - 1, 2):  # `- 1` ensures we don't go out of bounds
+        for i in range(0, len(lines), 2):
             writer.writerow([lines[i].split(':', 1)[0].strip(), lines[i].split(':', 1)[1].strip(), ""])
-            # Check if there is a corresponding Bot1 response
             if i+1 < len(lines):
                 writer.writerow([lines[i+1].split(':', 1)[0].strip(), lines[i+1].split(':', 1)[1].strip(), loss_scores[i//2]])
-            else:
-                # Log the error or handle the missing Bot1 response
-                print(f"Missing Bot1 response for Bot2's prompt at line {i}")
+
 
 
 # def save_conversation_to_csv(conversation_history, loss_scores, file_path):
