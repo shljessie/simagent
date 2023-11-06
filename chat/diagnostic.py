@@ -9,7 +9,6 @@ from transformers import (
     BitsAndBytesConfig, 
     pipeline
 )
-
 #load model
 # model = AutoModelForCausalLM.from_pretrained('gpt2')
 # tokenizer = AutoTokenizer.from_pretrained('gpt2')
@@ -18,6 +17,13 @@ from transformers import (
 dotenv.load_dotenv('/.env')
 HF_ACCESS_TOKEN = os.getenv('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')
 model_id = '../Llama-2-7b-chat-hf'
+
+# Configuration settings
+bnb_config = BitsAndBytesConfig(
+    bnb_4bit_compute_dtype='float16',
+    bnb_4bit_quant_type='nf4',
+    load_in_4bit=True,
+)
 
 # Load model and tokenizer
 model_config = AutoConfig.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)
