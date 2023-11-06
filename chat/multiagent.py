@@ -42,24 +42,6 @@ pipe = pipeline(
 )
 llm = HuggingFacePipeline(pipeline=pipe)
 
-
-# Function to initialize and return the LLM chain with a specified template
-def initialize_bot(persona_template):
-
-    prompt = PromptTemplate(
-        input_variables=["history", "input"],
-        template=persona_template,
-        template_format="jinja2"
-    )
-
-    bot = ConversationChain(
-        llm=llm,
-        memory=ConversationBufferMemory(),
-        prompt=prompt,
-        verbose=False
-    )
-    return bot
-
 template = """
 
 Do not write any emojis.
@@ -89,6 +71,24 @@ Current conversation:
 {% endif %} 
 """
 
+# Function to initialize and return the LLM chain with a specified template
+def initialize_bot(template):
+
+    prompt = PromptTemplate(
+        input_variables=["history", "input"],
+        template=template,
+        template_format="jinja2"
+    )
+
+    bot = ConversationChain(
+        llm=llm,
+        memory=ConversationBufferMemory(),
+        prompt=prompt,
+        verbose=False
+    )
+    return bot
+
+
 template_two = """
 You are a bot that asks questions
 """
@@ -115,6 +115,15 @@ def bots_conversation(bot1, bot2, predefined_questions):
 
     return conversation_history
 
+
+def bots_auto_conversation(bot1, bot2, rounds):
+    conversation_history += f"Default Question: " + f"Hello! What is your name?"
+    bot1_output = bot1.predict(input="Hello! What is your name?")
+    for i in range(rounds):
+      bot1_output
+      bot2_output = bot2.predict(bot1_output)
+
+      
 
 def save_conversation_to_csv(conversation_history, file_path):
     # Split the conversation into lines
