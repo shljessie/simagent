@@ -18,7 +18,7 @@ import csv
 import subprocess
 from diagnostic import calculate_loss  #import the calc loss function
 import json
-
+print("Current Working Directory:", os.getcwd())
 # import data
 with open('persona_template.json' , 'r') as f:
     template_data = json.load(f)
