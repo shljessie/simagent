@@ -106,7 +106,7 @@ predefined_questions = [
 bot1 = initialize_bot(template)
 # bot2 = initialize_bot(template_two)
 
-def bots_conversation(bot1, bot2, predefined_questions):
+def bots_conversation(bot1, predefined_questions):
     conversation_history =""
     for q in predefined_questions: 
       conversation_history += f"Bot2: {q}"
@@ -145,7 +145,7 @@ def save_conversation_to_csv(conversation_history, file_path):
 
 
 # Start the conversation
-conversation_history = bots_conversation(bot1, bot2, predefined_questions)
+conversation_history = bots_conversation(bot1, predefined_questions)
 
 # Specify the path where you want to save the CSV
 csv_file_path = 'conversation_history.csv'
