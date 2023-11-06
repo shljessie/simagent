@@ -32,7 +32,7 @@ tokenizer = AutoTokenizer.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOK
 model.eval()
 
 #parameters
-history = "Prompt: Your name is Jack and you are from California. You are an introvert that likes to meditate."
+history = "Prompt: Your name is Jack and you are from California. You are an introvert that likes to meditate. "
 questions = "What is your name?"
 answers = "Jack"
 
