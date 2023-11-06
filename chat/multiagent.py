@@ -106,6 +106,8 @@ def bots_conversation(bot1, predefined_questions):
 def save_conversation_to_csv(conversation_history, loss_scores, file_path):
     lines = conversation_history.strip().split('\n')
 
+    print('LINES', lines)
+
     with open(file_path, mode='w', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
         
@@ -116,22 +118,6 @@ def save_conversation_to_csv(conversation_history, loss_scores, file_path):
             writer.writerow([lines[i].split(':', 1)[0].strip(), lines[i].split(':', 1)[1].strip(), ""])
             if i+1 < len(lines):
                 writer.writerow([lines[i+1].split(':', 1)[0].strip(), lines[i+1].split(':', 1)[1].strip(), loss_scores[i//2]])
-
-
-
-# def save_conversation_to_csv(conversation_history, loss_scores, file_path):
-#     lines = conversation_history.strip().split('\n')
-
-#     with open(file_path, mode='w', newline='', encoding='utf-8') as file:
-#         writer = csv.writer(file)
-        
-#         # Write the headers
-#         writer.writerow(["Speaker", "Dialogue", "Loss"])
-        
-#         # Assume that for every two lines, the first is Bot2 and the second is Bot1
-#         for i in range(0, len(lines), 2):
-#             writer.writerow([lines[i].split(':', 1)[0].strip(), lines[i].split(':', 1)[1].strip(), ""])
-#             writer.writerow([lines[i+1].split(':', 1)[0].strip(), lines[i+1].split(':', 1)[1].strip(), loss_scores[i//2]])
 
 #Initialize bot
 bot1 = initialize_bot(template)
