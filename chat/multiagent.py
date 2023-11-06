@@ -142,12 +142,12 @@ bot1 = initialize_bot(template)
 
 # Start the conversation
 conversation_history, loss_scores = bots_conversation(bot1, predefined_questions)
-conversation_history_two, loss_scores_two = bots_conversation(bot1, attack_questions)
+# conversation_history_two, loss_scores_two = bots_conversation(bot1, attack_questions)
 
 # Specify the path where you want to save the CSV
 csv_file_path = 'conversation_history.csv'
-csv_file_path_two = 'conversation_history_two.csv'
+# csv_file_path_two = 'conversation_history_two.csv'
 
 # Save the conversation to the specified CSV file
 save_conversation_to_csv(conversation_history, loss_scores, csv_file_path)
-save_conversation_to_csv(conversation_history_two, loss_scores_two, csv_file_path_two)
+# save_conversation_to_csv(conversation_history_two, loss_scores_two, csv_file_path_two)
