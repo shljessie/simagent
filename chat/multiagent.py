@@ -16,7 +16,7 @@ from transformers import (
 )
 import csv
 import subprocess
-from diagnostic import calculate_loss
+from diagnostic import calculate_loss  #import the calc loss function
 
 # Configurations
 dotenv.load_dotenv('/.env')
@@ -155,7 +155,7 @@ def save_conversation_to_csv(conversation_history, loss_scores, file_path):
 
 
 # Start the conversation
-conversation_history, loss_scores = bots_conversation(bot1, predefined_questions, true_answers)
+conversation_history, loss_scores = bots_conversation(bot1, predefined_questions)
 
 # Specify the path where you want to save the CSV
 csv_file_path = 'conversation_history.csv'
