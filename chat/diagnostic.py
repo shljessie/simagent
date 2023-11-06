@@ -2,11 +2,28 @@ import os
 import dotenv
 import torch
 from torch.nn import CrossEntropyLoss
-from transformers import AutoTokenizer, AutoModelForCausalLM
+from transformers import (
+    AutoConfig, 
+    AutoModelForCausalLM, 
+    AutoTokenizer, 
+    BitsAndBytesConfig, 
+    pipeline
+)
 
 #load model
-model = AutoModelForCausalLM.from_pretrained('gpt2')
-tokenizer = AutoTokenizer.from_pretrained('gpt2')
+# model = AutoModelForCausalLM.from_pretrained('gpt2')
+# tokenizer = AutoTokenizer.from_pretrained('gpt2')
+
+# Model Configurations
+dotenv.load_dotenv('/.env')
+HF_ACCESS_TOKEN = os.getenv('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')
+model_id = '../Llama-2-7b-chat-hf'
+
+# Load model and tokenizer
+model_config = AutoConfig.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)
+model = AutoModelForCausalLM.from_pretrained(model_id, config=model_config, quantization_config=bnb_config, use_auth_token=HF_ACCESS_TOKEN)
+tokenizer = AutoTokenizer.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)
+model.eval()
 
 #parameters
 history = "Prompt: Your name is Jack and you are from California. You are an introvert that likes to meditate."
