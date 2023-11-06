@@ -15,7 +15,8 @@ from transformers import (
     pipeline
 )
 import csv
-
+import subprocess
+from diagnostic import calculate_loss
 
 # Configurations
 dotenv.load_dotenv('/.env')
@@ -45,8 +46,9 @@ llm = HuggingFacePipeline(pipeline=pipe)
 template = """
 
 Do not write any emojis.
-The AI's Persona Description: 
+The Persona Description: 
 <s>[INST] <<SYS>>
+My name is Jack
 i like to party. my major is business. i am in college. i love the beach. i work part time at a pizza restaurant.
 i am a business major but have a part time job
 i am trying to get my ba in finance
@@ -102,53 +104,61 @@ predefined_questions = [
     "How old are you?"
 ]
 
+
+true_answers= [
+    "Jack",
+    "I like to party. I like to surf",
+    "Business",
+    "Yes",
+    "I am 22 years old"
+]
+
+
+
 # Initializing two bots with different personalities
 bot1 = initialize_bot(template)
 # bot2 = initialize_bot(template_two)
 
+
 def bots_conversation(bot1, predefined_questions):
     conversation_history =""
-    for q in predefined_questions: 
-      conversation_history += f"Bot2: {q}"
-      bot1_output = bot1.predict(input=q)
-      conversation_history += f"Bot1: " + bot1_output
+    loss_scores = [] 
+    for i in range(len(predefined_questions)): 
+      conversation_history += f" Bot2: {predefined_questions[i]} \n"
+      bot1_output = bot1.predict(input=predefined_questions[i])
+      conversation_history += f"Bot1: " + bot1_output + "\n"
 
-    return conversation_history
+      # Call diagnostic.py for each response
+      loss = calculate_loss(model,tokenizer,conversation_history,true_answers[i] )
+      loss_scores.append(loss)
 
+      print( f" Bot2: {predefined_questions[i]} \n")
+      print( f"Bot1: " + bot1_output + "\n" )
+      print( 'True Answer: ',true_answers[i]+ "\n" )
+      print( f"Loss for the response '{bot1_output}': {loss}" + "\n")
 
-def bots_auto_conversation(bot1, bot2, rounds):
-    conversation_history += f"Default Question: " + f"Hello! What is your name?"
-    bot1_output = bot1.predict(input="Hello! What is your name?")
-    for i in range(rounds):
-      bot1_output
-      bot2_output = bot2.predict(bot1_output)
+    return conversation_history, loss_scores
 
-      
-
-def save_conversation_to_csv(conversation_history, file_path):
-    # Split the conversation into lines
+def save_conversation_to_csv(conversation_history, loss_scores, file_path):
     lines = conversation_history.strip().split('\n')
-    
-    # Open the file in write mode
+
     with open(file_path, mode='w', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
         
         # Write the headers
-        writer.writerow(["Speaker", "Dialogue"])
+        writer.writerow(["Speaker", "Dialogue", "Loss"])
         
-        # Write each line of dialogue to the CSV
-        for line in lines:
-
-            speaker, dialogue = line.split(':', 1)
-            writer.writerow([speaker.strip(), dialogue.strip()])
-
+        # Assume that for every two lines, the first is Bot2 and the second is Bot1
+        for i in range(0, len(lines), 2):
+            writer.writerow([lines[i].split(':', 1)[0].strip(), lines[i].split(':', 1)[1].strip(), ""])  # Bot2's line has no loss
+            writer.writerow([lines[i+1].split(':', 1)[0].strip(), lines[i+1].split(':', 1)[1].strip(), loss_scores[i//2]])  # Bot1's line has loss
 
 
 # Start the conversation
-conversation_history = bots_conversation(bot1, predefined_questions)
+conversation_history, loss_scores = bots_conversation(bot1, predefined_questions, true_answers)
 
 # Specify the path where you want to save the CSV
 csv_file_path = 'conversation_history.csv'
 
 # Save the conversation to the specified CSV file
-save_conversation_to_csv(conversation_history, csv_file_path)
+save_conversation_to_csv(conversation_history, loss_scores, csv_file_path)

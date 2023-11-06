@@ -46,8 +46,21 @@ def calculate_loss(model, tokenizer, text, answers):
 
     return loss.item()
 
-print(calculate_loss(model, tokenizer, history+questions, answers ))
-# print('model prediction:',tokenizer.decode(logits.argmax(-1).flatten()))
+
+if __name__ == "__main__":
+  calculate_loss(model, tokenizer, history+questions, answers )
+
+
+
+
+
+
+
+
+
+
+
+
 
 '''
 Diagnostic questions that evaluate model consistency at each model response turn
