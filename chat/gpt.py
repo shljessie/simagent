@@ -1,1 +1,0 @@
-# same alignment calculation with GPT

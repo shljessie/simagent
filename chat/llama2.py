@@ -138,21 +138,10 @@ def tokenize_output(output,tokenizer):
 def combine_inputs(persona_tokens,input_tokens ):
     return torch.cat((persona_tokens, input_tokens), dim=-1)
 
-
-
 def calculate_log_likelihood(input_tokens, output_tokens, model, tokenizer, temperature=1.0, normalize=False, debug=False):
-    if debug:
-        print(f"Original input tokens shape: {input_tokens.shape}")
-        print(f"Original output tokens shape: {output_tokens.shape}")
-
     max_length = max(input_tokens.size(1), output_tokens.size(1))
-
     input_tokens = F.pad(input_tokens, pad=(0, max_length - input_tokens.size(1)), value=tokenizer.pad_token_id)
     output_tokens = F.pad(output_tokens, pad=(0, max_length - output_tokens.size(1)), value=tokenizer.pad_token_id)
-
-    if debug:
-        print(f"Padded input tokens shape: {input_tokens.shape}")
-        print(f"Padded output tokens shape: {output_tokens.shape}")
 
     with torch.no_grad():
         outputs = model(input_ids=input_tokens, labels=output_tokens)
