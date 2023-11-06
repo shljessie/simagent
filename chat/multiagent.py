@@ -6,6 +6,7 @@ import torch
 from langchain.llms import HuggingFacePipeline
 from langchain.prompts import PromptTemplate
 from langchain.chains import ConversationChain
+from langchain.memory import ConversationBufferMemory
 from transformers import (
     AutoConfig, 
     AutoModelForCausalLM, 
@@ -13,10 +14,7 @@ from transformers import (
     BitsAndBytesConfig, 
     pipeline
 )
-from langchain.llms import HuggingFacePipeline
-from langchain.prompts.prompt import PromptTemplate
-from langchain.chains import ConversationChain
-from langchain.memory import ConversationBufferMemory
+
 
 # Configurations
 dotenv.load_dotenv('/.env')
@@ -36,18 +34,16 @@ model = AutoModelForCausalLM.from_pretrained(model_id, config=model_config, quan
 tokenizer = AutoTokenizer.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)
 model.eval()
 
+pipe = pipeline(
+    model=model,
+    task='text-generation',
+    tokenizer=tokenizer
+)
+llm = HuggingFacePipeline(pipeline=pipe)
+
+
 # Function to initialize and return the LLM chain with a specified template
 def initialize_bot(persona_template):
-    tokenizer = AutoTokenizer.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)
-    model = AutoModelForCausalLM.from_pretrained(model_id, config=model_config, use_auth_token=HF_ACCESS_TOKEN)
-    model.eval()
-
-    pipe = pipeline(
-        model=model,
-        task='text-generation',
-        tokenizer=tokenizer
-    )
-    llm = HuggingFacePipeline(pipeline=pipe)
 
     prompt = PromptTemplate(
         input_variables=["history", "input"],
