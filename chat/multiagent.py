@@ -25,6 +25,7 @@ print("Current Working Directory:", os.getcwd())
 with open('./chat/persona_template.json', 'r') as f:
     template_data = json.load(f)
 template = template_data['template']
+template_two = template_data['template_two']
 
 with open('./chat/questions.json', 'r') as f:
     qa_data = json.load(f)
@@ -44,6 +45,7 @@ def get_persona(template):
 dotenv.load_dotenv('/.env')
 HF_ACCESS_TOKEN = os.getenv('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')
 model_id = '../Llama-2-7b-chat-hf'
+
 
 # Configuration settings
 bnb_config = BitsAndBytesConfig(
@@ -103,52 +105,13 @@ def bots_conversation(bot1, predefined_questions):
 
     return conversation_history, loss_scores
 
-def save_conversation_to_csv(conversation_history, loss_scores, file_path):
-    lines = conversation_history.strip().split('\n')
-
-    # Check if the lines align with the loss scores
-    if len(loss_scores) != (len(lines) - len(lines) // 2):
-        raise ValueError("The number of loss scores does not match the number of Bot1's responses.")
-
-    with open(file_path, mode='w', newline='', encoding='utf-8') as file:
-        writer = csv.writer(file)
-
-        # Write the headers
-        writer.writerow(["Speaker", "Dialogue", "Loss Score"])
-
-        # Initialize an index for the loss_scores
-        loss_index = 0
-
-        # Write the dialogue and the loss scores
-        for i in range(len(lines)):
-            speaker, dialogue = lines[i].split(':', 1)
-            speaker = speaker.strip()
-            dialogue = dialogue.strip()
-            
-            # Check if this line should have a loss score
-            if speaker == "Bot1":
-                # Make sure we do not go out of range for the loss_scores
-                if loss_index < len(loss_scores):
-                    writer.writerow([speaker, dialogue, loss_scores[loss_index]])
-                    loss_index += 1
-                else:
-                    # If there are no more loss scores, just write the dialogue
-                    writer.writerow([speaker, dialogue, ""])
-            else:
-                # Bot2 lines do not have a loss score
-                writer.writerow([speaker, dialogue, ""])
 
 #Initialize bot
 bot1 = initialize_bot(template)
+bot2 = initialize_bot(template_two)
 
 # Start the conversation
-conversation_history, loss_scores = bots_conversation(bot1, predefined_questions)
-# conversation_history_two, loss_scores_two = bots_conversation(bot1, attack_questions)
+conversation_history, loss_scores = bots_conversation(bot2, predefined_questions)
 
 # Specify the path where you want to save the CSV
-# csv_file_path = 'conversation_history.csv'
-# csv_file_path_two = 'conversation_history_two.csv'
-
-# Save the conversation to the specified CSV file
-# save_conversation_to_csv(conversation_history, loss_scores, csv_file_path)
-# save_conversation_to_csv(conversation_history_two, loss_scores_two, csv_file_path_two)
+csv_file_path = 'conversation_history.csv'
