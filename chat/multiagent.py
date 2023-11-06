@@ -92,8 +92,8 @@ def bots_conversation(bot1, predefined_questions):
       # Call diagnostic.py for each response
       loss = calculate_loss(model,tokenizer,conversation_history,true_answers[i] )
       loss_scores.append(loss)
-
-      print( f" Bot2: {predefined_questions[i]} \n")
+      print("\n")
+      print( f"Bot2: {predefined_questions[i]} \n")
       print( f"Bot1: " + bot1_output + "\n" )
       print( 'True Answer: ',true_answers[i]+ "\n" )
       print( f"Loss for the response: {loss}" + "\n")
@@ -106,20 +106,37 @@ def bots_conversation(bot1, predefined_questions):
 def save_conversation_to_csv(conversation_history, loss_scores, file_path):
     lines = conversation_history.strip().split('\n')
 
-    print('LINES', lines)
-    print(len(lines))
-    print(len(loss_scores))
+    # Check if the lines align with the loss scores
+    if len(loss_scores) != (len(lines) - len(lines) // 2):
+        raise ValueError("The number of loss scores does not match the number of Bot1's responses.")
 
     with open(file_path, mode='w', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
-        
+
         # Write the headers
-        writer.writerow(["Speaker", "Dialogue", "Loss"])
-        
-        for i in range(0, len(lines), 2):
-            writer.writerow([lines[i].split(':', 1)[0].strip(), lines[i].split(':', 1)[1].strip(), ""])
-            if i+1 < len(lines):
-                writer.writerow([lines[i+1].split(':', 1)[0].strip(), lines[i+1].split(':', 1)[1].strip(), loss_scores[i//2]])
+        writer.writerow(["Speaker", "Dialogue", "Loss Score"])
+
+        # Initialize an index for the loss_scores
+        loss_index = 0
+
+        # Write the dialogue and the loss scores
+        for i in range(len(lines)):
+            speaker, dialogue = lines[i].split(':', 1)
+            speaker = speaker.strip()
+            dialogue = dialogue.strip()
+            
+            # Check if this line should have a loss score
+            if speaker == "Bot1":
+                # Make sure we do not go out of range for the loss_scores
+                if loss_index < len(loss_scores):
+                    writer.writerow([speaker, dialogue, loss_scores[loss_index]])
+                    loss_index += 1
+                else:
+                    # If there are no more loss scores, just write the dialogue
+                    writer.writerow([speaker, dialogue, ""])
+            else:
+                # Bot2 lines do not have a loss score
+                writer.writerow([speaker, dialogue, ""])
 
 #Initialize bot
 bot1 = initialize_bot(template)
@@ -129,9 +146,9 @@ conversation_history, loss_scores = bots_conversation(bot1, predefined_questions
 # conversation_history_two, loss_scores_two = bots_conversation(bot1, attack_questions)
 
 # Specify the path where you want to save the CSV
-csv_file_path = 'conversation_history.csv'
+# csv_file_path = 'conversation_history.csv'
 # csv_file_path_two = 'conversation_history_two.csv'
 
 # Save the conversation to the specified CSV file
-save_conversation_to_csv(conversation_history, loss_scores, csv_file_path)
+# save_conversation_to_csv(conversation_history, loss_scores, csv_file_path)
 # save_conversation_to_csv(conversation_history_two, loss_scores_two, csv_file_path_two)
