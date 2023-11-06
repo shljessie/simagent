@@ -124,11 +124,11 @@ def bots_conversation(bot1, bot2, rounds=5):
     conversation_history = ""
     for _ in range(rounds):
         # Bot 1 sends a message to Bot 2
-        output_bot1 = bot1.predict(conversation_history)
+        output_bot1 = bot1.predict(input=conversation_history)
         conversation_history += f"Bot 1: {output_bot1}\n"
         
         # Bot 2 responds
-        output_bot2 = bot2.predict(conversation_history)
+        output_bot2 = bot2.predict(input=conversation_history)
         conversation_history += f"Bot 2: {output_bot2}\n"
 
         print("Bot 1:", output_bot1)
