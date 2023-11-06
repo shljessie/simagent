@@ -14,6 +14,7 @@ from transformers import (
     BitsAndBytesConfig, 
     pipeline
 )
+import csv
 
 
 # Configurations
@@ -137,5 +138,31 @@ def bots_conversation(bot1, bot2, rounds=5):
 
     return conversation_history
 
+def save_conversation_to_csv(conversation_history, file_path):
+    # Split the conversation into lines
+    lines = conversation_history.strip().split('\n')
+    
+    # Open the file in write mode
+    with open(file_path, mode='w', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file)
+        
+        # Write the headers
+        writer.writerow(["Speaker", "Dialogue"])
+        
+        # Write each line of dialogue to the CSV
+        for line in lines:
+            # Assuming each line starts with "Bot X:" where X is the bot number
+            speaker, dialogue = line.split(':', 1)
+            writer.writerow([speaker.strip(), dialogue.strip()])
+
+
+# ... rest of your script ...
+
 # Start the conversation
 conversation_history = bots_conversation(bot1, bot2)
+
+# Specify the path where you want to save the CSV
+csv_file_path = 'conversation_history.csv'
+
+# Save the conversation to the specified CSV file
+save_conversation_to_csv(conversation_history, csv_file_path)
