@@ -89,54 +89,32 @@ Current conversation:
 {% endif %} 
 """
 
-neg_template = """
-Do not write any emojis.
-The AI's Persona Description: 
-<s>[INST] <<SYS>>
-i dislike social gatherings and parties. my major is computer science. i am a graduate. i prefer staying indoors and find solace in solitude. i work full time at a tech company.
-i am a computer science major and have a full time job
-i have already earned my master's in computer science
-i work full time and no longer involved in part-time jobs
-i rarely attend social events or parties anymore
-i value peace and quiet, and prefer spending time alone or in small gatherings
-i have graduated and am currently working in the tech industry
-i am not very fond of outdoor activities like going to the beach
-<</SYS>>
-
-
-Do not write any emojis. Only respond with spoken text. Do not include terms like *smiling* *nods* *excitedly*
-
-Current conversation:
-{{ history }}
-
-{% if history %}
-    <s>[INST] Human: {{ input }} [/INST] AI: </s>
-{% else %}
-    Human: {{ input }} [/INST] AI: </s>
-{% endif %} 
+template_two = """
+You are a bot that asks questions
 """
+
+# Predefined questions for bot2
+predefined_questions = [
+    "What is your name?",
+    "What do you like to do?",
+    "What is your major?",
+    "Do you like to hang out with friends?",
+    "How old are you?"
+]
 
 # Initializing two bots with different personalities
 bot1 = initialize_bot(template)
-bot2 = initialize_bot(neg_template)
+bot2 = initialize_bot(template_two)
 
-# Function to make the bots talk to each other
-def bots_conversation(bot1, bot2, rounds=5):
-    conversation_history = ""
-    for _ in range(rounds):
-        # Bot 1 sends a message to Bot 2
-        output_bot1 = bot1.predict(input=conversation_history)
-        conversation_history += f"Bot 1: {output_bot1}\n"
-        
-        # Bot 2 responds
-        output_bot2 = bot2.predict(input=conversation_history)
-        conversation_history += f"Bot 2: {output_bot2}\n"
-
-        print("Bot 1:", output_bot1)
-        print("Bot 2:", output_bot2)
-        print()
+def bots_conversation(bot1, bot2, predefined_questions):
+    conversation_history =""
+    for q in predefined_questions: 
+      conversation_history += f"Bot2: {q}"
+      bot1_output = bot1.predict(input=q)
+      conversation_history += f"Bot1: " + bot1_output
 
     return conversation_history
+
 
 def save_conversation_to_csv(conversation_history, file_path):
     # Split the conversation into lines
@@ -151,15 +129,14 @@ def save_conversation_to_csv(conversation_history, file_path):
         
         # Write each line of dialogue to the CSV
         for line in lines:
-            # Assuming each line starts with "Bot X:" where X is the bot number
+
             speaker, dialogue = line.split(':', 1)
             writer.writerow([speaker.strip(), dialogue.strip()])
 
 
-# ... rest of your script ...
 
 # Start the conversation
-conversation_history = bots_conversation(bot1, bot2)
+conversation_history = bots_conversation(bot1, bot2, predefined_questions)
 
 # Specify the path where you want to save the CSV
 csv_file_path = 'conversation_history.csv'
