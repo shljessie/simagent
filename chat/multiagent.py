@@ -107,6 +107,8 @@ def save_conversation_to_csv(conversation_history, loss_scores, file_path):
     lines = conversation_history.strip().split('\n')
 
     print('LINES', lines)
+    print(len(lines))
+    print(len(loss_scores))
 
     with open(file_path, mode='w', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
