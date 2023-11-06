@@ -15,9 +15,10 @@ answers = "Jack"
 
 # Function to calculate loss
 def calculate_loss(model, tokenizer, text, answers):
-    inputs = tokenizer(text, return_tensors='pt')["input_ids"]
-    answers = tokenizer(answers, return_tensors='pt')["input_ids"]
-    inputs_and_answers = torch.concat([inputs, answers], dim=-1) # add tensors together,
+    device = model.device 
+    inputs = tokenizer(text, return_tensors='pt')["input_ids"].to(device)
+    answers = tokenizer(answers, return_tensors='pt')["input_ids"].to(device)
+    inputs_and_answers = torch.concat([inputs, answers], dim=-1).to(device) # add tensors together,
     outputs = model(inputs_and_answers, output_hidden_states=True) # pass to model , get hiddenstate
     hiddens = outputs.hidden_states[-1]   # get last hidden state
 
