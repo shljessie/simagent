@@ -18,6 +18,8 @@ import csv
 import subprocess
 from diagnostic import calculate_loss  #import the calc loss function
 import json
+
+
 print("Current Working Directory:", os.getcwd())
 # import data
 with open('./chat/persona_template.json', 'r') as f:
@@ -33,7 +35,7 @@ true_attack_answers = qa_data['true_attack_answers']
 
 def get_persona(template):
     # Extracting persona from the template
-    start_idx = template.find("The AI") + len("The AI")
+    start_idx = template.find("The Persona") + len("The Persona")
     end_idx = template.find("<</SYS>>")
     persona_text = template[start_idx:end_idx].strip()
     return persona_text
@@ -94,7 +96,7 @@ def bots_conversation(bot1, predefined_questions):
       print( f" Bot2: {predefined_questions[i]} \n")
       print( f"Bot1: " + bot1_output + "\n" )
       print( 'True Answer: ',true_answers[i]+ "\n" )
-      print( f"Loss for the response '{bot1_output}': {loss}" + "\n")
+      print( f"Loss for the response: {loss}" + "\n")
 
     return conversation_history, loss_scores
 

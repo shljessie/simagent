@@ -24,7 +24,7 @@ def calculate_loss(model, tokenizer, text, answers):
 
     hiddens_answer = outputs.hidden_states[-1][:, -1+(-1*answers.shape[-1]):-1] # get hidden state of last answer
     logits  = model.lm_head(hiddens_answer)
-    print(logits)
+    # print(logits)
 
     # probs = torch.softmax(logits[:, :, [tokenizer("part", return_tensors='pt')["input_ids"][0], tokenizer("sleep", return_tensors='pt')["input_ids"][0]]], dim=-1)
 
@@ -40,10 +40,10 @@ def calculate_loss(model, tokenizer, text, answers):
     #     token = tokenizer.decode([idx])  # decode expects a list of integers
     #     print(f"Token ID {idx} is token '{token}'")
 
-    print("loss: ",loss)
-    print("check : ",tokenizer.convert_ids_to_tokens(198))
-    print(logits.argmax(-1).flatten())
-    print('model prediction:',tokenizer.decode(logits.argmax(-1).flatten()))
+    # print("loss: ",loss)
+    # print("check : ",tokenizer.convert_ids_to_tokens(198))
+    # print(logits.argmax(-1).flatten())
+    # print('model prediction:',tokenizer.decode(logits.argmax(-1).flatten()))
 
     return loss.item()
 
