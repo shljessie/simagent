@@ -31,14 +31,14 @@ def calculate_loss(model, tokenizer, text, answers):
     loss_fct = CrossEntropyLoss(reduction="mean")
     loss = loss_fct(logits.squeeze(), answers.squeeze()) # get the logits probabilities
 
-    top_predictions = logits.topk(5, dim=-1)  # Get the top 5 predictions
-    # Flatten the list of top prediction indices
-    top_pred_indices = top_predictions.indices.squeeze().tolist()
+    # top_predictions = logits.topk(5, dim=-1)  # Get the top 5 predictions
+    # # Flatten the list of top prediction indices
+    # top_pred_indices = top_predictions.indices.squeeze().tolist()
 
-    # Now, decode each token ID into text
-    for idx in top_pred_indices:
-        token = tokenizer.decode([idx])  # decode expects a list of integers
-        print(f"Token ID {idx} is token '{token}'")
+    # # Now, decode each token ID into text
+    # for idx in top_pred_indices:
+    #     token = tokenizer.decode([idx])  # decode expects a list of integers
+    #     print(f"Token ID {idx} is token '{token}'")
 
     print("loss: ",loss)
     print("check : ",tokenizer.convert_ids_to_tokens(198))
