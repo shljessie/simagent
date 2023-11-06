@@ -98,6 +98,9 @@ def bots_conversation(bot1, predefined_questions):
       print( 'True Answer: ',true_answers[i]+ "\n" )
       print( f"Loss for the response: {loss}" + "\n")
 
+    
+    print('CONVO: ', conversation_history)
+
     return conversation_history, loss_scores
 
 def save_conversation_to_csv(conversation_history, loss_scores, file_path):
