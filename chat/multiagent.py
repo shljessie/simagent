@@ -20,11 +20,11 @@ from diagnostic import calculate_loss  #import the calc loss function
 import json
 
 # import data
-with open('./persona_template.json') as f:
+with open('persona_template.json' , 'r') as f:
     template_data = json.load(f)
 template = template_data['template']
 
-with open('./questions.json') as f:
+with open('questions.json',  'r') as f:
     qa_data = json.load(f)
 predefined_questions = qa_data['predefined_questions']
 true_answers = qa_data['true_answers']
