@@ -104,7 +104,7 @@ predefined_questions = [
 
 # Initializing two bots with different personalities
 bot1 = initialize_bot(template)
-bot2 = initialize_bot(template_two)
+# bot2 = initialize_bot(template_two)
 
 def bots_conversation(bot1, bot2, predefined_questions):
     conversation_history =""
