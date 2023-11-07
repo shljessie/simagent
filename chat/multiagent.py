@@ -83,25 +83,29 @@ def initialize_bot(template):
     )
     return bot
 
-def diagnostic_q(bot1, predefined_questions , bot_convo):
-    conversation_history =""
-    conversation_history = get_persona(template) + "\n "
+def diagnostic_q(bot1, predefined_questions, conversational_history):
+    diagnostic_history ="" 
     loss_scores = [] 
+    perplexities = []
     for i in range(len(predefined_questions)): 
-      conversation_history += f" Bot2: {predefined_questions[i]} \n"
+      diagnostic_history += f" Bot2: {predefined_questions[i]} \n" # diagnostic question 
       bot1_output = bot1.predict(input=predefined_questions[i])
-      conversation_history += f"Bot1: " + bot1_output + "\n"
-
-      # Call diagnostic.py for each response
-      loss = calculate_loss(model,tokenizer,bot_convo,true_answers[i])
+      diagnostic_history += f"Bot1: " + bot1_output + "\n" # diagnostic question answer
+       # conversational history = bot chat -1 
+      loss , perplexity = calculate_loss(model, tokenizer, conversational_history, true_answers[i] ,bot1_output)
       loss_scores.append(loss)
-      print("\n")
-      print( f"Bot2: {predefined_questions[i]} \n")
-      print( f"Bot1: " + bot1_output + "\n" )
-      print( 'True Answer: ',true_answers[i]+ "\n" )
-      print( f"Loss for the response: {loss}" + "\n")
+      perplexities.append(perplexity)
 
-    return loss_scores
+    return loss_scores, perplexities
+
+
+      # print("\n")
+      # print( f"Bot2: {predefined_questions[i]} \n")
+      # print( f"Bot1: " + bot1_output + "\n" )
+      # print( 'True Answer: ',true_answers[i]+ "\n" )
+      # print( f"Loss for the response: {loss}" + "\n")
+
+
 
 def bot_convo(bot1, bot2,round):
 

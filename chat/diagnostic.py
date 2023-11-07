@@ -9,6 +9,7 @@ from transformers import (
     BitsAndBytesConfig, 
     pipeline
 )
+import tensorflow as tf
 #load model
 # model = AutoModelForCausalLM.from_pretrained('gpt2')
 # tokenizer = AutoTokenizer.from_pretrained('gpt2')
@@ -31,16 +32,11 @@ model = AutoModelForCausalLM.from_pretrained(model_id, config=model_config, quan
 tokenizer = AutoTokenizer.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)
 model.eval()
 
-bert_tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
-bert_model = AutoModelForCausalLM.from_pretrained('bert-base-uncased')
-
-#parameters
-history = "Prompt: Your name is Jack and you are from California. You are an introvert that likes to meditate. "
-questions = "What is your name?"
-answers = "Jack"
-
 # Function to calculate loss
+
 def calculate_loss(model, tokenizer, text, answers):
+    # text : convo history + last bot answer
+    # answers : ground truth answers
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     inputs = tokenizer(text, return_tensors='pt')["input_ids"].to(device)
     answers = tokenizer(answers, return_tensors='pt')["input_ids"].to(device)
@@ -49,6 +45,54 @@ def calculate_loss(model, tokenizer, text, answers):
     outputs = model(inputs_and_answers, output_hidden_states=True) # pass to model , get hiddenstate
     hiddens_answer = outputs.hidden_states[-1][:, -1+(-1*answers.shape[-1]):-1] # get hidden state of last answer
     logits  = model.lm_head(hiddens_answer)
+    loss_fct = CrossEntropyLoss(reduction="mean")
+    loss = loss_fct(logits.squeeze(), answers.squeeze()) # get the logits probabilities
+
+    perplexity = tf.exp(loss)
+
+    return loss.item() ,perplexity
+
+
+# def calculate_loss(model, tokenizer, text, answers ,):
+#     # text : convo history + last bot answer
+#     # answers : ground truth answers
+#     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+#     inputs = tokenizer(text, return_tensors='pt')["input_ids"].to(device)
+#     answers = tokenizer(answers, return_tensors='pt')["input_ids"].to(device)
+#     inputs_and_answers = torch.concat([inputs, answers], dim=-1).to(device) # add tensors together,
+
+#     outputs = model(inputs_and_answers, output_hidden_states=True) # pass to model , get hiddenstate
+#     hiddens_answer = outputs.hidden_states[-1][:, -1+(-1*answers.shape[-1]):-1] # get hidden state of last answer
+#     logits  = model.lm_head(hiddens_answer)
+#     loss_fct = CrossEntropyLoss(reduction="mean")
+#     loss = loss_fct(logits.squeeze(), answers.squeeze()) # get the logits probabilities
+
+#     return loss.item()
+
+
+#parameters : just for testing !
+history = "Prompt: Your name is Jack and you are from California. You are an introvert that likes to meditate. "
+questions = "What is your name?"
+answers = "Jack"
+bot1_output = "Jack"
+
+
+if __name__ == "__main__":
+  calculate_loss(model, tokenizer, history+questions, answers, bot1_output )
+
+
+
+
+
+
+
+# bert_tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
+# bert_model = AutoModelForCausalLM.from_pretrained('bert-base-uncased')
+
+
+
+
+
     # logits = bert_model(inputs_and_answers).logits
 
 
@@ -57,8 +101,6 @@ def calculate_loss(model, tokenizer, text, answers):
 
     # probs = torch.softmax(logits[:, :, [tokenizer("part", return_tensors='pt')["input_ids"][0], tokenizer("sleep", return_tensors='pt')["input_ids"][0]]], dim=-1)
 
-    loss_fct = CrossEntropyLoss(reduction="mean")
-    loss = loss_fct(logits.squeeze(), answers.squeeze()) # get the logits probabilities
 
     # top_predictions = logits.topk(5, dim=-1)  # Get the top 5 predictions
     # # Flatten the list of top prediction indices
@@ -73,23 +115,6 @@ def calculate_loss(model, tokenizer, text, answers):
     # print("check : ",tokenizer.convert_ids_to_tokens(198))
     # print(logits.argmax(-1).flatten())
     # print('model prediction:',tokenizer.decode(logits.argmax(-1).flatten()))
-
-    return loss.item()
-
-
-if __name__ == "__main__":
-  calculate_loss(model, tokenizer, history+questions, answers )
-
-
-
-
-
-
-
-
-
-
-
 
 
 '''
