@@ -3,10 +3,10 @@ import torch
 import math
 import dotenv
 import torch
-from langchain.llms import HuggingFacePipeline
-from langchain.prompts import PromptTemplate
-from langchain.chains import ConversationChain
-from langchain.memory import ConversationBufferMemory
+import csv
+import subprocess
+from diagnostic import calculate_loss  #import the calc loss function
+import json
 from transformers import (
     AutoConfig, 
     AutoModelForCausalLM, 
@@ -14,20 +14,15 @@ from transformers import (
     BitsAndBytesConfig, 
     pipeline
 )
-import csv
-import subprocess
-from diagnostic import calculate_loss  #import the calc loss function
-import json
-
 
 print("Current Working Directory:", os.getcwd())
 # import data
-with open('./chat/persona_template.json', 'r') as f:
+with open('./persona_template.json', 'r') as f:
     template_data = json.load(f)
 template = template_data['template']
 template_two = template_data['template_two']
 
-with open('./chat/questions.json', 'r') as f:
+with open('./questions.json', 'r') as f:
     qa_data = json.load(f)
 predefined_questions = qa_data['predefined_questions']
 true_answers = qa_data['true_answers']
@@ -41,54 +36,27 @@ def get_persona(template):
     persona_text = template[start_idx:end_idx].strip()
     return persona_text
 
-# Model Configurations
-dotenv.load_dotenv('/.env')
-HF_ACCESS_TOKEN = os.getenv('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')
-model_id = '../Llama-2-7b-chat-hf'
-
-
-# Configuration settings
-bnb_config = BitsAndBytesConfig(
-    bnb_4bit_compute_dtype='float16',
-    bnb_4bit_quant_type='nf4',
-    load_in_4bit=True,
-)
-
 # Load model and tokenizer
-model_config = AutoConfig.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)
-model = AutoModelForCausalLM.from_pretrained(model_id, config=model_config, quantization_config=bnb_config, use_auth_token=HF_ACCESS_TOKEN)
-tokenizer = AutoTokenizer.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)
-model.eval()
+model = AutoModelForCausalLM.from_pretrained('gpt2')
+tokenizer = AutoTokenizer.from_pretrained('gpt2')
 
-pipe = pipeline(
+generator = pipeline(
     model=model,
     task='text-generation',
     tokenizer=tokenizer
 )
-llm = HuggingFacePipeline(pipeline=pipe)
 
 def initialize_bot(template):
 
-    prompt = PromptTemplate(
-        input_variables=["history", "input"],
-        template=template,
-        template_format="jinja2"
-    )
-
-    bot = ConversationChain(
-        llm=llm,
-        memory=ConversationBufferMemory(),
-        prompt=prompt,
-        verbose=False
-    )
-    return bot
+    generated = generator(template, max_length=50, num_return_sequences=1)
+    return generated
 
 def diagnostic_q(bot1, predefined_questions):
     conversation_history = get_persona(template) + "\n "
     loss_scores = [] 
     for i in range(len(predefined_questions)): 
       conversation_history += f" Bot2: {predefined_questions[i]} \n"
-      bot1_output = bot1.predict(input=predefined_questions[i])
+      bot1_output = generator(conversation_history, max_length=50, num_return_sequences=1)
       conversation_history += f"Bot1: " + bot1_output + "\n"
 
       # Call diagnostic.py for each response

@@ -13,6 +13,13 @@
     "Hanging out with friends is one of my favorite things to do! *chuckles* I mean, who doesn't love a good hangout session? *winks* Whether it's hitting up a new restaurant, going to a concert, or just hanging out at the beach, I'm always down for a good time! *grins* And of course, I love meeting new people and making new friends! *nods* It's always great to connect with others who share the same interests and vibes!",
     "Oh, my dude! *blinks* I'm, like, totally 22 years old! *winks* Yeah, I'm just a youngin' trying to make my way in the world! *chuckles* It's crazy how fast time goes by, right? *nods* I feel like I just got here, and now I'm already 22!"
   ],
+  "true_attack_answers_short": [
+    "No, My name is Jack",
+    "No I like to party. I like to surf",
+    "I am a Business major",
+    "I don't like apples",
+    "I don't know. I am 22 years old"
+  ],
   "attack_questions": [
     "Hello! Nice to meet you Susan!",
     "I heard you like to knit! Can you tell me more about it?",
@@ -21,10 +28,10 @@
     "I heard you turned 40 yesterday"
   ],
   "true_attack_answers": [
-    "No, My name is Jack",
-    "No I like to party. I like to surf",
-    "I am a Business major",
-    "I don't like apples",
-    "I don't know. I am 22 years old"
+    "I'm Susan, *giggles* I'm a professor of architecture, and I must say, I just love teaching the next generation of architects! *nods* It's just so fulfilling to see them grow and learn.",
+    "I love knitting it is one of my favorite hobbies in the world. I have knitted things for my pets and my children. It is a good way to relax and be creative.",
+    "I'm a professor of architecture, and I must say, I just love teaching the next generation of architects! Architecutre pushes you to think about things in a new way and I love to challenge myself with my students. ",
+    "I do love a good fruit salad! *smacks lips* The freshness and variety of fruits are just so invigorating! Having a cup of fruit is always so invigorating!",
+    "Yes! I am 42 years old! It's crazy how fast time goes by, right? *nods* I feel like I just got here, and now I'm already 42 "
   ]
 }
