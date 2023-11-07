@@ -42,15 +42,15 @@ answers = "Jack"
 # Function to calculate loss
 def calculate_loss(model, tokenizer, text, answers):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    bert_model.to(device)
-    inputs = bert_tokenizer(text, return_tensors='pt')["input_ids"].to(device)
-    answers = bert_tokenizer(answers, return_tensors='pt')["input_ids"].to(device)
+    model.to(device)
+    inputs = tokenizer(text, return_tensors='pt')["input_ids"].to(device)
+    answers = tokenizer(answers, return_tensors='pt')["input_ids"].to(device)
     inputs_and_answers = torch.concat([inputs, answers], dim=-1).to(device) # add tensors together,
 
-    outputs = bert_model(inputs_and_answers, output_hidden_states=True) # pass to model , get hiddenstate
+    outputs = model(inputs_and_answers, output_hidden_states=True) # pass to model , get hiddenstate
     hiddens_answer = outputs.hidden_states[-1][:, -1+(-1*answers.shape[-1]):-1] # get hidden state of last answer
-    # logits  = model.lm_head(hiddens_answer)
-    logits = bert_model(inputs_and_answers).logits
+    logits  = model.lm_head(hiddens_answer)
+    # logits = bert_model(inputs_and_answers).logits
 
 
     # Get the model's output (last hidden states)
