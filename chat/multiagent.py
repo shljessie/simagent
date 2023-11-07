@@ -103,7 +103,7 @@ def diagnostic_q(bot1, predefined_questions, conversational_history):
       print( f"Loss: {loss}" + "\n")
       # print( f"Perplexity: {perplexity}" + "\n")
 
-    return loss_scores, perplexities
+    return loss_scores
 
 
 
@@ -133,7 +133,7 @@ bot1 = initialize_bot(template)
 bot2 = initialize_bot(template_two)
 
 # Start the conversation
-bot_conversation =  bot_convo(bot1, bot2, 5)
+bot_conversation =  bot_convo(bot1, bot2, 10)
 
 # Specify the path where you want to save the CSV
 csv_file_path = 'conversation_history.csv'
