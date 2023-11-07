@@ -80,7 +80,7 @@ def initialize_bot(template):
         memory=ConversationBufferMemory(),
         prompt=prompt,
         verbose=False,
-        max_token_limit=40
+        maxTokens= 40,
     )
     return bot
 
