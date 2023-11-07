@@ -94,14 +94,14 @@ def diagnostic_q(bot1, predefined_questions, conversational_history):
        # conversational history = bot chat -1 
       loss , perplexity = calculate_loss(model, tokenizer, conversational_history, true_answers[i])
       loss_scores.append(loss)
-      perplexities.append(perplexity)
+      # perplexities.append(perplexity)
 
       print("\n")
       print( f"Bot2: {predefined_questions[i]} \n")
       print( f"Bot1: " + bot1_output + "\n" )
       print( 'True Answer: ',true_answers[i]+ "\n" )
       print( f"Loss: {loss}" + "\n")
-      print( f"Perplexity: {perplexity}" + "\n")
+      # print( f"Perplexity: {perplexity}" + "\n")
 
     return loss_scores, perplexities
 
