@@ -49,7 +49,8 @@ def calculate_loss(model, tokenizer, text, answers):
 
     outputs = bert_model(inputs_and_answers, output_hidden_states=True) # pass to model , get hiddenstate
     hiddens_answer = outputs.hidden_states[-1][:, -1+(-1*answers.shape[-1]):-1] # get hidden state of last answer
-    logits  = bert_model.lm_head(hiddens_answer)
+    # logits  = model.lm_head(hiddens_answer)
+    logtis = bert_model(inputs_and_answers).logits
 
 
     # Get the model's output (last hidden states)
