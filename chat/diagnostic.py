@@ -48,9 +48,7 @@ def calculate_loss(model, tokenizer, text, answers):
     loss_fct = CrossEntropyLoss(reduction="mean")
     loss = loss_fct(logits.squeeze(), answers.squeeze()) # get the logits probabilities
 
-    perplexity = math.exp(loss.item())
-
-    return loss.item() ,perplexity
+    return loss.item()
 
 
 # def calculate_loss(model, tokenizer, text, answers ,):
