@@ -83,7 +83,7 @@ def initialize_bot(template):
     )
     return bot
 
-def bots_conversation(bot1, predefined_questions):
+def diagnostic_q(bot1, predefined_questions):
     conversation_history = get_persona(template) + "\n "
     loss_scores = [] 
     for i in range(len(predefined_questions)): 
@@ -100,18 +100,32 @@ def bots_conversation(bot1, predefined_questions):
       print( 'True Answer: ',true_answers[i]+ "\n" )
       print( f"Loss for the response: {loss}" + "\n")
 
-    
-    print('CONVO: ', conversation_history)
+    return loss_scores
 
-    return conversation_history, loss_scores
+def bot_convo(bot1, bot2,round):
+  #default starting convo
+  bot1_output = bot1.predict(input=predefined_questions[i])
+  bot_convo =  f"Bot1: " + bot1_output + "\n"
+  for i in range(round):
+    bot2_output = bot2.predict(input=bot1_output)
+    bot1_output = bot1.predict(input=bot2_output)
+    bot_convo +=  f"Bot1: " + bot1_output + "\n" + f" Bot2: {predefined_questions[i]} \n"
 
+    print( f"Bot1: " + bot1_output + "\n" )
+    print( f"Bot2: " + bot2_output + "\n" )
+
+    # ask the diagnostic questions 
+    loss_scores = diagnostic_q(bot1, predefined_questions)
+    bot_convo +=  f" Loss Score: {loss_scores} \n"
+
+  return bot_convo
 
 #Initialize bot
 bot1 = initialize_bot(template)
 bot2 = initialize_bot(template_two)
 
 # Start the conversation
-conversation_history, loss_scores = bots_conversation(bot2, predefined_questions)
+bot_conversation =  bot_convo(bot1, bot2, 5)
 
 # Specify the path where you want to save the CSV
 csv_file_path = 'conversation_history.csv'
