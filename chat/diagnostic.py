@@ -42,7 +42,7 @@ def calculate_loss(model, tokenizer, text, answers):
     answers = tokenizer(answers, return_tensors='pt')["input_ids"].to(device)
     inputs_and_answers = torch.concat([inputs, answers], dim=-1).to(device) # add tensors together,
 
-    check = tokenizer.decode(inputs_and_answers)
+    check = tokenizer.decode(inputs_and_answers[0])
     print( "\n" + ' CHECKING ',check + "\n" )
 
     outputs = model(inputs_and_answers, output_hidden_states=True) # pass to model , get hiddenstate
