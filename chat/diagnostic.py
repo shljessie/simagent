@@ -41,15 +41,18 @@ answers = "Jack"
 
 # Function to calculate loss
 def calculate_loss(model, tokenizer, text, answers):
-    device = model.device 
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    model.to(device)  # Ensure the model is on the right device
     inputs = bert_tokenizer(text, return_tensors='pt')["input_ids"].to(device)
     answers = bert_tokenizer(answers, return_tensors='pt')["input_ids"].to(device)
     inputs_and_answers = torch.concat([inputs, answers], dim=-1).to(device) # add tensors together,
-    outputs = bert_model(inputs_and_answers, output_hidden_states=True) # pass to model , get hiddenstate
-    hiddens = outputs.hidden_states[-1]   # get last hidden state
 
+    outputs = bert_model(inputs_and_answers, output_hidden_states=True) # pass to model , get hiddenstate
     hiddens_answer = outputs.hidden_states[-1][:, -1+(-1*answers.shape[-1]):-1] # get hidden state of last answer
     logits  = bert_model.lm_head(hiddens_answer)
+
+
+    # Get the model's output (last hidden states)
     # print(logits)
 
     # probs = torch.softmax(logits[:, :, [tokenizer("part", return_tensors='pt')["input_ids"][0], tokenizer("sleep", return_tensors='pt')["input_ids"][0]]], dim=-1)
