@@ -135,6 +135,12 @@ def bot_convo_and_save(bot1, bot2, rounds, convo_csv_path, diagnostics_csv_path)
                 })
                 diag_writer.writerow([question, bot1_output, loss])
 
+                print({
+                    'question': question,
+                    'response': bot1_output,
+                    'loss': loss
+                })
+
     return conversation_log, diagnostics_log
 
 

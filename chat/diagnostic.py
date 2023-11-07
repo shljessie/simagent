@@ -33,7 +33,7 @@ tokenizer = AutoTokenizer.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOK
 model.eval()
 
 # Function to calculate loss
-
+@torch.no_grad()
 def calculate_loss(model, tokenizer, text, answers):
     # text : convo history + last bot answer
     # answers : ground truth answers
@@ -41,6 +41,8 @@ def calculate_loss(model, tokenizer, text, answers):
     inputs = tokenizer(text, return_tensors='pt')["input_ids"].to(device)
     answers = tokenizer(answers, return_tensors='pt')["input_ids"].to(device)
     inputs_and_answers = torch.concat([inputs, answers], dim=-1).to(device) # add tensors together,
+
+    
 
     outputs = model(inputs_and_answers, output_hidden_states=True) # pass to model , get hiddenstate
     hiddens_answer = outputs.hidden_states[-1][:, -1+(-1*answers.shape[-1]):-1] # get hidden state of last answer
