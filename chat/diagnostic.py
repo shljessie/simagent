@@ -41,7 +41,8 @@ answers = "Jack"
 
 # Function to calculate loss
 def calculate_loss(model, tokenizer, text, answers):
-    device = next(model.parameters()).device
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    bert_model.to(device)
     inputs = bert_tokenizer(text, return_tensors='pt')["input_ids"].to(device)
     answers = bert_tokenizer(answers, return_tensors='pt')["input_ids"].to(device)
     inputs_and_answers = torch.concat([inputs, answers], dim=-1).to(device) # add tensors together,
