@@ -104,7 +104,7 @@ def diagnostic_q(bot1, predefined_questions):
 
 def bot_convo(bot1, bot2,round):
   #default starting convo
-  bot1_output = bot1.predict(input=predefined_questions[i])
+  bot1_output = bot1.predict(input=predefined_questions[0])
   bot_convo =  f"Bot1: " + bot1_output + "\n"
   for i in range(round):
     bot2_output = bot2.predict(input=bot1_output)
