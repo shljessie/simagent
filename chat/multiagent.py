@@ -140,8 +140,8 @@ bot1 = initialize_bot(template)
 bot2 = initialize_bot(template_two)
 
 
-convo_csv_path = '/mnt/data/bot_conversation_history.csv'
-diagnostics_csv_path = '/mnt/data/diagnostic_history_and_loss.csv'
+convo_csv_path = 'bot_conversation_history.csv'
+diagnostics_csv_path = 'diagnostic_history_and_loss.csv'
 
 # Run the conversation and save to CSV
 conversation_log, diagnostics_log = bot_convo_and_save(bot1, bot2, 10, convo_csv_path, diagnostics_csv_path)
