@@ -9,7 +9,7 @@ from transformers import (
     BitsAndBytesConfig, 
     pipeline
 )
-import tensorflow as tf
+import math
 #load model
 # model = AutoModelForCausalLM.from_pretrained('gpt2')
 # tokenizer = AutoTokenizer.from_pretrained('gpt2')
@@ -48,7 +48,7 @@ def calculate_loss(model, tokenizer, text, answers):
     loss_fct = CrossEntropyLoss(reduction="mean")
     loss = loss_fct(logits.squeeze(), answers.squeeze()) # get the logits probabilities
 
-    perplexity = tf.exp(loss)
+    perplexity = math.exp(loss.item())
 
     return loss.item() ,perplexity
 
