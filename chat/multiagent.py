@@ -110,7 +110,7 @@ def bot_convo_and_save(bot1, bot2, rounds, convo_csv_path, diagnostics_csv_path)
     conversation_log = [prompt_bot1]
     diagnostics_log = []
 
-    print('predefined questions', predefined_questions)
+    print('predefined questions', predefined_questions[0])
     # Start the conversation
     bot1_output = bot1(input=predefined_questions[0])
     conversation_log.append(("Bot1", bot1_output))
