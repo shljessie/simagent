@@ -113,7 +113,7 @@ def bot_convo_and_save(bot1, bot2, rounds, convo_csv_path, diagnostics_csv_path)
 
     print('predefined questions', predefined_questions[0])
     # Start the conversation
-    bot1_output = bot1(input=predefined_questions[0])
+    bot1_output = bot1(input="Hello. What is your name?")
     conversation_log.append(("Bot1", bot1_output))
 
     # Open CSV files for writing
