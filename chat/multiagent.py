@@ -30,34 +30,15 @@ true_answers = qa_data['true_answers']
 attack_questions = qa_data['attack_questions']
 true_attack_answers = qa_data['true_attack_answers']
 
-def get_persona(template):
-    # Extracting persona from the template
-    start_idx = template.find("The Persona") + len("The Persona")
-    end_idx = template.find("<</SYS>>")
-    persona_text = template[start_idx:end_idx].strip()
-    return persona_text
-
 # Model Configurations
 dotenv.load_dotenv('/.env')
 HF_ACCESS_TOKEN = os.getenv('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')
 model_id = '../Llama-2-7b-chat-hf'
 
-
 #bot personas
-prompt_bot1 =  """
-You are a chatbot having a conversation. You must always follow your persona.
+prompt_bot1 =  "You are a chatbot having a conversation. You must always follow your persona. The Persona: " + template
 
-The Persona: 
-{template}
-"""
-
-prompt_bot2 =  """
-You are a chatbot having a conversation. You must always follow your persona.
-
-The Persona: 
-{template_two}
-"""
-
+prompt_bot2 =  "You are a chatbot having a conversation. You must always follow your persona. The Persona: " + template_two
 
 # Configuration settings
 bnb_config = BitsAndBytesConfig(
@@ -78,31 +59,11 @@ pipe = pipeline(
     tokenizer=tokenizer
 )
 
-# llama_pipeline = pipeline(
-#     "text-generation",  # LLM task
-#     model=model,
-#     torch_dtype=torch.float16,
-#     device_map="auto",
-# )
-
-
-#load a hf text generation pipeline with the llama2 model
-# pipe = pipeline(
-#     model=model,
-#     task='text-generation',
-#     tokenizer=tokenizer
-# )
-
 def initialize_bot(prompt: str) -> None:
     sequences = pipe(
-        prompt,
-        do_sample=True,
-        top_k=10,
-        num_return_sequences=1,
-        eos_token_id=tokenizer.eos_token_id,
-        max_length=25,
+        prompt
     )
-    print("Chatbot:", sequences[0]['generated_text'])
+    print("Chatbot:", sequences)
     return sequences
 
 
@@ -113,7 +74,7 @@ def bot_convo_and_save(bot1, bot2, rounds, convo_csv_path, diagnostics_csv_path)
     print('BOT1', bot1)
     print('predefined questions', predefined_questions[0])
     # Start the conversation
-    bot1_output = bot1.predict(input="Hello. What is your name?")
+    bot1_output = generate_response(prompt="Hello. What is your name?")
     conversation_log.append(("Bot1", bot1_output))
 
     # Open CSV files for writing
@@ -131,12 +92,12 @@ def bot_convo_and_save(bot1, bot2, rounds, convo_csv_path, diagnostics_csv_path)
 
         for i in range(rounds):
             # Bot2's turn
-            bot2_output = bot2(input= conversation_log)
+            bot2_output = generate_response(prompt= conversation_log)
             conversation_log.append(("Bot2", bot2_output))
             convo_writer.writerow(['Bot2', bot2_output])
 
             # Bot1's turn
-            bot1_output = bot1.predict(input=conversation_log)
+            bot1_output = bot1.predict(prompt=conversation_log)
             conversation_log.append(("Bot1", bot1_output))
             convo_writer.writerow(['Bot1', bot1_output])
 
