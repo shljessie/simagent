@@ -78,9 +78,11 @@ pipe = pipeline(
     tokenizer=tokenizer
 )
 
+model_name = "meta-llama/Llama-2-7b-chat-hf"
+
 llama_pipeline = pipeline(
     "text-generation",  # LLM task
-    model=model,
+    model=model_name,
     torch_dtype=torch.float16,
     device_map="auto",
 )
