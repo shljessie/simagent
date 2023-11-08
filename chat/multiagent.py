@@ -110,7 +110,7 @@ def bot_convo_and_save(bot1, bot2, rounds, convo_csv_path, diagnostics_csv_path)
     # Lists to store conversation and diagnostics
     conversation_log = [prompt_bot1]
     diagnostics_log = []
-
+    print('BOT1', bot1)
     print('predefined questions', predefined_questions[0])
     # Start the conversation
     bot1_output = bot1.predict(input="Hello. What is your name?")
