@@ -36,9 +36,9 @@ HF_ACCESS_TOKEN = os.getenv('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')
 model_id = '../Llama-2-7b-chat-hf'
 
 #bot personas
-prompt_bot1 =  "You are a chatbot having a conversation. You must always follow your persona. The Persona: " + template
+prompt_bot1 =  "You are a chatbot having a conversation. You must always follow your persona. Generate one response text to the last conversation response. The Persona: " + template
 
-prompt_bot2 =  "You are a chatbot having a conversation. You must always follow your persona. The Persona: " + template_two
+prompt_bot2 =  "You are a chatbot having a conversation. You must always follow your persona. Generate one response text to the last conversation response. The Persona: " + template_two
 
 # Configuration settings
 bnb_config = BitsAndBytesConfig(
@@ -62,7 +62,6 @@ pipe = pipeline(
 def initialize_bot(prompt: str) -> None:
     sequences = pipe(
         prompt,
-        max_new_tokens=50,
     )
     print("Chatbot:", sequences[0]['generated_text'])
     return sequences
@@ -93,12 +92,12 @@ def bot_convo_and_save(bot1, bot2, rounds, convo_csv_path, diagnostics_csv_path)
 
         for i in range(rounds):
             # Bot2's turn
-            bot2_output = generate_response(prompt= conversation_log)
+            bot2_output = initialize_bot(prompt= conversation_log)
             conversation_log.append(("Bot2", bot2_output))
             convo_writer.writerow(['Bot2', bot2_output])
 
             # Bot1's turn
-            bot1_output = bot1.predict(prompt=conversation_log)
+            bot1_output = initialize_bot(prompt=conversation_log)
             conversation_log.append(("Bot1", bot1_output))
             convo_writer.writerow(['Bot1', bot1_output])
 
