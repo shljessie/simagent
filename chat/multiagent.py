@@ -61,9 +61,10 @@ pipe = pipeline(
 
 def initialize_bot(prompt: str) -> None:
     sequences = pipe(
-        prompt
+        prompt,
+        max_length=25,
     )
-    print("Chatbot:", sequences)
+    print("Chatbot:", sequences[0]['generated_text'])
     return sequences
 
 
