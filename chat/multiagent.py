@@ -3,10 +3,6 @@ import torch
 import math
 import dotenv
 import torch
-from langchain.llms import HuggingFacePipeline
-from langchain.prompts import PromptTemplate
-from langchain.chains import ConversationChain
-from langchain.memory import ConversationBufferMemory
 from transformers import (
     AutoConfig, 
     AutoModelForCausalLM, 
@@ -47,6 +43,22 @@ HF_ACCESS_TOKEN = os.getenv('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')
 model_id = '../Llama-2-7b-chat-hf'
 
 
+#bot personas
+prompt_bot1 =  """
+You are a chatbot having a conversation. You must always follow your persona.
+
+The Persona: 
+{template}
+"""
+
+prompt_bot2 =  """
+You are a chatbot having a conversation. You must always follow your persona.
+
+The Persona: 
+{template_two}
+"""
+
+
 # Configuration settings
 bnb_config = BitsAndBytesConfig(
     bnb_4bit_compute_dtype='float16',
@@ -65,31 +77,33 @@ pipe = pipeline(
     task='text-generation',
     tokenizer=tokenizer
 )
-llm = HuggingFacePipeline(pipeline=pipe)
 
-def initialize_bot(template):
+llama_pipeline = pipeline(
+    "text-generation",  # LLM task
+    model=model,
+    torch_dtype=torch.float16,
+    device_map="auto",
+)
 
-    prompt = PromptTemplate(
-        input_variables=["history", "input"],
-        template=template,
-        template_format="jinja2"
+def initialize_bot(prompt: str) -> None:
+    sequences = llama_pipeline(
+        prompt,
+        do_sample=True,
+        top_k=10,
+        num_return_sequences=1,
+        eos_token_id=tokenizer.eos_token_id,
+        max_length=25,
     )
+    print("Chatbot:", sequences[0]['generated_text'])
 
-    bot = ConversationChain(
-        llm=llm,
-        memory=ConversationBufferMemory(),
-        prompt=prompt,
-        verbose=False
-    )
-    return bot
 
 def bot_convo_and_save(bot1, bot2, rounds, convo_csv_path, diagnostics_csv_path):
     # Lists to store conversation and diagnostics
-    conversation_log = []
+    conversation_log = [prompt_bot1]
     diagnostics_log = []
 
     # Start the conversation
-    bot1_output = bot1.predict(input=predefined_questions[0])
+    bot1_output = bot1(input=predefined_questions[0])
     conversation_log.append(("Bot1", bot1_output))
 
     # Open CSV files for writing
@@ -107,12 +121,12 @@ def bot_convo_and_save(bot1, bot2, rounds, convo_csv_path, diagnostics_csv_path)
 
         for i in range(rounds):
             # Bot2's turn
-            bot2_output = bot2.predict(input=bot1_output)
+            bot2_output = bot2(input= conversation_log)
             conversation_log.append(("Bot2", bot2_output))
             convo_writer.writerow(['Bot2', bot2_output])
 
             # Bot1's turn
-            bot1_output = bot1.predict(input=bot2_output)
+            bot1_output = bot1.predict(input=conversation_log)
             conversation_log.append(("Bot1", bot1_output))
             convo_writer.writerow(['Bot1', bot1_output])
 
@@ -143,12 +157,11 @@ def bot_convo_and_save(bot1, bot2, rounds, convo_csv_path, diagnostics_csv_path)
 
     return conversation_log, diagnostics_log
 
+# initialize bots
+bot1 = initialize_bot(prompt_bot1)
+bot2 = initialize_bot(prompt_bot2)
 
-#Initialize bot
-bot1 = initialize_bot(template)
-bot2 = initialize_bot(template_two)
-
-
+# file paths
 convo_csv_path = 'bot_conversation_history.csv'
 diagnostics_csv_path = 'diagnostic_history_and_loss.csv'
 
