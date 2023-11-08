@@ -25,7 +25,8 @@ template_two = template_data['template_two']
 
 with open('./chat/questions.json', 'r') as f:
     qa_data = json.load(f)
-predefined_questions = qa_data['predefined_questions']
+predefined_questions =  "You are a chatbot having a conversation. You must always follow your persona. Generate one response text to the last conversation response." + qa_data['predefined_questions']
+
 true_answers = qa_data['true_answers']
 attack_questions = qa_data['attack_questions']
 true_attack_answers = qa_data['true_attack_answers']
