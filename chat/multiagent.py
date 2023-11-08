@@ -78,17 +78,23 @@ pipe = pipeline(
     tokenizer=tokenizer
 )
 
-model_name = "meta-llama/Llama-2-7b-chat-hf"
+# llama_pipeline = pipeline(
+#     "text-generation",  # LLM task
+#     model=model,
+#     torch_dtype=torch.float16,
+#     device_map="auto",
+# )
 
-llama_pipeline = pipeline(
-    "text-generation",  # LLM task
-    model=model_name,
-    torch_dtype=torch.float16,
-    device_map="auto",
-)
+
+#load a hf text generation pipeline with the llama2 model
+# pipe = pipeline(
+#     model=model,
+#     task='text-generation',
+#     tokenizer=tokenizer
+# )
 
 def initialize_bot(prompt: str) -> None:
-    sequences = llama_pipeline(
+    sequences = pipe(
         prompt,
         do_sample=True,
         top_k=10,
