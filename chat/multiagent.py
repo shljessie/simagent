@@ -103,6 +103,7 @@ def initialize_bot(prompt: str) -> None:
         max_length=25,
     )
     print("Chatbot:", sequences[0]['generated_text'])
+    return sequences
 
 
 def bot_convo_and_save(bot1, bot2, rounds, convo_csv_path, diagnostics_csv_path):
