@@ -62,7 +62,7 @@ pipe = pipeline(
 def initialize_bot(prompt: str) -> None:
     sequences = pipe(
         prompt,
-        max_length=25,
+        max_new_tokens=50,
     )
     print("Chatbot:", sequences[0]['generated_text'])
     return sequences
@@ -75,7 +75,7 @@ def bot_convo_and_save(bot1, bot2, rounds, convo_csv_path, diagnostics_csv_path)
     print('BOT1', bot1)
     print('predefined questions', predefined_questions[0])
     # Start the conversation
-    bot1_output = generate_response(prompt="Hello. What is your name?")
+    bot1_output = initialize_bot(prompt="Hello. What is your name?")
     conversation_log.append(("Bot1", bot1_output))
 
     # Open CSV files for writing
