@@ -36,9 +36,24 @@ HF_ACCESS_TOKEN = os.getenv('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')
 model_id = '../Llama-2-7b-chat-hf'
 
 #bot personas
-prompt_bot1 =  "You are a chatbot having a conversation. You must always follow your persona. Generate one response text to the last conversation response. The Persona: " + template
+prompt_bot1 = f"""
+[INST] 
+<<SYS>>
+You are a chatbot having a conversation. You must always follow your persona. Generate one response text to the last conversation response. 
+The Persona:{template}
+<</SYS>>
 
-prompt_bot2 =  "You are a chatbot having a conversation. You must always follow your persona. Generate one response text to the last conversation response. The Persona: " + template_two
+[/INST]
+"""
+prompt_bot2 = f"""
+[INST] 
+<<SYS>>
+You are a chatbot having a conversation. You must always follow your persona. Generate one response text to the last conversation response. 
+The Persona:{template_two}
+<</SYS>>
+
+[/INST]
+"""
 
 # Configuration settings
 bnb_config = BitsAndBytesConfig(
