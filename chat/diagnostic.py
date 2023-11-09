@@ -18,41 +18,53 @@ import math
 dotenv.load_dotenv('/.env')
 HF_ACCESS_TOKEN = os.getenv('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')
 model_id = '../Llama-2-7b-chat-hf'
+# model_id ='gpt2'
 
 # Configuration settings
-bnb_config = BitsAndBytesConfig(
-    bnb_4bit_compute_dtype='float16',
-    bnb_4bit_quant_type='nf4',
-    load_in_4bit=True,
-)
+# bnb_config = BitsAndBytesConfig(
+#     bnb_4bit_compute_dtype='float16',
+#     bnb_4bit_quant_type='nf4',
+#     load_in_4bit=True,
+# )
 
 # Load model and tokenizer
 model_config = AutoConfig.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)
 model = AutoModelForCausalLM.from_pretrained(model_id, config=model_config, quantization_config=bnb_config, use_auth_token=HF_ACCESS_TOKEN)
 tokenizer = AutoTokenizer.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)
+
+# tokenizer = AutoTokenizer.from_pretrained("EleutherAI/pythia-1b")
+# model = AutoModelForCausalLM.from_pretrained("EleutherAI/pythia-1b")
 model.eval()
 
 # Function to calculate loss
 @torch.no_grad()
-def calculate_loss(model, tokenizer, text, answers):
-    # text : convo history + last bot answer
-    # answers : ground truth answers
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    inputs = tokenizer(text, return_tensors='pt')["input_ids"].to(device)
-    answers = tokenizer(answers, return_tensors='pt')["input_ids"].to(device)
-    inputs_and_answers = torch.concat([inputs, answers], dim=-1).to(device) # add tensors together,
+def calculate_loss(model: model, tokenizer:tokenizer, convo_history, bot1_diag_response, ground_truth_answers):
+    """
+    model: model to use. identical to the chat model used.
+    tokenizer: identical model to the chat model
+    conv_history: conversation history of bot1 and bot2 
+    bot1_diag_response: bot1 response to diagnostic question 
+    ground_truth_answers: ground truth answers to diagnostic question
+    
+    """
 
-    check = tokenizer.decode(inputs_and_answers[0])
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    inputs = tokenizer(convo_history, return_tensors='pt')["input_ids"].to(device)
+    bot1_diag_response = tokenizer(bot1_diag_response, return_tensors='pt')["input_ids"].to(device)
+    ground_truth_answers = tokenizer(ground_truth_answers, return_tensors='pt')["input_ids"].to(device)
+    diag_question_response = torch.concat([inputs, bot1_diag_response], dim=-1).to(device) # add tensors together,
+
+    check = tokenizer.decode(diag_question_response[0])
     print( "\n" + ' CHECKING ',check + "\n" )
 
-    outputs = model(inputs_and_answers, output_hidden_states=True) # pass to model , get hiddenstate
-    hiddens_answer = outputs.hidden_states[-1][:, -1+(-1*answers.shape[-1]):-1] # get hidden state of last answer
-    logits  = model.lm_head(hiddens_answer)
+    outputs = model(diag_question_response, output_hidden_states=True) # pass to model , get hiddenstate
+    hiddens_diag_response = outputs.hidden_states[-1][:, -1+(-1*bot1_diag_response.shape[-1]):-1] # get hidden state of response to diagnostic output
+
+    logits  = model.lm_head(hiddens_diag_response)
     loss_fct = CrossEntropyLoss(reduction="mean")
-    loss = loss_fct(logits.squeeze(), answers.squeeze()) # get the logits probabilities
+    loss = loss_fct(logits.squeeze(), ground_truth_answers.squeeze()) # get the logits probabilities
 
     return loss.item()
-
 
 # def calculate_loss(model, tokenizer, text, answers ,):
 #     # text : convo history + last bot answer

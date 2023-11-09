@@ -115,24 +115,23 @@ def bot_convo_and_save(bot1, bot2, rounds, convo_csv_path, diagnostics_csv_path)
             bot1_output = bot1.predict(input=bot2_output)
             conversation_log.append(("Bot1", bot1_output))
             convo_writer.writerow(['Bot1', bot1_output])
-
-            print('CHEKCK: ',conversation_log)
+            
 
             # Build the conversational history for the diagnostic phase
             conversational_history = "\n".join([f"{speaker}: {text}" for speaker, text in conversation_log])
 
             # Diagnostic phase
             for question, true_answer in zip(predefined_questions, true_answers):
-                bot1_output = bot1.predict(input=question)
+                bot1_diag_response = bot1.predict(input=question)
 
                 print( 'CONVO HISTORY: ', conversational_history)
                 print( 'true answer: ', true_answer)
-                loss = calculate_loss(model, tokenizer, conversational_history, true_answer)
+                loss = calculate_loss(model, tokenizer, conversational_history,bot1_diag_response, true_answer)
 
                 # Add diagnostic data to log and CSV
                 diagnostics_log.append({
                     'question': question,
-                    'response': bot1_output,
+                    'response': bot1_diag_response,
                     'loss': loss
                 })
                 diag_writer.writerow([question, bot1_output, loss])
