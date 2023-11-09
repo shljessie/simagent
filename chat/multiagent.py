@@ -84,128 +84,60 @@ def initialize_bot(prompt: str) -> None:
     return sequences
 
 
-def bot_convo_and_save(bot1, bot2, rounds, convo_csv_path, diagnostics_csv_path):
-    # Lists to store conversation and diagnostics
-    conversation_log = [prompt_bot1]
-    diagnostics_log = []
-    print('BOT1', bot1)
-    print('predefined questions', predefined_questions)
-    # Start the conversation
-    bot1_output = initialize_bot(prompt=predefined_questions)
-    conversation_log.append(("Bot1", bot1_output))
 
-    # Open CSV files for writing
-    with open(convo_csv_path, 'w', newline='') as convo_file, \
-         open(diagnostics_csv_path, 'w', newline='') as diag_file:
+def diagnostic_q(bot1, predefined_questions, conversational_history):
+    diagnostics = []
+    for i in range(len(predefined_questions)): 
+        bot1_output = bot1.predict(input=predefined_questions[i])
+        loss = calculate_loss(model, tokenizer, conversational_history, true_answers[i])
         
-        convo_writer = csv.writer(convo_file)
-        diag_writer = csv.writer(diag_file)
-        # Write headers for CSV files
-        convo_writer.writerow(['Speaker', 'Text'])
-        diag_writer.writerow(['Question', 'Response', 'Loss'])
+        diagnostics.append({
+            'question': predefined_questions[i],
+            'response': bot1_output,
+            'loss': loss
+        })
+        
+        print({
+            'question': predefined_questions[i],
+            'response': bot1_output,
+            'loss': loss
+        })
 
-        # Write the initial conversation to CSV
-        convo_writer.writerow(['Bot1', bot1_output])
+    return diagnostics
 
-        for i in range(rounds):
-            # Bot2's turn
-            bot2_output = initialize_bot(prompt= conversation_log)
-            conversation_log.append(("Bot2", bot2_output))
-            convo_writer.writerow(['Bot2', bot2_output])
 
-            # Bot1's turn
-            bot1_output = initialize_bot(prompt=conversation_log)
-            conversation_log.append(("Bot1", bot1_output))
-            convo_writer.writerow(['Bot1', bot1_output])
+def bot_convo(bot1, bot2,round):
 
-            # Build the conversational history for the diagnostic phase
-            conversational_history = "\n".join([f"{speaker}: {text}" for speaker, text in conversation_log])
+  bot_convo =""
+  #default starting convo
+  bot1_output = bot1.predict(input=predefined_questions[0])
+  bot_convo =  f"Bot1: " + bot1_output + "\n"
+  for i in range(round):
+    bot2_output = bot2.predict(input=bot1_output)
+    bot1_output = bot1.predict(input=bot2_output)
+    bot_convo +=  f" Bot2: {predefined_questions[i]} \n" + f"Bot1: " + bot1_output
 
-            # Diagnostic phase
-            for question, true_answer in zip(predefined_questions, true_answers):
-                bot1_output = bot1.predict(input=question)
+    print( f"Bot1: " + bot1_output + "\n" )
+    print( f"Bot2: " + bot2_output + "\n" )
 
-                print( 'CONVO HISTORY: ', conversational_history)
-                print( 'true answer: ', true_answer)
-                loss = calculate_loss(model, tokenizer, conversational_history, true_answer)
+    # ask the diagnostic questions 
+    diagnostic_history, loss_scores = diagnostic_q(bot1, predefined_questions, bot_convo)
+    bot_convo +=  f" Loss Score: {loss_scores} \n"
 
-                # Add diagnostic data to log and CSV
-                diagnostics_log.append({
-                    'question': question,
-                    'response': bot1_output,
-                    'loss': loss
-                })
-                diag_writer.writerow([question, bot1_output, loss])
+  return diagnostic_history, loss_scores, bot_convo
 
-                print({
-                    'question': question,
-                    'response': bot1_output,
-                    'loss': loss
-                })
 
-    return conversation_log, diagnostics_log
 
 # initialize bots
 bot1 = initialize_bot(prompt_bot1)
 bot2 = initialize_bot(prompt_bot2)
 
-# file paths
-convo_csv_path = 'bot_conversation_history.csv'
-diagnostics_csv_path = 'diagnostic_history_and_loss.csv'
-
-# Run the conversation and save to CSV
-conversation_log, diagnostics_log = bot_convo_and_save(bot1, bot2, 10, convo_csv_path, diagnostics_csv_path)
+diagnostic, bot_conversation =  bot_convo(bot1, bot2, 10)
 
 
 
 
 
-
-
-
-
-
-
-# def diagnostic_q(bot1, predefined_questions, conversational_history):
-#     diagnostics = []
-#     for i in range(len(predefined_questions)): 
-#         bot1_output = bot1.predict(input=predefined_questions[i])
-#         loss = calculate_loss(model, tokenizer, conversational_history, true_answers[i])
-        
-#         diagnostics.append({
-#             'question': predefined_questions[i],
-#             'response': bot1_output,
-#             'loss': loss
-#         })
-        
-#         print({
-#             'question': predefined_questions[i],
-#             'response': bot1_output,
-#             'loss': loss
-#         })
-
-#     return diagnostics
-
-
-# # def bot_convo(bot1, bot2,round):
-
-# #   bot_convo =""
-# #   #default starting convo
-# #   bot1_output = bot1.predict(input=predefined_questions[0])
-# #   bot_convo =  f"Bot1: " + bot1_output + "\n"
-# #   for i in range(round):
-# #     bot2_output = bot2.predict(input=bot1_output)
-# #     bot1_output = bot1.predict(input=bot2_output)
-# #     bot_convo +=  f" Bot2: {predefined_questions[i]} \n" + f"Bot1: " + bot1_output
-
-# #     print( f"Bot1: " + bot1_output + "\n" )
-# #     print( f"Bot2: " + bot2_output + "\n" )
-
-# #     # ask the diagnostic questions 
-# #     diagnostic_history, loss_scores = diagnostic_q(bot1, predefined_questions, bot_convo)
-# #     bot_convo +=  f" Loss Score: {loss_scores} \n"
-
-# #   return diagnostic_history, loss_scores, bot_convo
 
 # def save_conversation_to_csv(bot_conversation, csv_file_path):
 #     # Saving the bot conversation to a CSV file
@@ -234,3 +166,65 @@ conversation_log, diagnostics_log = bot_convo_and_save(bot1, bot2, 10, convo_csv
 
 # save_conversation_to_csv(bot_conversation, csv_file_path)
 # save_diagnostics_to_csv(diagnostic, csv_file_path)
+
+
+# def bot_convo_and_save(bot1, bot2, rounds, convo_csv_path, diagnostics_csv_path):
+#     # Lists to store conversation and diagnostics
+#     conversation_log = [prompt_bot1]
+#     diagnostics_log = []
+#     print('BOT1', bot1)
+#     print('predefined questions', predefined_questions)
+#     # Start the conversation
+#     bot1_output = initialize_bot(prompt=predefined_questions)
+#     conversation_log.append(("Bot1", bot1_output))
+
+    # Open CSV files for writing
+    # with open(convo_csv_path, 'w', newline='') as convo_file, \
+    #      open(diagnostics_csv_path, 'w', newline='') as diag_file:
+        
+    #     convo_writer = csv.writer(convo_file)
+    #     diag_writer = csv.writer(diag_file)
+    #     # Write headers for CSV files
+    #     convo_writer.writerow(['Speaker', 'Text'])
+    #     diag_writer.writerow(['Question', 'Response', 'Loss'])
+
+    #     # Write the initial conversation to CSV
+    #     convo_writer.writerow(['Bot1', bot1_output])
+
+    #     for i in range(rounds):
+    #         # Bot2's turn
+    #         bot2_output = initialize_bot(prompt= conversation_log)
+    #         conversation_log.append(("Bot2", bot2_output))
+    #         convo_writer.writerow(['Bot2', bot2_output])
+
+    #         # Bot1's turn
+    #         bot1_output = initialize_bot(prompt=conversation_log)
+    #         conversation_log.append(("Bot1", bot1_output))
+    #         convo_writer.writerow(['Bot1', bot1_output])
+
+    #         # Build the conversational history for the diagnostic phase
+    #         conversational_history = "\n".join([f"{speaker}: {text}" for speaker, text in conversation_log])
+
+    #         # Diagnostic phase
+    #         for question, true_answer in zip(predefined_questions, true_answers):
+    #             bot1_output = bot1.predict(input=question)
+
+    #             print( 'CONVO HISTORY: ', conversational_history)
+    #             print( 'true answer: ', true_answer)
+    #             loss = calculate_loss(model, tokenizer, conversational_history, true_answer)
+
+    #             # Add diagnostic data to log and CSV
+    #             diagnostics_log.append({
+    #                 'question': question,
+    #                 'response': bot1_output,
+    #                 'loss': loss
+    #             })
+    #             diag_writer.writerow([question, bot1_output, loss])
+
+    #             print({
+    #                 'question': question,
+    #                 'response': bot1_output,
+    #                 'loss': loss
+    #             })
+
+    # return conversation_log, diagnostics_log
