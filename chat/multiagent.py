@@ -120,7 +120,7 @@ def bot_convo(round):
   print(bot1_output)
 
   for i in range(round):
-    bot2_output = gen_bot_response(bot2_covo)
+    bot2_output = gen_bot_response(bot2_convo)
     bot_convo +=  f"Bot2: " + bot2_output + "\n"
     bot2_convo +=  f"Bot2: " + bot2_output + "\n"
     bot1_output = gen_bot_response(bot_convo)
