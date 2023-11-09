@@ -25,7 +25,9 @@ template_two = template_data['template_two']
 
 with open('./chat/questions.json', 'r') as f:
     qa_data = json.load(f)
-predefined_questions =  "You are a chatbot having a conversation. You must always follow your persona. Generate one response text to the last conversation response." + qa_data['predefined_questions'][0]
+predefined_questions = qa_data['predefined_questions']
+
+
 
 true_answers = qa_data['true_answers']
 attack_questions = qa_data['attack_questions']
@@ -88,7 +90,7 @@ def initialize_bot(prompt: str) -> None:
 def diagnostic_q(bot1, predefined_questions, conversational_history):
     diagnostics = []
     for i in range(len(predefined_questions)): 
-        bot1_output = bot1.predict(input=predefined_questions[i])
+        bot1_output = bot1(predefined_questions[i])
         loss = calculate_loss(model, tokenizer, conversational_history, true_answers[i])
         
         diagnostics.append({
@@ -108,7 +110,9 @@ def diagnostic_q(bot1, predefined_questions, conversational_history):
 
 def bot_convo(bot1, bot2,round):
 
-  bot_convo =""
+  print("bot convo predefined: ",predefined_questions[0] )
+
+  bot_convo = prompt_bot1 + "  "
   #default starting convo
   bot1_output = bot1(predefined_questions[0])
   bot_convo =  f"Bot1: " + bot1_output + "\n"
