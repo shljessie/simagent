@@ -83,7 +83,7 @@ def gen_bot_response(prompt: str) -> None:
         prompt,
     )
     print("Chatbot:", sequences[0]['generated_text'])
-    return sequences
+    return  sequences[0]['generated_text']
 
 
 
@@ -117,6 +117,8 @@ def bot_convo(round):
   bot1_output = gen_bot_response(bot_convo)
   bot2_covo = prompt_bot2 + bot1_output
   bot_convo =  f"Bot1: " + bot1_output + "\n"
+  print(bot1_output)
+
   for i in range(round):
     bot2_output = gen_bot_response(bot2_covo)
     bot_convo +=  f"Bot2: " + bot2_output + "\n"
