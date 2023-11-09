@@ -86,7 +86,7 @@ def gen_bot_response(prompt: str) -> None:
     return  sequences[0]['generated_text']
 
 
-
+@torch.no_grad()
 def diagnostic_q(predefined_questions, conversational_history):
     diagnostics = []
     for i in range(len(predefined_questions)): 
@@ -107,7 +107,7 @@ def diagnostic_q(predefined_questions, conversational_history):
 
     return diagnostics
 
-
+@torch.no_grad()
 def bot_convo(round):
 
   print("bot convo predefined: ",predefined_questions[0] )
