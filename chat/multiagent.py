@@ -34,7 +34,7 @@ true_attack_answers = qa_data['true_attack_answers']
 # Model Configurations
 dotenv.load_dotenv('/.env')
 HF_ACCESS_TOKEN = os.getenv('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')
-model_id = 'meta-llama/Llama-2-7b'
+model_id = '../Llama-2-7b-chat-hf'
 
 #bot personas
 prompt_bot1 = f"""
