@@ -131,13 +131,12 @@ def bot_convo(round):
     print( f"Bot2: " + bot2_output + "\n" )
 
     # ask the diagnostic questions 
-    diagnostic_history, loss_scores = diagnostic_q(predefined_questions, bot_convo)
-    bot_convo +=  f" Loss Score: {loss_scores} \n"
+    diagnostics = diagnostic_q(predefined_questions, bot_convo)
 
-  return diagnostic_history, loss_scores, bot_convo
+  return diagnostics, bot_convo
 
 
-diagnostic_history, loss_scores, bot_convo =  bot_convo(10)
+diagnostics, bot_convo =  bot_convo(10)
 
 
 
