@@ -115,7 +115,7 @@ def bot_convo(round):
   bot_convo = prompt_bot1 + predefined_questions[0]
   #default starting convo
   bot1_output = gen_bot_response(bot_convo)
-  bot2_covo = prompt_bot2 + bot1_output
+  bot2_convo = prompt_bot2 + bot1_output
   bot_convo =  f"Bot1: " + bot1_output + "\n"
   print(bot1_output)
 
