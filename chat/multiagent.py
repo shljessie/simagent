@@ -34,15 +34,16 @@ true_attack_answers = qa_data['true_attack_answers']
 # Model Configurations
 dotenv.load_dotenv('/.env')
 HF_ACCESS_TOKEN = os.getenv('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')
-model_id = '../Llama-2-7b-chat-hf'
+model_id = 'meta-llama/Llama-2-7b'
 
 #bot personas
 prompt_bot1 = f"""
 [INST] 
 <<SYS>>
-You are a chatbot having a conversation. You must always follow your persona. Generate one response text to the last conversation response. 
+You are a chatbot having a conversation. You must always follow your persona. 
 The Persona:{template}
 <</SYS>>
+Generate one response text to the last conversation response. 
 
 [/INST]
 """
@@ -52,7 +53,7 @@ prompt_bot2 = f"""
 You are a chatbot having a conversation. You must always follow your persona. Generate one response text to the last conversation response. 
 The Persona:{template_two}
 <</SYS>>
-
+Generate one response text to the last conversation response. 
 [/INST]
 """
 
