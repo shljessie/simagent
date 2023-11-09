@@ -45,7 +45,7 @@ prompt_bot1 = f"""
 You are a chatbot having a conversation. You must always follow your persona. 
 The Persona:{template}
 <</SYS>>
-Generate one response text to the last conversation response. 
+Generate one response text to the last conversation response that is aligned with your persona.
 
 [/INST]
 """
@@ -55,7 +55,7 @@ prompt_bot2 = f"""
 You are a chatbot having a conversation. You must always follow your persona. Generate one response text to the last conversation response. 
 The Persona:{template_two}
 <</SYS>>
-Generate one response text to the last conversation response. 
+Generate one response text to the last conversation response that is aligned with your persona.
 [/INST]
 """
 
@@ -78,7 +78,7 @@ pipe = pipeline(
     tokenizer=tokenizer
 )
 
-def initialize_bot(prompt: str) -> None:
+def gen_bot_response(prompt: str) -> None:
     sequences = pipe(
         prompt,
     )
@@ -87,10 +87,10 @@ def initialize_bot(prompt: str) -> None:
 
 
 
-def diagnostic_q(bot1, predefined_questions, conversational_history):
+def diagnostic_q(predefined_questions, conversational_history):
     diagnostics = []
     for i in range(len(predefined_questions)): 
-        bot1_output = bot1(predefined_questions[i])
+        bot1_output = gen_bot_response(predefined_questions[i])
         loss = calculate_loss(model, tokenizer, conversational_history, true_answers[i])
         
         diagnostics.append({
@@ -108,36 +108,34 @@ def diagnostic_q(bot1, predefined_questions, conversational_history):
     return diagnostics
 
 
-def bot_convo(bot1, bot2,round):
+def bot_convo(round):
 
   print("bot convo predefined: ",predefined_questions[0] )
 
-  bot_convo = prompt_bot1 + "  "
+  bot_convo = prompt_bot1 + predefined_questions[0]
   #default starting convo
-  bot1_output = bot1(str(predefined_questions[0]))
+  bot1_output = gen_bot_response(bot_convo)
+  bot2_covo = prompt_bot2 + bot1_output
   bot_convo =  f"Bot1: " + bot1_output + "\n"
   for i in range(round):
-    bot2_output = bot2(bot_convo)
+    bot2_output = gen_bot_response(bot2_covo)
     bot_convo +=  f"Bot2: " + bot2_output + "\n"
-    bot1_output = bot1(bot_convo)
+    bot2_convo +=  f"Bot2: " + bot2_output + "\n"
+    bot1_output = gen_bot_response(bot_convo)
     bot_convo +=  f"Bot1: " + bot1_output + "\n"
+    bot2_convo +=  f"Bot1: " + bot1_output + "\n"
 
     print( f"Bot1: " + bot1_output + "\n" )
     print( f"Bot2: " + bot2_output + "\n" )
 
     # ask the diagnostic questions 
-    diagnostic_history, loss_scores = diagnostic_q(bot1, predefined_questions, bot_convo)
+    diagnostic_history, loss_scores = diagnostic_q(predefined_questions, bot_convo)
     bot_convo +=  f" Loss Score: {loss_scores} \n"
 
   return diagnostic_history, loss_scores, bot_convo
 
 
-
-# initialize bots
-bot1 = initialize_bot(prompt_bot1)
-bot2 = initialize_bot(prompt_bot2)
-
-diagnostic, bot_conversation =  bot_convo(bot1, bot2, 10)
+diagnostic_history, loss_scores, bot_convo =  bot_convo(10)
 
 
 
