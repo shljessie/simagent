@@ -25,7 +25,7 @@ template_two = template_data['template_two']
 
 with open('./chat/questions.json', 'r') as f:
     qa_data = json.load(f)
-predefined_questions =  "You are a chatbot having a conversation. You must always follow your persona. Generate one response text to the last conversation response." + qa_data['predefined_questions']
+predefined_questions =  "You are a chatbot having a conversation. You must always follow your persona. Generate one response text to the last conversation response." + qa_data['predefined_questions'][0]
 
 true_answers = qa_data['true_answers']
 attack_questions = qa_data['attack_questions']
@@ -89,9 +89,9 @@ def bot_convo_and_save(bot1, bot2, rounds, convo_csv_path, diagnostics_csv_path)
     conversation_log = [prompt_bot1]
     diagnostics_log = []
     print('BOT1', bot1)
-    print('predefined questions', predefined_questions[0])
+    print('predefined questions', predefined_questions)
     # Start the conversation
-    bot1_output = initialize_bot(prompt="Hello. What is your name?")
+    bot1_output = initialize_bot(prompt=predefined_questions)
     conversation_log.append(("Bot1", bot1_output))
 
     # Open CSV files for writing
