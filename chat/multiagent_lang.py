@@ -85,7 +85,7 @@ def initialize_bot(template):
 
 def bot_convo_and_save(bot1, bot2, rounds, convo_csv_path, diagnostics_csv_path):
     # Lists to store conversation and diagnostics
-    conversation_log = [template + predefined_questions[0]]
+    conversation_log = [("Template", template + predefined_questions[0])]
     diagnostics_log = []
 
     # Start the conversation
@@ -115,6 +115,8 @@ def bot_convo_and_save(bot1, bot2, rounds, convo_csv_path, diagnostics_csv_path)
             bot1_output = bot1.predict(input=bot2_output)
             conversation_log.append(("Bot1", bot1_output))
             convo_writer.writerow(['Bot1', bot1_output])
+
+            print('CHEKCK: ',conversation_log)
 
             # Build the conversational history for the diagnostic phase
             conversational_history = "\n".join([f"{speaker}: {text}" for speaker, text in conversation_log])
