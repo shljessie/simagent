@@ -110,11 +110,11 @@ def bot_convo(bot1, bot2,round):
 
   bot_convo =""
   #default starting convo
-  bot1_output = bot1.predict(input=predefined_questions[0])
+  bot1_output = bot1(predefined_questions[0])
   bot_convo =  f"Bot1: " + bot1_output + "\n"
   for i in range(round):
-    bot2_output = bot2.predict(input=bot1_output)
-    bot1_output = bot1.predict(input=bot2_output)
+    bot2_output = bot2(bot1_output)
+    bot1_output = bot1(bot2_output)
     bot_convo +=  f" Bot2: {predefined_questions[i]} \n" + f"Bot1: " + bot1_output
 
     print( f"Bot1: " + bot1_output + "\n" )
