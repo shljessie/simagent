@@ -47,7 +47,10 @@ bnb_config = BitsAndBytesConfig(
 model_config = AutoConfig.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)
 model = AutoModelForCausalLM.from_pretrained(model_id, config=model_config, use_auth_token=HF_ACCESS_TOKEN) # remove quantization
 tokenizer = AutoTokenizer.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)
-tokenizer.use_default_system_prompt = False
+
+
+print(model)
+print(tokenizer)
 
 @spaces.GPU
 def generate(
@@ -66,6 +69,8 @@ def generate(
     for user, assistant in chat_history:
         conversation.extend([{"role": "user", "content": user}, {"role": "assistant", "content": assistant}])
     conversation.append({"role": "user", "content": message})
+
+    print('CONVP',conversation)
 
     input_ids = tokenizer.apply_chat_template(conversation, return_tensors="pt")
     if input_ids.shape[1] > MAX_INPUT_TOKEN_LENGTH:
