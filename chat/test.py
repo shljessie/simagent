@@ -23,12 +23,11 @@ pipeline = transformers.pipeline(
 prompt = """
 
 <s>[INST] <<SYS>>
-You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe.  Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive in nature.
-
-If a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information.
+You are the Persona. Always act as you are the persona.
+Persona:  My name is Jack i like to party.  my major is business. i am in college.
 <</SYS>>
 
-There's a llama in my garden 😱 What should I do? [/INST]
+What is your name? [/INST]
 
 """
 sequences = pipeline(
