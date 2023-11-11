@@ -35,7 +35,7 @@ MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "4096"))
 # Model Configurations
 dotenv.load_dotenv('../.env')
 HF_ACCESS_TOKEN = os.getenv('HF_ACCESS_TOKEN')
-model_id = '../Llama-2-7b-chat-hf'
+model_id = 'meta-llama/Llama-2-7b-chat-hf'
 
 # Configuration settings
 bnb_config = BitsAndBytesConfig(
@@ -44,7 +44,7 @@ bnb_config = BitsAndBytesConfig(
 )
 
 #load model
-model_config = AutoConfig.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)
+model_config = AutoConfig.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN, )
 model = AutoModelForCausalLM.from_pretrained(model_id, config=model_config, use_auth_token=HF_ACCESS_TOKEN) # remove quantization
 tokenizer = AutoTokenizer.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)
 
