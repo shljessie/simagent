@@ -1,10 +1,14 @@
-from transformers import AutoTokenizer
+from transformers import (
+    AutoModelForCausalLM, 
+    AutoTokenizer, 
+)
 import transformers
 import torch
 
-model = "./Llama-2-7b-chat-hf"
+model_id = "./Llama-2-7b-chat-hf"
 HF_ACCESS_TOKEN = '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'
 
+model = AutoModelForCausalLM.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN, torch_dtype=torch.float16, device_map="auto")
 tokenizer = AutoTokenizer.from_pretrained(model, use_auth_token=HF_ACCESS_TOKEN,)
 pipeline = transformers.pipeline(
     "text-generation",
