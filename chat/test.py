@@ -9,10 +9,11 @@ model_id = "../Llama-2-7b-chat-hf"
 HF_ACCESS_TOKEN = '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'
 
 model = AutoModelForCausalLM.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN, torch_dtype=torch.float16, device_map="auto")
-tokenizer = AutoTokenizer.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN,)
+tokenizer = AutoTokenizer.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)
 pipeline = transformers.pipeline(
     "text-generation",
     model=model,
+    tokenizer = tokenizer,
     torch_dtype=torch.float32,
     device_map="auto",
     token = HF_ACCESS_TOKEN
