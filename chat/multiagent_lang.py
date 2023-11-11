@@ -42,8 +42,8 @@ def get_persona(template):
     return persona_text
 
 # Model Configurations
-dotenv.load_dotenv('/.env')
-HF_ACCESS_TOKEN = os.getenv('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')
+dotenv.load_dotenv('../.env')
+HF_ACCESS_TOKEN = os.getenv('HF_ACCESS_TOKEN')
 model_id = '../Llama-2-7b-chat-hf'
 
 
