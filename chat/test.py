@@ -63,7 +63,7 @@ def generate(prompt ,bot):
       for seq in sequences_2:
         print( 'checking resposne bot2, ', seq['generated_text'], '\n')
         response = seq['generated_text']
-        result = response[1 + len(bot2_prompt):index + len(marker)+100]
+        result = response[1 + len(bot2_prompt):1 + len(bot2_prompt)+100]
 
   else:
     #get model response/bot response
