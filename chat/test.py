@@ -106,7 +106,7 @@ conversation_history.append(f"Bot1: {bot1_response}")
 print('BOT 1 CONVO HISTORY: ', conversation_history,"\n")
 
 # bot1 answer to what is your name
-bot2_prompt = bot2_initial_prompt + conversation_history[-1]
+bot2_prompt = bot2_initial_prompt
 print('BOT 2 PROMPT: ', bot2_prompt ,"\n")
 bot2_response = generate(bot2_prompt, 'bot2')
 print('BOT 2 RESPONSE: ', bot2_response ,"\n")
