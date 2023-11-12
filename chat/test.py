@@ -51,7 +51,7 @@ def generate(prompt ,bot):
   """
   if bot=='bot2':
       print('here')
-      sequences = pipeline(
+      sequences_2 = pipeline(
         prompt,
         do_sample=True,
         top_k=10,
@@ -60,7 +60,7 @@ def generate(prompt ,bot):
         max_length=200,
         )
       # parsing part of bot response, removing the prompt returned
-      for seq in sequences:
+      for seq in sequences_2:
         print( 'checking resposne bot2, ', seq['generated_text'], '\n')
         response = seq['generated_text']
         result = response[1 + len(bot2_prompt):]
@@ -94,24 +94,28 @@ def generate(prompt ,bot):
 
 # 
 conversation_history=[initial_prompt]
+for i in range(5):
+  if i ==0:
+    bot1_prompt = initial_prompt
+    bot2_prompt = bot2_initial_prompt
+  else:
+    bot1_prompt = conversation_history[-1]
+    bot2_prompt = conversation_history[-1]
+  # initial rpompt 
+  print('BOT 1 PROMPT: ', bot1_prompt ,"\n")
+  bot1_response = generate(bot1_prompt,'bot1')
+  #answer to what is your name
+  print('BOT 1 RESPONSE: ', bot1_response ,"\n")
+  # adding that to convo history
+  conversation_history.append(f"Bot1: {bot1_response}")
+  print('BOT 1 CONVO HISTORY: ', conversation_history,"\n")
 
-bot1_prompt = initial_prompt
-# initial rpompt 
-print('BOT 1 PROMPT: ', bot1_prompt ,"\n")
-bot1_response = generate(bot1_prompt,'bot1')
-#answer to what is your name
-print('BOT 1 RESPONSE: ', bot1_response ,"\n")
-# adding that to convo history
-conversation_history.append(f"Bot1: {bot1_response}")
-print('BOT 1 CONVO HISTORY: ', conversation_history,"\n")
-
-# bot1 answer to what is your name
-bot2_prompt = bot2_initial_prompt
-print('BOT 2 PROMPT: ', bot2_prompt ,"\n")
-bot2_response = generate(bot2_prompt, 'bot2')
-print('BOT 2 RESPONSE: ', bot2_response ,"\n")
-conversation_history.append(f"Bot2: {bot2_response}")
-print('BOT 2 CONVO HISTORY: ', conversation_history ,"\n")
+  # bot1 answer to what is your name
+  print('BOT 2 PROMPT: ', bot2_prompt ,"\n")
+  bot2_response = generate(bot2_prompt, 'bot2')
+  print('BOT 2 RESPONSE: ', bot2_response ,"\n")
+  conversation_history.append(f"Bot2: {bot2_response}")
+  print('BOT 2 CONVO HISTORY: ', conversation_history ,"\n")
 
 # for seq in sequences:
 #     conversation_history=[initial_prompt]
