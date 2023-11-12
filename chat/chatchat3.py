@@ -69,7 +69,10 @@ def generate(
 
 
 if __name__ == "__main__":
-    chat_history = []
+    # Initialize chat history with the bot's persona
+    initial_bot_message = "Hello! I am Rohan, a grad student at Stanford studying Material Science. I like cocoa almond spread."
+    chat_history = [("Bot Persona", initial_bot_message)]
+
     while True:
         user_input = input("You: ")
         if user_input.lower() in ["exit", "quit"]:
@@ -78,10 +81,11 @@ if __name__ == "__main__":
         # Check for the 'show history' command
         if user_input.lower() == "show history":
             print("----- Conversation History -----")
-            for i, (user_msg, bot_msg) in enumerate(chat_history):
-                print(f"User: {user_msg}\nBot: {bot_msg}\n")
+            for i, (sender, msg) in enumerate(chat_history):
+                print(f"{sender}: {msg}\n")
             continue
 
         response = generate(user_input, chat_history, system_prompt="", max_new_tokens=1024)
         print("Bot:", response)
-        chat_history.append((user_input, response))
+        chat_history.append(("You", user_input))
+        chat_history.append(("Bot", response))
