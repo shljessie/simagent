@@ -15,6 +15,7 @@ if torch.cuda.is_available():
     tokenizer = AutoTokenizer.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)
     tokenizer.use_default_system_prompt = False
 
+#generate the chat messages
 def generate(
     message: str,
     chat_history: List[Tuple[str, str]],
@@ -52,9 +53,12 @@ def generate(
     # Decode only the last part of the output
     decoded_output = tokenizer.decode(output[0], skip_special_tokens=True)
     last_response = decoded_output.split(conversation[-1]["content"])[-1].strip()
-    return last_response
+    # Remove [/INST] tokens
+    cleaned_response = last_response.replace("[/INST]", "").strip()
 
-# Example usage
+    return cleaned_response
+
+
 if __name__ == "__main__":
     chat_history = []
     while True:
