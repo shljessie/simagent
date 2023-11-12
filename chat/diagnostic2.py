@@ -45,11 +45,12 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
     # get hidden state of response to diagnostic output
     hiddens_diag_response = outputs.hidden_states[-1][:, -1+(-1*bot1_diag_response.shape[-1]):-1]
     print("hiddens_diag_response zie: ", hiddens_diag_response.size(), "\n")
-    
+
     # calculate loss
     logits  = model.lm_head(hiddens_diag_response) #compare model output against actual tokens
+    logits = logits[:, -ground_truth_answers.size(1):, :].contiguous()
     loss_fct = CrossEntropyLoss(reduction="mean")
-    loss = loss_fct(logits.squeeze(), ground_truth_answers.squeeze()) # get the logits probabilities bot1_diag_response and ground_truth answers
+    loss = loss_fct(logits.view(-1, logits.size(-1)), ground_truth_answers.view(-1)) # get the logits probabilities bot1_diag_response and ground_truth answers
 
     # Q: should we append the ground truth answers too?
     return loss.item()
