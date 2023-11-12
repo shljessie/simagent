@@ -147,11 +147,10 @@ if __name__ == "__main__":
         print("Bot1:", bot1_response)
         print("\n--------------------------------------------------\n")
         for i in range(len(predefined_questions)):
-          print(predefined_questions[0])
-          print(predefined_questions[1])
           print("Diagnostic Question :", predefined_questions[i] , "\n")
           print("Diagnostic Answer :", true_answers[i] , "\n")
           bot1_diag_response = generate(predefined_questions[i], chat_history, system_prompt="", max_new_tokens=1024 )     
+          print("Bot1 Response: ",bot1_diag_response)
         print("\n--------------------------------------------------\n")
         
         # Bot2 generates a response to Bot1's last message
