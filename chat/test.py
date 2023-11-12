@@ -57,7 +57,7 @@ def generate(prompt ,bot):
         top_k=10,
         num_return_sequences=1,
         eos_token_id=tokenizer.eos_token_id,
-        max_length=1000,
+        max_length=200,
         )
       # parsing part of bot response, removing the prompt returned
       for seq in sequences:
@@ -73,7 +73,7 @@ def generate(prompt ,bot):
       top_k=10,
       num_return_sequences=1,
       eos_token_id=tokenizer.eos_token_id,
-      max_length=500,
+      max_length=200,
       )
 
     print('Model Output: ',sequences, "\n")
@@ -111,7 +111,7 @@ print('BOT 2 PROMPT: ', bot2_prompt ,"\n")
 bot2_response = generate(bot2_prompt, 'bot2')
 print('BOT 2 RESPONSE: ', bot2_response ,"\n")
 conversation_history.append(f"Bot2: {bot2_response}")
-print('BOT 2 CONVO HISTORY: ', bot2_response ,"\n")
+print('BOT 2 CONVO HISTORY: ', conversation_history ,"\n")
 
 # for seq in sequences:
 #     conversation_history=[initial_prompt]
