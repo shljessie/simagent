@@ -161,7 +161,7 @@ if __name__ == "__main__":
           loss = calculate_loss(model, tokenizer, flattened_history, bot1_diag_response, true_answers[i] )
           print("Loss: ", loss)
           csv_data.append({
-                'Round': _ + 1 ,
+                'Conversation History': chat_history,
                 'Diagnostic Question': predefined_questions[i],
                 'Bot1 Response': bot1_diag_response,
                 'Ground Truth Answer': true_answers[i],
@@ -192,7 +192,7 @@ if __name__ == "__main__":
     except IOError:
         print("I/O error while writing to CSV")
 
-        
+
     # Print the chat history
     print("\n----- Conversation History -----")
     for sender, msg in chat_history:
