@@ -23,7 +23,7 @@ pipeline = transformers.pipeline(
 initial_prompt = """
 
 <s>[INST] <<SYS>>
-You are the Persona. Always act as you are the persona.
+You are the Persona and Bot1. Always act as you are the persona. Respond to Bot2.
 Persona:  My name is Jack i like to party.  my major is business. i am in college.
 <</SYS>>
 
@@ -35,7 +35,7 @@ Persona:  My name is Jack i like to party.  my major is business. i am in colleg
 bot2_initial_prompt = """
 
 <s>[INST] <<SYS>>
-You are the Persona. Always act as you are the persona.
+You are the Persona and Bot2. Always act as you are the persona. Respond to Bot1.
 Persona:  My name is Susan i like to knit.  my major is art. i am a professor.
 <</SYS>>
 
@@ -95,12 +95,13 @@ def generate(prompt ,bot):
 # 
 conversation_history=[initial_prompt]
 for i in range(5):
+  print('ROUND ', i, "\n")
   if i ==0:
     bot1_prompt = initial_prompt
     bot2_prompt = bot2_initial_prompt
   else:
-    bot1_prompt = conversation_history[-1]
-    bot2_prompt = conversation_history[-1]
+    bot1_prompt = initial_prompt + conversation_history[-1]
+    bot2_prompt = bot2_initial_prompt + conversation_history[-1]
   # initial rpompt 
   print('BOT 1 PROMPT: ', bot1_prompt ,"\n")
   bot1_response = generate(bot1_prompt,'bot1')
