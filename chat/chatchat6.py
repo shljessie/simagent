@@ -144,15 +144,17 @@ if __name__ == "__main__":
 
         bot1_response = generate(last_response, chat_history, system_prompt="", max_new_tokens=1024)
         chat_history.append(("Bot1", bot1_response))
+
         print("Bot1:", bot1_response)
         print("\n--------------------------------------------------\n")
         for i in range(len(predefined_questions)):
           print("Diagnostic Question :", predefined_questions[i] , "\n")
+          print("Chat History:", chat_history, "\n")
           print("Diagnostic Answer :", true_answers[i] , "\n")
           bot1_diag_response = generate(predefined_questions[i], chat_history, system_prompt="", max_new_tokens=1024 )     
           print("Bot1 Response: ",bot1_diag_response,"\n")
           #calculate loss
-          # loss = calculate_loss(model, tokenizer, chat_history, bot1_diag_response, a )
+          loss = calculate_loss(model, tokenizer, chat_history, bot1_diag_response, true_answers[i] )
 
         print("\n--------------------------------------------------\n")
         
