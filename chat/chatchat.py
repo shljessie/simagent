@@ -1,19 +1,16 @@
 import os
 from threading import Thread
 from typing import Iterator
-import dotenv
+
 import gradio as gr
 import spaces
 import torch
-from transformers import (
-    AutoConfig, 
-    AutoModelForCausalLM, 
-    AutoTokenizer, 
-    BitsAndBytesConfig, 
-    TextIteratorStreamer
-)
+from transformers import AutoModelForCausalLM, AutoTokenizer, TextIteratorStreamer
 
-#for default
+MAX_MAX_NEW_TOKENS = 2048
+DEFAULT_MAX_NEW_TOKENS = 1024
+MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "4096"))
+
 DESCRIPTION = """\
 # Llama-2 7B Chat
 This Space demonstrates model [Llama-2-7b-chat](https://huggingface.co/meta-llama/Llama-2-7b-chat) by Meta, a Llama 2 model with 7B parameters fine-tuned for chat instructions. Feel free to play with it, or duplicate to run generations without a queue! If you want to run your own service, you can also [deploy the model on Inference Endpoints](https://huggingface.co/inference-endpoints).
@@ -28,26 +25,21 @@ As a derivate work of [Llama-2-7b-chat](https://huggingface.co/meta-llama/Llama-
 this demo is governed by the original [license](https://huggingface.co/spaces/huggingface-projects/llama-2-7b-chat/blob/main/LICENSE.txt) and [acceptable use policy](https://huggingface.co/spaces/huggingface-projects/llama-2-7b-chat/blob/main/USE_POLICY.md).
 """
 
-MAX_MAX_NEW_TOKENS = 2048
-DEFAULT_MAX_NEW_TOKENS = 1024
-MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "4096"))
+if not torch.cuda.is_available():
+    DESCRIPTION += "\n<p>Running on CPU 🥶 This demo does not work on CPU.</p>"
 
-# Model Configurations
-dotenv.load_dotenv('../.env')
-HF_ACCESS_TOKEN = os.getenv('HF_ACCESS_TOKEN')
-model_id = '../Llama-2-7b-chat-hf'
 
-#load model
-model = AutoModelForCausalLM.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN, torch_dtype=torch.float16, device_map="auto")
-tokenizer = AutoTokenizer.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)
+if torch.cuda.is_available():
+    model_id = "meta-llama/Llama-2-7b-chat-hf"
+    model = AutoModelForCausalLM.from_pretrained(model_id, torch_dtype=torch.float16, device_map="auto")
+    tokenizer = AutoTokenizer.from_pretrained(model_id)
+    tokenizer.use_default_system_prompt = False
 
-print(model)
-print(tokenizer)
 
 @spaces.GPU
 def generate(
     message: str,
-    chat_history, 
+    chat_history: list[tuple[str, str]],
     system_prompt: str,
     max_new_tokens: int = 1024,
     temperature: float = 0.6,
@@ -62,8 +54,6 @@ def generate(
         conversation.extend([{"role": "user", "content": user}, {"role": "assistant", "content": assistant}])
     conversation.append({"role": "user", "content": message})
 
-    print('CONVP',conversation)
-
     input_ids = tokenizer.apply_chat_template(conversation, return_tensors="pt")
     if input_ids.shape[1] > MAX_INPUT_TOKEN_LENGTH:
         input_ids = input_ids[:, -MAX_INPUT_TOKEN_LENGTH:]
@@ -71,7 +61,6 @@ def generate(
     input_ids = input_ids.to(model.device)
 
     streamer = TextIteratorStreamer(tokenizer, timeout=10.0, skip_prompt=True, skip_special_tokens=True)
-    print('\nloaded stremaer\n' )
     generate_kwargs = dict(
         {"input_ids": input_ids},
         streamer=streamer,
@@ -83,19 +72,15 @@ def generate(
         num_beams=1,
         repetition_penalty=repetition_penalty,
     )
-    # t = Thread(target=model.generate, kwargs=generate_kwargs)
-    outputs = model.generate(**generate_kwargs)
-    print('OUTPUT CHECK: ',outputs)
-    # print('result of t', t)
-    # t.start()
+    t = Thread(target=model.generate, kwargs=generate_kwargs)
+    t.start()
 
     outputs = []
     for text in streamer:
-        print('TEXZT :', text)
         outputs.append(text)
         yield "".join(outputs)
 
-# setting the prompt of the bot
+
 chat_interface = gr.ChatInterface(
     fn=generate,
     additional_inputs=[
