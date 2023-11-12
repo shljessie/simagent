@@ -131,7 +131,14 @@ def generate_bot2(
 
     # Decode only the last part of the output
     decoded_output = tokenizer.decode(output[0], skip_special_tokens=True)
-    last_response = decoded_output.split(conversation[-1]["content"])[-1].strip()
+    # last_response = decoded_output.split(conversation[-1]["content"])[-1].strip()
+    
+    if conversation[-1]["content"]:
+        # Only split if the content is not empty
+        last_response = decoded_output.split(conversation[-1]["content"])[-1].strip()
+    else:
+        # Handle the case where there is no content to split by
+        last_response = decoded_output.strip()
     # Remove [/INST] tokens
     cleaned_response = last_response.replace("[/INST]", "").strip()
 
