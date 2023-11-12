@@ -7,11 +7,7 @@ from typing import List, Tuple
 
 predefined_questions = ["Hello! What is your name?", "What do you like?", "What is your major?"]
 
-true_answers = [
-    "Hey there! My name is Rohan",
-    "I like coco almond spread",
-    "I'm a grad student at Stanford studying Material Science."
-  ],
+true_answers = ["Hey there! My name is Rohan","I like coco almond spread","I'm a grad student at Stanford studying Material Science."]
 
 MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "4096"))
 # Define the bot's persona
