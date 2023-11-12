@@ -30,16 +30,17 @@ if not torch.cuda.is_available():
 
 
 if torch.cuda.is_available():
-    model_id = "meta-llama/Llama-2-7b-chat-hf"
-    model = AutoModelForCausalLM.from_pretrained(model_id, torch_dtype=torch.float16, device_map="auto")
-    tokenizer = AutoTokenizer.from_pretrained(model_id)
+    model_id = "../Llama-2-7b-chat-hf"
+    HF_ACCESS_TOKEN = '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'
+    model = AutoModelForCausalLM.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN, torch_dtype=torch.float16, device_map="auto")
+    tokenizer = AutoTokenizer.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)
     tokenizer.use_default_system_prompt = False
 
 
 @spaces.GPU
 def generate(
     message: str,
-    chat_history: list[tuple[str, str]],
+    chat_history,
     system_prompt: str,
     max_new_tokens: int = 1024,
     temperature: float = 0.6,
