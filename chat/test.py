@@ -57,7 +57,7 @@ def generate(prompt ,bot):
         top_k=10,
         num_return_sequences=1,
         eos_token_id=tokenizer.eos_token_id,
-        max_length=50,
+        max_length=500,
         )
       # parsing part of bot response, removing the prompt returned
       for seq in sequences:
@@ -73,7 +73,7 @@ def generate(prompt ,bot):
       top_k=10,
       num_return_sequences=1,
       eos_token_id=tokenizer.eos_token_id,
-      max_length=50,
+      max_length=500,
       )
 
     print('Model Output: ',sequences, "\n")
