@@ -57,13 +57,13 @@ def generate(prompt ,bot):
         top_k=10,
         num_return_sequences=1,
         eos_token_id=tokenizer.eos_token_id,
-        max_length=200,
+        max_length=1024,
         )
       # parsing part of bot response, removing the prompt returned
       for seq in sequences_2:
         print( 'checking resposne bot2, ', seq['generated_text'], '\n')
         response = seq['generated_text']
-        result = response[1 + len(bot2_prompt):]
+        result = response[1 + len(bot2_prompt):100]
 
   else:
     #get model response/bot response
@@ -73,7 +73,7 @@ def generate(prompt ,bot):
       top_k=10,
       num_return_sequences=1,
       eos_token_id=tokenizer.eos_token_id,
-      max_length=200,
+      max_length=1024,
       )
 
     print('Model Output: ',sequences, "\n")
@@ -84,7 +84,7 @@ def generate(prompt ,bot):
       marker = "[/INST]\n\n"
       index = response.find(marker)
       if index != -1:
-        result = response[index + len(marker):]
+        result = response[index + len(marker):100]
 
     print('Conversation Output: ',result, "\n")
 
