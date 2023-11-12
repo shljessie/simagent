@@ -57,7 +57,7 @@ def generate(conversational_history, prompt):
 
   print('Model Output: ',sequences)
   for seq in sequences:
-    conversation_history.append('Bot1: ',seq['generated_text'])
+    conversation_history.append(f"Bot1:  {seq['generated_text']}")
   print('Conversation Output: ',conversation_history)
 
   return sequences
