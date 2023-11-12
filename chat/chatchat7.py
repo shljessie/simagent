@@ -154,10 +154,10 @@ if __name__ == "__main__":
           print("Diagnostic Question :", predefined_questions[i] , "\n")
           print("Chat History:", chat_history, "\n")
           print("Diagnostic Answer :", true_answers[i] , "\n")
-          bot1_diag_response = generate(predefined_questions[i], chat_history, system_prompt="", max_new_tokens=50 )     
+          flattened_history = ' '.join([f"{speaker}: {text}" for speaker, text in chat_history])
+          bot1_diag_response = generate(predefined_questions[i], flattened_history, system_prompt="", max_new_tokens=50 )     
           print("Bot1 Response: ",bot1_diag_response,"\n")
           #calculate loss
-          flattened_history = ' '.join([f"{speaker}: {text}" for speaker, text in chat_history])
           loss = calculate_loss(model, tokenizer, flattened_history, bot1_diag_response, true_answers[i] )
           print("Loss: ", loss)
           csv_data.append({
