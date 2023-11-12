@@ -2,11 +2,13 @@ from transformers import (
     AutoModelForCausalLM, 
     AutoTokenizer, 
 )
+import os
 import transformers
 import torch
 
 model_id = "../Llama-2-7b-chat-hf"
-HF_ACCESS_TOKEN = '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'
+dotenv.load_dotenv('../.env')
+HF_ACCESS_TOKEN = os.getenv('HF_ACCESS_TOKEN')
 
 model = AutoModelForCausalLM.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN, torch_dtype=torch.float16, device_map="auto")
 tokenizer = AutoTokenizer.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)

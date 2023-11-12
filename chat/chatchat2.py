@@ -133,10 +133,63 @@ chat_interface = gr.ChatInterface(
     ],
 )
 
+
+chat_interface_two = gr.ChatInterface(
+    fn=generate,
+    additional_inputs=[
+        gr.Textbox(label="System prompt", lines=6),
+        gr.Slider(
+            label="Max new tokens",
+            minimum=1,
+            maximum=MAX_MAX_NEW_TOKENS,
+            step=1,
+            value=DEFAULT_MAX_NEW_TOKENS,
+        ),
+        gr.Slider(
+            label="Temperature",
+            minimum=0.1,
+            maximum=4.0,
+            step=0.1,
+            value=0.6,
+        ),
+        gr.Slider(
+            label="Top-p (nucleus sampling)",
+            minimum=0.05,
+            maximum=1.0,
+            step=0.05,
+            value=0.9,
+        ),
+        gr.Slider(
+            label="Top-k",
+            minimum=1,
+            maximum=1000,
+            step=1,
+            value=50,
+        ),
+        gr.Slider(
+            label="Repetition penalty",
+            minimum=1.0,
+            maximum=2.0,
+            step=0.05,
+            value=1.2,
+        ),
+    ],
+    stop_btn=None,
+    examples=[
+        ["Hello there! How are you doing?"],
+        ["Can you explain briefly to me what is the Python programming language?"],
+        ["Explain the plot of Cinderella in a sentence."],
+        ["How many hours does it take a man to eat a Helicopter?"],
+        ["Write a 100-word article on 'Benefits of Open-Source in AI research'"],
+    ],
+)
+
+
 with gr.Blocks(css="style.css") as demo:
     gr.Markdown(DESCRIPTION)
     gr.DuplicateButton(value="Duplicate Space for private use", elem_id="duplicate-button")
     chat_interface.render()
+    chat_interface_two.render()
     gr.Markdown(LICENSE)
 
 if __name__ == "__main__":
