@@ -155,6 +155,7 @@ if __name__ == "__main__":
           print("Bot1 Response: ",bot1_diag_response,"\n")
           #calculate loss
           loss = calculate_loss(model, tokenizer, chat_history, bot1_diag_response, true_answers[i] )
+          print("Loss: ", loss)
 
         print("\n--------------------------------------------------\n")
         
