@@ -1,20 +1,3 @@
-import os
-import dotenv
-import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
-from typing import List, Tuple
-
-MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "4096"))
-
-# Load environment variables and model
-if torch.cuda.is_available():
-    model_id = "../Llama-2-7b-chat-hf"
-    dotenv.load_dotenv('../.env')
-    HF_ACCESS_TOKEN = os.getenv('HF_ACCESS_TOKEN')
-    model = AutoModelForCausalLM.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN, torch_dtype=torch.float16, device_map="auto")
-    tokenizer = AutoTokenizer.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)
-    tokenizer.use_default_system_prompt = False
-
 def generate(
     message: str,
     chat_history: List[Tuple[str, str]],
@@ -49,7 +32,10 @@ def generate(
         repetition_penalty=repetition_penalty,
     )
 
-    return tokenizer.decode(output[0], skip_special_tokens=True)
+    # Decode only the last part of the output
+    decoded_output = tokenizer.decode(output[0], skip_special_tokens=True)
+    last_response = decoded_output.split(conversation[-1]["content"])[-1].strip()
+    return last_response
 
 # Example usage
 if __name__ == "__main__":
