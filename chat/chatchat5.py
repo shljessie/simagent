@@ -145,7 +145,7 @@ if __name__ == "__main__":
     # Set the initial response for the first round
     last_response = initial_bot2_message  # Starting with Bot2's persona message
 
-    rounds = 5  # Number of conversational rounds
+    rounds = 2  # Number of conversational rounds
     for _ in range(rounds):
         # Bot1 generates a response to Bot2's last message
         bot1_response = generate(last_response, chat_history, system_prompt="", max_new_tokens=200)
