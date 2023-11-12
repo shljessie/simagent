@@ -148,6 +148,7 @@ if __name__ == "__main__":
         print("Bot1:", bot1_response)
         print("\n--------------------------------------------------\n")
         for i in range(len(predefined_questions)):
+          print('\n\n\nEval', i)
           print("Diagnostic Question :", predefined_questions[i] , "\n")
           print("Chat History:", chat_history, "\n")
           print("Diagnostic Answer :", true_answers[i] , "\n")
