@@ -50,6 +50,7 @@ def generate(prompt ,bot):
 
   """
   if bot=='bot2':
+      print('here')
       sequences = pipeline(
         prompt,
         do_sample=True,
@@ -74,7 +75,7 @@ def generate(prompt ,bot):
       max_length=250,
       )
 
-    print('Model Output: ',sequences)
+    print('Model Output: ',sequences, "\n")
 
     # parsing part of bot response, removing the prompt returned
     for seq in sequences:
@@ -84,7 +85,7 @@ def generate(prompt ,bot):
       if index != -1:
         result = response[index + len(marker):]
 
-    print('Conversation Output: ',result)
+    print('Conversation Output: ',result, "\n")
 
   #return the removed prompt, true bot response
   return result
