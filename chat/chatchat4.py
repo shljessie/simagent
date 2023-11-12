@@ -122,26 +122,34 @@ def generate_bot2(
     return cleaned_response
 
 
-
 if __name__ == "__main__":
-    # Initialize chat history with the bot's persona
+    # Initialize chat history with the bot's personas
     initial_bot1_message = "I am Rohan, a grad student at Stanford studying Material Science. I like cocoa almond spread."
-    initial_bot2_message = "I am Seonghee a grad student at Stanford studying Computer Science. I like cilantro."
+    initial_bot2_message = "I am Seonghee, a grad student at Stanford studying Computer Science. I like cilantro."
     chat_history = [("Bot1 Persona", initial_bot1_message), ("Bot2 Persona", initial_bot2_message)]
+
+    # Set the initial response for the first round
+    last_response = initial_bot2_message  # Starting with Bot2's persona message
 
     rounds = 5  # Number of conversational rounds
     for _ in range(rounds):
-        # Bot1 generates a response
-        bot1_response = generate(initial_bot1_message, chat_history, system_prompt="", max_new_tokens=1024)
+        # Bot1 generates a response to Bot2's last message
+        bot1_response = generate(last_response, chat_history, system_prompt="", max_new_tokens=1024)
         chat_history.append(("Bot1", bot1_response))
         print("Bot1:", bot1_response)
+        print("\n--------------------------------------------------\n")
 
-        # Bot2 generates a response
+        # Bot2 generates a response to Bot1's last message
         bot2_response = generate_bot2(bot1_response, chat_history, system_prompt="", max_new_tokens=1024)
         chat_history.append(("Bot2", bot2_response))
         print("Bot2:", bot2_response)
+        print("\n--------------------------------------------------\n")
+
+        # Update the last response
+        last_response = bot2_response
 
     # Print the chat history
     print("\n----- Conversation History -----")
     for sender, msg in chat_history:
-        print(f"{sender}: {msg}")
+        print(f"{sender}: {msg}\n")
+        print("--------------------------------------------------")
