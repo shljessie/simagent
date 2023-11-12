@@ -148,7 +148,7 @@ if __name__ == "__main__":
     rounds = 2  # Number of conversational rounds
     for _ in range(rounds):
         # Bot1 generates a response to Bot2's last message
-        bot1_response = generate(last_response, chat_history, system_prompt="", max_new_tokens=200)
+        bot1_response = generate(last_response, chat_history, system_prompt="", max_new_tokens=1024)
         chat_history.append(("Bot1", bot1_response))
         
         print("Bot1:", bot1_response)
@@ -156,7 +156,7 @@ if __name__ == "__main__":
         for q, a in zip(predefined_questions, true_answers):
           print("Diagnostic Question :", q , "\n")
           #get model response to diagnostic question
-          bot1_diag_response = generate(q, chat_history, system_prompt="", max_new_tokens=200 )     #TODO: is this the right way?
+          bot1_diag_response = generate(q, chat_history, system_prompt="", max_new_tokens=1024 )     #TODO: is this the right way?
           # calculate loss
           print("chat_history format: ", chat_history, "\n")
           loss = calculate_loss(model, tokenizer, chat_history, bot1_diag_response, a )    #TODO is this the right way, chat history maybe in wrong format
@@ -164,7 +164,7 @@ if __name__ == "__main__":
         print("\n--------------------------------------------------\n")
 
         # Bot2 generates a response to Bot1's last message
-        bot2_response = generate_bot2(bot1_response, chat_history, system_prompt="", max_new_tokens=200)
+        bot2_response = generate_bot2(bot1_response, chat_history, system_prompt="", max_new_tokens=1024)
         chat_history.append(("Bot2", bot2_response))
         print("Bot2:", bot2_response)
         print("\n--------------------------------------------------\n")
