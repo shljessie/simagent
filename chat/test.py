@@ -61,7 +61,7 @@ def generate(prompt ,bot):
         )
       # parsing part of bot response, removing the prompt returned
       for seq in sequences:
-        print( 'checking resposne bot2, ' seq['generated_text'], '\n')
+        print( 'checking resposne bot2, ', seq['generated_text'], '\n')
         response = seq['generated_text']
         result = response[1 + len(bot2_prompt):]
 
