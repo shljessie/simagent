@@ -147,14 +147,17 @@ if __name__ == "__main__":
     rounds = 5  # Number of conversational rounds
     for _ in range(rounds):
         # Bot1 generates a response to Bot2's last message
+        print('last_response: ', last_response)
+        print('chat_history: ,', chat_history)
+
         bot1_response = generate(last_response, chat_history, system_prompt="", max_new_tokens=1024)
         chat_history.append(("Bot1", bot1_response))
         print("Bot1:", bot1_response)
         print("\n--------------------------------------------------\n")
-        for q, a in zip(predefined_questions, true_answers):
-          print("Diagnostic Question :", q , "\n")
-          print("Diagnostic Answer :", a , "\n")
-          bot1_diag_response = generate(q, chat_history, system_prompt="", max_new_tokens=1024 )     
+        for i in range(len(predefined_questions)):
+          print("Diagnostic Question :", predefined_questions[i] , "\n")
+          print("Diagnostic Answer :", true_answers[i] , "\n")
+          bot1_diag_response = generate(predefined_questions[i], chat_history, system_prompt="", max_new_tokens=1024 )     
         print("\n--------------------------------------------------\n")
         
         # Bot2 generates a response to Bot1's last message
