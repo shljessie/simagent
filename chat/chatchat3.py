@@ -74,6 +74,14 @@ if __name__ == "__main__":
         user_input = input("You: ")
         if user_input.lower() in ["exit", "quit"]:
             break
+
+        # Check for the 'show history' command
+        if user_input.lower() == "show history":
+            print("----- Conversation History -----")
+            for i, (user_msg, bot_msg) in enumerate(chat_history):
+                print(f"User: {user_msg}\nBot: {bot_msg}\n")
+            continue
+
         response = generate(user_input, chat_history, system_prompt="", max_new_tokens=1024)
         print("Bot:", response)
         chat_history.append((user_input, response))
