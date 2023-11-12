@@ -63,7 +63,7 @@ def generate(prompt ,bot):
       for seq in sequences_2:
         print( 'checking resposne bot2, ', seq['generated_text'], '\n')
         response = seq['generated_text']
-        result = response[1 + len(bot2_prompt):1 + len(bot2_prompt)+100]
+        result = response[1 + len(prompt):1 + len(prompt)+100]
 
   else:
     #get model response/bot response
@@ -80,11 +80,7 @@ def generate(prompt ,bot):
 
     # parsing part of bot response, removing the prompt returned
     for seq in sequences:
-      response = seq['generated_text']
-      marker = "[/INST]\n\n"
-      index = response.find(marker)
-      if index != -1:
-        result = response[index + len(marker):index + len(marker)+100]
+      result = response[1+ len(prompt): 1 + len(prompt)+100]
 
     print('Conversation Output: ',result, "\n")
 
