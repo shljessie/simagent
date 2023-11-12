@@ -80,6 +80,7 @@ def generate(prompt ,bot):
 
     # parsing part of bot response, removing the prompt returned
     for seq in sequences:
+      response = seq['generated_text']
       result = response[1+ len(prompt): 1 + len(prompt)+100]
 
     print('Conversation Output: ',result, "\n")
