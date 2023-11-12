@@ -17,8 +17,8 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
     """
 
     # check model inputs
-    print("Calculate Loss \n")
-    print("Conversation History: \n", convo_history )
+    print("------------------------ Calculating Loss ----------------------")
+    print("Conversation History: \n", convo_history, "\n" )
     print("Bot1 Diagnostic Response: \n", bot1_diag_response)
     print("Ground Truth Answers: \n", ground_truth_answers, "\n")
 

@@ -142,7 +142,7 @@ if __name__ == "__main__":
         # print('last_response: ', last_response)
         # print('chat_history: ,', chat_history)
 
-        bot1_response = generate(last_response, chat_history, system_prompt="", max_new_tokens=1024)
+        bot1_response = generate(last_response, chat_history, system_prompt="", max_new_tokens=200)
         chat_history.append(("Bot1", bot1_response))
 
         print("Bot1:", bot1_response)
@@ -151,16 +151,17 @@ if __name__ == "__main__":
           print("Diagnostic Question :", predefined_questions[i] , "\n")
           print("Chat History:", chat_history, "\n")
           print("Diagnostic Answer :", true_answers[i] , "\n")
-          bot1_diag_response = generate(predefined_questions[i], chat_history, system_prompt="", max_new_tokens=1024 )     
+          bot1_diag_response = generate(predefined_questions[i], chat_history, system_prompt="", max_new_tokens=200 )     
           print("Bot1 Response: ",bot1_diag_response,"\n")
           #calculate loss
-          loss = calculate_loss(model, tokenizer, chat_history, bot1_diag_response, true_answers[i] )
+          flattened_history = ' '.join([f"{speaker}: {text}" for speaker, text in chat_history])
+          loss = calculate_loss(model, tokenizer, flattened_history, bot1_diag_response, true_answers[i] )
           print("Loss: ", loss)
 
         print("\n--------------------------------------------------\n")
         
         # Bot2 generates a response to Bot1's last message
-        bot2_response = generate_bot2(bot1_response, chat_history, system_prompt="", max_new_tokens=1024)
+        bot2_response = generate_bot2(bot1_response, chat_history, system_prompt="", max_new_tokens=200)
         chat_history.append(("Bot2", bot2_response))
         print("Bot2:", bot2_response)
         print("\n--------------------------------------------------\n")
