@@ -136,7 +136,7 @@ if __name__ == "__main__":
     csv_data = [] 
 
     # Set the initial response for the first round
-    last_response = initial_bot1_message  # Starting with Bot2's persona message
+    last_response = "Hello!"  # Starting with Bot2's persona message
 
     rounds = 50  # Number of conversational rounds
     for _ in range(rounds):
