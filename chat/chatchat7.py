@@ -182,7 +182,7 @@ if __name__ == "__main__":
 
     # Write to CSV - Place this block here
     csv_file = "conversation_data.csv"
-    csv_columns = ['Round', 'Diagnostic Question', 'Bot1 Response', 'Ground Truth Answer', 'Loss']
+    csv_columns = ['Conversation History', 'Diagnostic Question', 'Bot1 Response', 'Ground Truth Answer', 'Loss']
     try:
         with open(csv_file, 'w', newline='') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
