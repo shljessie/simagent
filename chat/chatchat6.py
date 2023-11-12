@@ -3,7 +3,7 @@ import dotenv
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from typing import List, Tuple
-
+from diagnostic import calculate_loss
 
 predefined_questions = ["Hello! What is your name?", "What do you like?", "What is your major?"]
 
@@ -139,8 +139,8 @@ if __name__ == "__main__":
     rounds = 5  # Number of conversational rounds
     for _ in range(rounds):
         # Bot1 generates a response to Bot2's last message
-        print('last_response: ', last_response)
-        print('chat_history: ,', chat_history)
+        # print('last_response: ', last_response)
+        # print('chat_history: ,', chat_history)
 
         bot1_response = generate(last_response, chat_history, system_prompt="", max_new_tokens=1024)
         chat_history.append(("Bot1", bot1_response))
@@ -150,7 +150,10 @@ if __name__ == "__main__":
           print("Diagnostic Question :", predefined_questions[i] , "\n")
           print("Diagnostic Answer :", true_answers[i] , "\n")
           bot1_diag_response = generate(predefined_questions[i], chat_history, system_prompt="", max_new_tokens=1024 )     
-          print("Bot1 Response: ",bot1_diag_response)
+          print("Bot1 Response: ",bot1_diag_response,"\n")
+          #calculate loss
+          # loss = calculate_loss(model, tokenizer, chat_history, bot1_diag_response, a )
+
         print("\n--------------------------------------------------\n")
         
         # Bot2 generates a response to Bot1's last message
