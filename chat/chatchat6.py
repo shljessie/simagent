@@ -5,11 +5,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 from typing import List, Tuple
 
 
-predefined_questions = [
-    "Hello! What is your name?",
-    "What do you like?",
-    "What is your major?",
-  ],
+predefined_questions = ["Hello! What is your name?", "What do you like?", "What is your major?"]
 
 true_answers = [
     "Hey there! My name is Rohan",
