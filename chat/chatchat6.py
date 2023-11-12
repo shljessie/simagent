@@ -155,6 +155,7 @@ if __name__ == "__main__":
         print("Bot1:", bot1_response)
         print("\n--------------------------------------------------\n")
         for i in range(len(predefined_questions)):
+          print(i)
           print("Diagnostic Question :", predefined_questions[i] , "\n")
           print("Diagnostic Answer :", true_answers[i] , "\n")
           bot1_diag_response = generate(predefined_questions[i], chat_history, system_prompt="", max_new_tokens=1024 )     
