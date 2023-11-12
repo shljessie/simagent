@@ -10,7 +10,7 @@ MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "4096"))
 # Define the bot's persona
 BOT_PERSONA = """
 [SYSTEM]
-I am Rohan a grad student at Stanford studying Material Science. I like cocoalmond spread.
+I am Rohan a grad student at Stanford studying Material Science. I like coco almond spread.
 [/SYSTEM]
 """
 
@@ -21,17 +21,17 @@ I am Seonghee a grad student at Stanford studying Computer Science. I like cilan
 [/SYSTEM]
 """
 
-print("Current Working Directory:", os.getcwd())
-# import data
-with open('./chat/persona_template.json', 'r') as f:
-    template_data = json.load(f)
-template = template_data['template']
-template_two = template_data['template_two']
+predefined_questions = [
+    "Hello! What is your name?",
+    "What do you like?",
+    "What is your major?",
+  ],
 
-with open('./chat/questions.json', 'r') as f:
-    qa_data = json.load(f)
-predefined_questions = qa_data['predefined_questions']
-true_answers = qa_data['true_answers']
+true_answers = [
+    "Hey there! My name is Rohan",
+    "I like coco almond spread",
+    "I'm a grad student at Stanford studying Material Science."
+  ],
 
 # Load environment variables and model
 if torch.cuda.is_available():
