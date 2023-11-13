@@ -3,7 +3,7 @@ import dotenv
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from typing import List, Tuple
-from diagnostic import calculate_loss
+from diagnostic2 import calculate_loss
 import csv
 
 predefined_questions = ["Hello! What is your name?", "What do you like?", "What is your major?"]
@@ -39,7 +39,7 @@ def generate(
     message: str,
     chat_history: List[Tuple[str, str]],
     system_prompt: str,
-    max_new_tokens: int = 50,
+    max_new_tokens: int = 200,
     temperature: float = 0.6,
     top_p: float = 0.9,
     top_k: int = 50,
@@ -74,15 +74,7 @@ def generate(
 
     # Decode only the last part of the output
     decoded_output = tokenizer.decode(output[0], skip_special_tokens=True)
-    # last_response = decoded_output.split(conversation[-1]["content"])[-1].strip()
-        # last_response = decoded_output.split(conversation[-1]["content"])[-1].strip()
-    
-    if conversation[-1]["content"]:
-        # Only split if the content is not empty
-        last_response = decoded_output.split(conversation[-1]["content"])[-1].strip()
-    else:
-        # Handle the case where there is no content to split by
-        last_response = decoded_output.strip()
+    last_response = decoded_output.split(conversation[-1]["content"])[-1].strip()
     # Remove [/INST] tokens
     cleaned_response = last_response.replace("[/INST]", "").strip()
 
@@ -94,7 +86,7 @@ def generate_bot2(
     message: str,
     chat_history: List[Tuple[str, str]],
     system_prompt: str,
-    max_new_tokens: int = 50,
+    max_new_tokens: int = 200,
     temperature: float = 0.6,
     top_p: float = 0.9,
     top_k: int = 50,
@@ -129,14 +121,7 @@ def generate_bot2(
 
     # Decode only the last part of the output
     decoded_output = tokenizer.decode(output[0], skip_special_tokens=True)
-        # last_response = decoded_output.split(conversation[-1]["content"])[-1].strip()
-    
-    if conversation[-1]["content"]:
-        # Only split if the content is not empty
-        last_response = decoded_output.split(conversation[-1]["content"])[-1].strip()
-    else:
-        # Handle the case where there is no content to split by
-        last_response = decoded_output.strip()
+    last_response = decoded_output.split(conversation[-1]["content"])[-1].strip()
     # Remove [/INST] tokens
     cleaned_response = last_response.replace("[/INST]", "").strip()
 
@@ -151,15 +136,15 @@ if __name__ == "__main__":
     csv_data = [] 
 
     # Set the initial response for the first round
-    last_response = "Hello!"  # Starting with Bot2's persona message
+    last_response = initial_bot2_message  # Starting with Bot2's persona message
 
-    rounds = 50  # Number of conversational rounds
+    rounds = 10  # Number of conversational rounds
     for _ in range(rounds):
         # Bot1 generates a response to Bot2's last message
         # print('last_response: ', last_response)
         # print('chat_history: ,', chat_history)
 
-        bot1_response = generate(last_response, chat_history, system_prompt="", max_new_tokens=50)
+        bot1_response = generate(last_response, chat_history, system_prompt="", max_new_tokens=200)
         chat_history.append(("Bot1", bot1_response))
 
         print("Bot1:", bot1_response)
@@ -169,8 +154,7 @@ if __name__ == "__main__":
           print("Diagnostic Question :", predefined_questions[i] , "\n")
           print("Chat History:", chat_history, "\n")
           print("Diagnostic Answer :", true_answers[i] , "\n")
-          
-          bot1_diag_response = generate(predefined_questions[i], chat_history, system_prompt="", max_new_tokens=50 )     
+          bot1_diag_response = generate(predefined_questions[i], chat_history, system_prompt="", max_new_tokens=200 )     
           print("Bot1 Response: ",bot1_diag_response,"\n")
           #calculate loss
           flattened_history = ' '.join([f"{speaker}: {text}" for speaker, text in chat_history])
@@ -187,7 +171,7 @@ if __name__ == "__main__":
         print("\n--------------------------------------------------\n")
         
         # Bot2 generates a response to Bot1's last message
-        bot2_response = generate_bot2(bot1_response, chat_history, system_prompt="", max_new_tokens=50)
+        bot2_response = generate_bot2(bot1_response, chat_history, system_prompt="", max_new_tokens=200)
         chat_history.append(("Bot2", bot2_response))
         print("Bot2:", bot2_response)
         print("\n--------------------------------------------------\n")

@@ -72,11 +72,10 @@ def calculate_loss(model: model, tokenizer:tokenizer, convo_history, bot1_diag_r
     return loss.item()
 
 # for testing
-history = "Prompt: Your name is Jack and you are from California. You are an introvert that likes to meditate. "
-questions = "What is your name?"
-answers = "Jack"
-bot1_output = "Jack"
-
-
 if __name__ == "__main__":
-  calculate_loss(model, tokenizer, history+questions, answers, bot1_output )
+    history = "Prompt: Your name is Jack and you are from California. You are an introvert that likes to meditate. "
+    questions = "What is your name?"
+    answers = "Jack"
+    bot1_output = "Jack"
+
+    calculate_loss(model, tokenizer, history+questions, answers, bot1_output )
