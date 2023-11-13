@@ -11,6 +11,7 @@ predefined_questions = ["Hello! What is your name?", "What do you like?", "What 
 true_answers = ["Hey there! My name is Rohan","I like coco almond spread","I'm a grad student at Stanford studying Material Science."]
 
 MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "4096"))
+
 # Define the bot's persona
 BOT_PERSONA = """
 [SYSTEM]
@@ -152,9 +153,9 @@ if __name__ == "__main__":
     csv_data = [] 
 
     # Set the initial response for the first round
-    last_response = initial_bot2_message  # Starting with Bot2's persona message
+    last_response = "Hello"# Start with hello
 
-    rounds = 100  # Number of conversational rounds
+    rounds = 70  # Number of conversational rounds
     for _ in range(rounds):
         # Bot1 generates a response to Bot2's last message
         # print('last_response: ', last_response)
