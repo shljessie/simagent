@@ -84,4 +84,4 @@ if __name__ == "__main__":
     answers = "Jack"
     bot1_output = "Jack"
     
-    calculate_loss(model, tokenizer, history+questions, answers, bot1_output )
+    calculate_loss(model, tokenizer, history+questions, answers, bot1_output)
