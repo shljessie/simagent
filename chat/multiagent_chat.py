@@ -4,6 +4,7 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from typing import List, Tuple
 from diagnostic2 import calculate_loss
+import csv
 
 predefined_questions = ["Hello! What is your name?", "What do you like?", "What is your major?"]
 
@@ -132,6 +133,7 @@ if __name__ == "__main__":
     initial_bot1_message = "I am Rohan, a grad student at Stanford studying Material Science. I like cocoa almond spread."
     initial_bot2_message = "I am Seonghee, a grad student at Stanford studying Computer Science. I like cilantro."
     chat_history = [("Bot1 Persona", initial_bot1_message)]
+    csv_data = [] 
 
     # Set the initial response for the first round
     last_response = initial_bot2_message  # Starting with Bot2's persona message
@@ -158,6 +160,13 @@ if __name__ == "__main__":
           flattened_history = ' '.join([f"{speaker}: {text}" for speaker, text in chat_history])
           loss = calculate_loss(model, tokenizer, flattened_history, bot1_diag_response, true_answers[i] )
           print("Loss: ", loss)
+          csv_data.append({
+                'Conversation History': chat_history,
+                'Diagnostic Question': predefined_questions[i],
+                'Bot1 Response': bot1_diag_response,
+                'Ground Truth Answer': true_answers[i],
+                'Loss': loss
+            })
 
         print("\n--------------------------------------------------\n")
         
@@ -169,6 +178,20 @@ if __name__ == "__main__":
 
         # Update the last response
         last_response = bot2_response
+
+
+    # Write to CSV - Place this block here
+    csv_file = "conversation_data.csv"
+    csv_columns = ['Conversation History', 'Diagnostic Question', 'Bot1 Response', 'Ground Truth Answer', 'Loss']
+    try:
+        with open(csv_file, 'w', newline='') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
+            writer.writeheader()
+            for data in csv_data:
+                writer.writerow(data)
+    except IOError:
+        print("I/O error while writing to CSV")
+
 
     # Print the chat history
     print("\n----- Conversation History -----")
