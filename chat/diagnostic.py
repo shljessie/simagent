@@ -79,9 +79,4 @@ bot1_output = "Jack"
 
 
 if __name__ == "__main__":
-    history = "Prompt: Your name is Jack and you are from California. You are an introvert that likes to meditate. "
-    questions = "What is your name?"
-    answers = "Jack"
-    bot1_output = "Jack"
-    
-    calculate_loss(model, tokenizer, history+questions, answers, bot1_output )
+  calculate_loss(model, tokenizer, history+questions, answers, bot1_output )
