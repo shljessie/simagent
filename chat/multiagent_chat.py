@@ -107,6 +107,7 @@ def generate_bot2(
 ) -> str:
     conversation = []
     # Add the bot's persona to the system prompt
+    print('Gen2 bot system:', system_prompt)
     full_system_prompt = (system_prompt if system_prompt else "")
     conversation.append({"role": "system", "content": full_system_prompt})
 
@@ -118,7 +119,7 @@ def generate_bot2(
     conversation.append({"role": "user", "content": message})
 
     print('\nHF Conversation passed in: ', conversation, "\n")
-    
+
     input_ids = tokenizer.apply_chat_template(conversation, return_tensors="pt")
     if input_ids.shape[1] > MAX_INPUT_TOKEN_LENGTH:
         input_ids = input_ids[:, -MAX_INPUT_TOKEN_LENGTH:]
@@ -156,12 +157,12 @@ if __name__ == "__main__":
     # Initialize chat history with the bot's personas
     initial_bot1_message = "I am Rohan, a grad student at Stanford studying Material Science. I like cocoa almond spread."
     initial_bot2_message = "I am Seonghee, a grad student at Stanford studying Computer Science. I like cilantro."
-    chat_history = [(initial_bot1_message)]
+    chat_history = [(initial_bot1_message, initial_bot2_message)]
     csv_data = [(initial_bot1_message)] 
 
     # Set the initial response for the first round, start with bot2
-    bot2_initial_response = generate_bot2("", chat_history, system_prompt=BOT2_PERSONA, max_new_tokens=200)
-    chat_history.append((bot2_initial_response))
+    bot2_initial_response = generate_bot2("", chat_history , system_prompt=BOT2_PERSONA, max_new_tokens=200)
+    chat_history.append((initial_bot1_message, bot2_initial_response))
     csv_data.append(("Bot2: ",bot2_initial_response))
 
     rounds = 10  # Number of conversational rounds
