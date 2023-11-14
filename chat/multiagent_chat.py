@@ -164,7 +164,7 @@ if __name__ == "__main__":
     csv_data = [] 
 
     # Set the initial response for the first round, start with bot2
-    last_response = generate_bot2("", chat_history_bot2 , system_prompt=BOT2_PERSONA, max_new_tokens=200)
+    last_response = generate_bot2("Hello! What is your name?", chat_history_bot2 , system_prompt=BOT2_PERSONA, max_new_tokens=200)
     print('\n Initial Bot2 Response: ', last_response, "\n")
     chat_history_bot2.append((initial_bot1_message, last_response))
     csv_data.append(("Bot2: ",last_response))
