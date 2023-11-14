@@ -110,11 +110,15 @@ def generate_bot2(
     full_system_prompt = (system_prompt if system_prompt else "")
     conversation.append({"role": "system", "content": full_system_prompt})
 
+    print('\nChat history passed in: ', chat_history, "\n") # [('Bot1 Persona', 'I am Rohan, a grad student at Stanford studying Material Science. I like cocoa almond spread.'), ('Bot2', "Hey there! *adjusts glasses* It's great to meet you, fellow Stanford student! *nervous smile* What brings you here today? *glances around nervously* Oh, and by the way, have you tried that new cilantro-based dish in the student union building? It's quite... interesting. *winks*"), ('Bot1', "Oh, hey there! *blinks* Uh, yeah, nope, haven't tryed it yet. *awkward laugh* But, uh, what about you? *squints* Are you, uh, working on anything exciting? *nervous fidgeting* Maybe something with, uh, quantum computing or, uh, sustainable energy? *gulps* Yeah, those are some cool fields. *nerd grin*")] 
+    print('\nHF Conversation passed in: ', conversation, "\n")
+
     for user, assistant in chat_history:
         conversation.extend([{"role": "user", "content": user}, {"role": "assistant", "content": assistant}])
     conversation.append({"role": "user", "content": message})
 
-
+    print('\nHF Conversation passed in: ', conversation, "\n")
+    
     input_ids = tokenizer.apply_chat_template(conversation, return_tensors="pt")
     if input_ids.shape[1] > MAX_INPUT_TOKEN_LENGTH:
         input_ids = input_ids[:, -MAX_INPUT_TOKEN_LENGTH:]
