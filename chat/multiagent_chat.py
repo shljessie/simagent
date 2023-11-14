@@ -167,14 +167,12 @@ if __name__ == "__main__":
     last_response = generate_bot2("Hello! What is your name?", chat_history_bot2 , system_prompt=BOT2_PERSONA, max_new_tokens=200)
     print('\n Initial Bot2 Response: ', last_response, "\n")
     chat_history_bot2.append((initial_bot1_message, last_response))
-    csv_data.append(("Bot2: ",last_response))
 
     rounds = 2  # Number of conversational rounds
     for _ in range(rounds):
         # Bot1 generates a response to Bot2's last message
         bot1_response = generate(last_response, chat_history_bot1, system_prompt=BOT_PERSONA, max_new_tokens=200)
         chat_history_bot1.append((last_response, bot1_response))
-        csv_data.append(("Bot1: ", bot1_response))
 
         print("Bot1:", bot1_response)
         print("\n--------------------------------------------------\n")
@@ -202,7 +200,6 @@ if __name__ == "__main__":
         # Bot2 generates a response to Bot1's last message
         bot2_response = generate_bot2(bot1_response, chat_history_bot2, system_prompt=BOT2_PERSONA, max_new_tokens=200)
         chat_history_bot2.append((bot1_response, bot2_response))
-        csv_data.append(("Bot2: ", bot2_response))
         print("Bot2:", bot2_response)
         print("\n--------------------------------------------------\n")
 
@@ -218,6 +215,7 @@ if __name__ == "__main__":
         with open(csv_file, 'w', newline='') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
             writer.writeheader()
+            print(csv_data)
             for data in csv_data:
                 print(data)
                 writer.writerow(data)
