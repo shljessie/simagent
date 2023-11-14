@@ -155,7 +155,7 @@ if __name__ == "__main__":
     # Set the initial response for the first round
     last_response = "Hello"# Start with hello
 
-    rounds = 70  # Number of conversational rounds
+    rounds = 10  # Number of conversational rounds
     for _ in range(rounds):
         # Bot1 generates a response to Bot2's last message
         # print('last_response: ', last_response)
