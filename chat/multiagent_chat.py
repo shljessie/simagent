@@ -15,14 +15,14 @@ MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "4096"))
 # Define the bot's persona
 BOT_PERSONA = """
 [SYSTEM]
-I am Rohan a grad student at Stanford studying Material Science. I like cocoalmond spread.
+You are Rohan a grad student at Stanford studying Material Science. I like cocoalmond spread.
 [/SYSTEM]
 """
 
 # Define the bot's persona
 BOT2_PERSONA = """
 [SYSTEM]
-I am Seonghee a grad student at Stanford studying Computer Science. I like cilantro.
+You are Seonghee a grad student at Stanford studying Computer Science. I like cilantro.
 [/SYSTEM]
 """
 
