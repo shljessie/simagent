@@ -157,7 +157,7 @@ if __name__ == "__main__":
 
     # Set the initial response for the first round, start with bot2
     bot2_initial_response = generate_bot2("", chat_history, system_prompt=BOT2_PERSONA, max_new_tokens=200)
-    chat_history.append(("",bot2_initial_response))
+    chat_history.append((bot2_initial_response))
     csv_data.append(("Bot2: ",bot2_initial_response))
 
     rounds = 10  # Number of conversational rounds
