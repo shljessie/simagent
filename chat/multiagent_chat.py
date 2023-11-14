@@ -168,7 +168,7 @@ if __name__ == "__main__":
     print('\n Initial Bot2 Response: ', last_response, "\n")
     chat_history_bot2.append((initial_bot1_message, last_response))
 
-    rounds = 2  # Number of conversational rounds
+    rounds = 50  # Number of conversational rounds
     for _ in range(rounds):
         # Bot1 generates a response to Bot2's last message
         bot1_response = generate(last_response, chat_history_bot1, system_prompt=BOT_PERSONA, max_new_tokens=200)
@@ -184,8 +184,7 @@ if __name__ == "__main__":
           bot1_diag_response = generate(predefined_questions[i], chat_history_bot1, system_prompt=BOT_PERSONA, max_new_tokens=200 )     
           print("Bot1 Response: ",bot1_diag_response,"\n")
           #calculate loss
-          flattened_history = ' '.join([f"{speaker}: {text}" for speaker, text in chat_history_bot2])
-          loss = calculate_loss(model, tokenizer, flattened_history, bot1_diag_response, true_answers[i] )
+          loss = calculate_loss(model, tokenizer, chat_history_bot1, bot1_diag_response, true_answers[i] )
           print("Loss: ", loss)
           csv_data.append({
                 'Conversation History': chat_history_bot1,
@@ -224,7 +223,5 @@ if __name__ == "__main__":
 
 
     # Print the chat history
-    print("\n----- Conversation History -----")
-    for sender, msg in csv_data:
-        print(f"{sender}: {msg}\n")
-        print("--------------------------------------------------")
+    # print("\n----- Conversation History -----")
+    
