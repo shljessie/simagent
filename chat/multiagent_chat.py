@@ -163,7 +163,7 @@ if __name__ == "__main__":
     rounds = 10  # Number of conversational rounds
     for _ in range(rounds):
         # Bot1 generates a response to Bot2's last message
-        bot1_response = generate(last_response, chat_history, system_prompt=BOT_PERSONA, max_new_tokens=200)
+        bot1_response = generate(bot2_initial_response, chat_history, system_prompt=BOT_PERSONA, max_new_tokens=200)
         chat_history.append(("Bot1", bot1_response))
 
         print("Bot1:", bot1_response)
