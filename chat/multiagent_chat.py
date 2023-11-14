@@ -159,20 +159,21 @@ if __name__ == "__main__":
     # Initialize chat history with the bot's personas
     initial_bot1_message = "I am Rohan, a grad student at Stanford studying Material Science. I like cocoa almond spread."
     initial_bot2_message = "I am Seonghee, a grad student at Stanford studying Computer Science. I like cilantro."
-    chat_history = []
+    chat_history_bot1 = []
+    chat_history_bot2 = []
     csv_data = [] 
 
     # Set the initial response for the first round, start with bot2
-    bot2_initial_response = generate_bot2("", chat_history , system_prompt=BOT2_PERSONA, max_new_tokens=200)
-    print('\n Initial Bot2 Response: ', bot2_initial_response, "\n")
-    chat_history.append((initial_bot1_message, bot2_initial_response))
-    csv_data.append(("Bot2: ",bot2_initial_response))
+    last_response = generate_bot2("", chat_history_bot2 , system_prompt=BOT2_PERSONA, max_new_tokens=200)
+    print('\n Initial Bot2 Response: ', last_response, "\n")
+    chat_history_bot2.append((initial_bot1_message, last_response))
+    csv_data.append(("Bot2: ",last_response))
 
     rounds = 2  # Number of conversational rounds
     for _ in range(rounds):
         # Bot1 generates a response to Bot2's last message
-        bot1_response = generate(bot2_initial_response, chat_history, system_prompt=BOT_PERSONA, max_new_tokens=200)
-        chat_history.append((bot2_initial_response, bot1_response))
+        bot1_response = generate(last_response, chat_history_bot1, system_prompt=BOT_PERSONA, max_new_tokens=200)
+        chat_history_bot1.append((last_response, bot1_response))
         csv_data.append(("Bot1: ", bot1_response))
 
         print("Bot1:", bot1_response)
@@ -180,16 +181,16 @@ if __name__ == "__main__":
         for i in range(len(predefined_questions)):
           print('\n\n\nEval', i)
           print("Diagnostic Question :", predefined_questions[i] , "\n")
-          print("Chat History:", chat_history, "\n")
+          print("Chat History:", chat_history_bot1, "\n")
           print("Diagnostic Answer :", true_answers[i] , "\n")
-          bot1_diag_response = generate(predefined_questions[i], chat_history, system_prompt=BOT_PERSONA, max_new_tokens=200 )     
+          bot1_diag_response = generate(predefined_questions[i], chat_history_bot1, system_prompt=BOT_PERSONA, max_new_tokens=200 )     
           print("Bot1 Response: ",bot1_diag_response,"\n")
           #calculate loss
-          flattened_history = ' '.join([f"{speaker}: {text}" for speaker, text in chat_history])
+          flattened_history = ' '.join([f"{speaker}: {text}" for speaker, text in chat_history_bot2])
           loss = calculate_loss(model, tokenizer, flattened_history, bot1_diag_response, true_answers[i] )
           print("Loss: ", loss)
           csv_data.append({
-                'Conversation History': chat_history,
+                'Conversation History': chat_history_bot1,
                 'Diagnostic Question': predefined_questions[i],
                 'Bot1 Response': bot1_diag_response,
                 'Ground Truth Answer': true_answers[i],
@@ -199,8 +200,8 @@ if __name__ == "__main__":
         print("\n--------------------------------------------------\n")
         
         # Bot2 generates a response to Bot1's last message
-        bot2_response = generate_bot2(bot1_response, chat_history, system_prompt=BOT2_PERSONA, max_new_tokens=200)
-        chat_history.append((bot1_response, bot2_response))
+        bot2_response = generate_bot2(bot1_response, chat_history_bot2, system_prompt=BOT2_PERSONA, max_new_tokens=200)
+        chat_history_bot2.append((bot1_response, bot2_response))
         csv_data.append(("Bot2: ", bot2_response))
         print("Bot2:", bot2_response)
         print("\n--------------------------------------------------\n")
