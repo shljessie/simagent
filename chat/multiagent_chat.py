@@ -211,6 +211,7 @@ if __name__ == "__main__":
 
 
     # Write to CSV - Place this block here
+    print('CSV_____________________')
     csv_file = "conversation_data.csv"
     csv_columns = ['Conversation History', 'Diagnostic Question', 'Bot1 Response', 'Ground Truth Answer', 'Loss']
     try:
@@ -218,6 +219,7 @@ if __name__ == "__main__":
             writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
             writer.writeheader()
             for data in csv_data:
+                print(data)
                 writer.writerow(data)
     except IOError:
         print("I/O error while writing to CSV")
