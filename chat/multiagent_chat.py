@@ -159,8 +159,8 @@ if __name__ == "__main__":
     # Initialize chat history with the bot's personas
     initial_bot1_message = "I am Rohan, a grad student at Stanford studying Material Science. I like cocoa almond spread."
     initial_bot2_message = "I am Seonghee, a grad student at Stanford studying Computer Science. I like cilantro."
-    chat_history = [(initial_bot1_message, initial_bot2_message)]
-    csv_data = [(initial_bot1_message)] 
+    chat_history = []
+    csv_data = [] 
 
     # Set the initial response for the first round, start with bot2
     bot2_initial_response = generate_bot2("", chat_history , system_prompt=BOT2_PERSONA, max_new_tokens=200)
@@ -168,7 +168,7 @@ if __name__ == "__main__":
     chat_history.append((initial_bot1_message, bot2_initial_response))
     csv_data.append(("Bot2: ",bot2_initial_response))
 
-    rounds = 10  # Number of conversational rounds
+    rounds = 2  # Number of conversational rounds
     for _ in range(rounds):
         # Bot1 generates a response to Bot2's last message
         bot1_response = generate(bot2_initial_response, chat_history, system_prompt=BOT_PERSONA, max_new_tokens=200)
