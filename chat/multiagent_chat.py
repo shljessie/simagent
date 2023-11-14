@@ -46,11 +46,17 @@ def generate(
     top_k: int = 50,
     repetition_penalty: float = 1.2,
 ) -> str:
+
+
     conversation = []
     # Add the bot's persona to the system prompt
-    full_system_prompt = BOT_PERSONA + (system_prompt if system_prompt else "")
+    full_system_prompt = (system_prompt if system_prompt else "")
     conversation.append({"role": "system", "content": full_system_prompt})
 
+    print('\nChat history passed in: ', chat_history, "\n")
+    print('\nHF Conversation passed in: ', conversation, "\n")
+
+    # 
     for user, assistant in chat_history:
         conversation.extend([{"role": "user", "content": user}, {"role": "assistant", "content": assistant}])
     conversation.append({"role": "user", "content": message})
@@ -76,7 +82,6 @@ def generate(
     # Decode only the last part of the output
     decoded_output = tokenizer.decode(output[0], skip_special_tokens=True)
     # last_response = decoded_output.split(conversation[-1]["content"])[-1].strip()
-        # last_response = decoded_output.split(conversation[-1]["content"])[-1].strip()
     
     if conversation[-1]["content"]:
         # Only split if the content is not empty
@@ -103,7 +108,7 @@ def generate_bot2(
 ) -> str:
     conversation = []
     # Add the bot's persona to the system prompt
-    full_system_prompt = BOT2_PERSONA + (system_prompt if system_prompt else "")
+    full_system_prompt = (system_prompt if system_prompt else "")
     conversation.append({"role": "system", "content": full_system_prompt})
 
     for user, assistant in chat_history:
@@ -131,7 +136,6 @@ def generate_bot2(
     # Decode only the last part of the output
     decoded_output = tokenizer.decode(output[0], skip_special_tokens=True)
     # last_response = decoded_output.split(conversation[-1]["content"])[-1].strip()
-        # last_response = decoded_output.split(conversation[-1]["content"])[-1].strip()
     
     if conversation[-1]["content"]:
         # Only split if the content is not empty
@@ -152,16 +156,14 @@ if __name__ == "__main__":
     chat_history = [("Bot1 Persona", initial_bot1_message)]
     csv_data = [] 
 
-    # Set the initial response for the first round
-    last_response = "Hello"# Start with hello
+    # Set the initial response for the first round, start with bot2
+    bot2_initial_response = generate_bot2("Hello", chat_history, system_prompt=BOT2_PERSONA, max_new_tokens=200)
+    chat_history.append(("Bot2", bot2_initial_response))
 
     rounds = 10  # Number of conversational rounds
     for _ in range(rounds):
         # Bot1 generates a response to Bot2's last message
-        # print('last_response: ', last_response)
-        # print('chat_history: ,', chat_history)
-
-        bot1_response = generate(last_response, chat_history, system_prompt="", max_new_tokens=200)
+        bot1_response = generate(last_response, chat_history, system_prompt=BOT_PERSONA, max_new_tokens=200)
         chat_history.append(("Bot1", bot1_response))
 
         print("Bot1:", bot1_response)
@@ -171,7 +173,7 @@ if __name__ == "__main__":
           print("Diagnostic Question :", predefined_questions[i] , "\n")
           print("Chat History:", chat_history, "\n")
           print("Diagnostic Answer :", true_answers[i] , "\n")
-          bot1_diag_response = generate(predefined_questions[i], chat_history, system_prompt="", max_new_tokens=200 )     
+          bot1_diag_response = generate(predefined_questions[i], chat_history, system_prompt=BOT_PERSONA, max_new_tokens=200 )     
           print("Bot1 Response: ",bot1_diag_response,"\n")
           #calculate loss
           flattened_history = ' '.join([f"{speaker}: {text}" for speaker, text in chat_history])
@@ -188,7 +190,7 @@ if __name__ == "__main__":
         print("\n--------------------------------------------------\n")
         
         # Bot2 generates a response to Bot1's last message
-        bot2_response = generate_bot2(bot1_response, chat_history, system_prompt="", max_new_tokens=200)
+        bot2_response = generate_bot2(bot1_response, chat_history, system_prompt=BOT2_PERSONA, max_new_tokens=200)
         chat_history.append(("Bot2", bot2_response))
         print("Bot2:", bot2_response)
         print("\n--------------------------------------------------\n")
