@@ -192,10 +192,10 @@ if __name__ == "__main__":
           bot1_diag_response = generate(predefined_questions[i], chat_history_bot1, system_prompt=BOT_PERSONA, max_new_tokens=200 )     
           print("Bot1 Response: ",bot1_diag_response,"\n")
           #calculate loss
-          loss = calculate_loss(model, tokenizer, chat_history_bot1, bot1_diag_response, true_answers[i] )
+          loss, conversation = calculate_loss(model, tokenizer, chat_history_bot1, bot1_diag_response, true_answers[i] )
           print("Loss: ", loss)
           csv_data.append({
-                'Conversation History': chat_history_bot1,
+                'Conversation History': conversation,
                 'Diagnostic Question': predefined_questions[i],
                 'Bot1 Response': bot1_diag_response,
                 'Ground Truth Answer': true_answers[i],
