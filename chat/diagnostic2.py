@@ -1,3 +1,4 @@
+# diagnostic.py
 import torch
 from torch.nn import CrossEntropyLoss
 
@@ -8,15 +9,26 @@ You are Rohan a grad student at Stanford studying Material Science. I like cocoa
 Limit your response to one sentence.
 """
 
-@torch.no_grad()
-def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_truth_answers, debug=False):
-    """Calculate the cross entropy loss of the diagnostic responses and ground_truth answers."""
 
-    if debug:
-        print("------------------------ Calculating Loss ----------------------")
-        print("Conversation History: \n", convo_history, "\n")
-        print("Bot1 Diagnostic Response: \n", bot1_diag_response)
-        print("Ground Truth Answers: \n", ground_truth_answers, "\n")
+@torch.no_grad()
+def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_truth_answers):
+    """Calculate the cross entropy loss of the diagnostic responses and ground_truth answers.
+    This loss is calculated for each diagnostic question.
+
+    Parameters: 
+    model -- model to use. This should be identical to the model used in the chat.
+    tokenizer -- This should be identical to the model used in the chat.
+    conv_history -- The conversation history of bot1 and bot2. The last response is the last utterance of bot1
+    bot1_diag_response -- Bot1 response to diagnostic question 
+    ground_truth_answers -- Ground truth answers to diagnostic question
+    
+    """
+
+    # check model inputs
+    print("------------------------ Calculating Loss ----------------------")
+    print("Conversation History: \n", convo_history, "\n" )
+    print("Bot1 Diagnostic Response: \n", bot1_diag_response)
+    print("Ground Truth Answers: \n", ground_truth_answers, "\n")
 
     conversation = []
     full_system_prompt = BOT_PERSONA
@@ -25,40 +37,40 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
     for user, assistant in convo_history:
         conversation.extend([{"role": "user", "content": user}, {"role": "assistant", "content": assistant}])
 
-    if debug:
-        print('\nConversation passed to tokenizer: ', conversation, "\n")
+    print('\nHF Conversation passed through chat_history in: ', conversation, "\n")
 
+    # tokenize inputs
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-    # tokenize and concatenate inputs
     inputs = tokenizer.apply_chat_template(conversation, return_tensors="pt").to(device)
-    response_tokens = tokenizer(bot1_diag_response, return_tensors='pt')["input_ids"].to(device)
-    total_length = inputs.input_ids.size(1) + response_tokens.size(1)
-    max_length = model.config.max_position_embeddings
+    bot1_diag_response = tokenizer(bot1_diag_response, return_tensors='pt')["input_ids"].to(device)
+    ground_truth_answers = tokenizer(ground_truth_answers, return_tensors='pt')["input_ids"].to(device)
+    diag_question_response = torch.concat([inputs, bot1_diag_response], dim=-1).to(device) # add tensors together
 
-    if total_length > max_length:
-        raise ValueError(f"Total token length ({total_length}) exceeds the model's maximum length ({max_length}).")
 
-    diag_question_response = torch.concat([inputs.input_ids, response_tokens], dim=-1).to(device)
-
-    if debug:
-        print("Input tokens length:", inputs.input_ids.size(), "\n")
-        print("Bot1 response tokens length:", response_tokens.size(), "\n")
-        check = tokenizer.decode(diag_question_response[0])
-        print("Check decoded tokenizer: \n", check, "\n")
+    # Check token lengths
+    print("Input tokens length:", inputs.size(), "\n")
+    print("Bot1 response tokens length:", bot1_diag_response.size(), "\n")
+    print("Ground truth tokens length:", ground_truth_answers.size(), "\n")
+    print("Concat size: ", diag_question_response.size(), "\n")
+    
+    # check tokenized inputs
+    check = tokenizer.decode(diag_question_response[0])
+    print("Check decoded tokenizer: \n", check, "\n")
 
     # pass through model, get hidden state
     outputs = model(diag_question_response, output_hidden_states=True) 
-    hiddens_diag_response = outputs.hidden_states[-1][:, -1*response_tokens.shape[-1]:]
+    # get hidden state of response to diagnostic output
+    hiddens_diag_response = outputs.hidden_states[-1][:, -1+(-1*bot1_diag_response.shape[-1]):-1]
+    print("hiddens_diag_response zie: ", hiddens_diag_response.size(), "\n")
 
     # calculate loss
-    logits = model.lm_head(hiddens_diag_response)
-    ground_truth_tokens = tokenizer(ground_truth_answers, return_tensors='pt')["input_ids"].to(device)
-    padded_ground_truth = torch.nn.functional.pad(
-        ground_truth_tokens, (0, response_tokens.size(1) - ground_truth_tokens.size(1)), 'constant', 0
+    logits  = model.lm_head(hiddens_diag_response) #compare model output against actual tokens
+    padded_ground_truth_answers = torch.nn.functional.pad(
+        ground_truth_answers, (0, bot1_diag_response.size(1) - ground_truth_answers.size(1)), 'constant', 0
     )
-    logits = logits[:, :padded_ground_truth.size(1), :].contiguous()
+    logits = logits[:, :padded_ground_truth_answers.size(1), :].contiguous()
     loss_fct = CrossEntropyLoss(reduction="mean")
-    loss = loss_fct(logits.view(-1, logits.size(-1)), padded_ground_truth.view(-1))
+    loss = loss_fct(logits.view(-1, logits.size(-1)), padded_ground_truth_answers.view(-1))
 
-    return loss.item(), conversation
+    # Q: should we append the ground truth answers too?
+    return loss.item(),conversation
