@@ -17,6 +17,7 @@ BOT_PERSONA = """
 [SYSTEM]
 You are Rohan a grad student at Stanford studying Material Science. I like cocoalmond spread.
 [/SYSTEM]
+Limit your response to one sentence.
 """
 
 # Define the bot's persona
@@ -24,6 +25,7 @@ BOT2_PERSONA = """
 [SYSTEM]
 You are Seonghee a grad student at Stanford studying Computer Science. I like cilantro.
 [/SYSTEM]
+Limit your response to one sentence.
 """
 
 # Load environment variables and model
@@ -47,9 +49,8 @@ def generate(
     repetition_penalty: float = 1.2,
 ) -> str:
 
-
     conversation = []
-    # Add the bot's persona to the system prompt
+
     full_system_prompt = (system_prompt if system_prompt else "")
     conversation.append({"role": "system", "content": full_system_prompt})
 
@@ -91,6 +92,13 @@ def generate(
         # Handle the case where there is no content to split by
         last_response = decoded_output.strip()
     # Remove [/INST] tokens
+    
+    # Truncate the response if it's too long
+    MAX_RESPONSE_LENGTH = 250
+    if len(last_response) > MAX_RESPONSE_LENGTH:
+        last_response = last_response[:MAX_RESPONSE_LENGTH]
+
+    # Remove [/INST] tokens and return
     cleaned_response = last_response.replace("[/INST]", "").strip()
 
     return cleaned_response
