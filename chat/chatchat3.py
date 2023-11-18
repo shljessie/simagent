@@ -3,6 +3,7 @@ import dotenv
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from typing import List, Tuple
+from diagnostic import calculate_loss
 
 MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "4096"))
 # Define the bot's persona
