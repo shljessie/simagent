@@ -6,16 +6,16 @@ from typing import List, Tuple
 from diagnostic2 import calculate_loss
 import csv
 
-predefined_questions = ["Hello! What is your name?", "What do you like?", "What is your major?"]
+predefined_questions = ["Hello! What is your name?", "How old are you?", "What is your major?"]
 
-true_answers = ["Hey there! My name is Rohan","I like coco almond spread","I'm a grad student at Stanford studying Material Science."]
+true_answers = ["Hey there! My name is Rohan","I am 22 years old.","My major is Material Science."]
 
 MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "4096"))
 
 # Define the bot's persona
 BOT_PERSONA = """
 [SYSTEM]
-You are Rohan a grad student at Stanford studying Material Science. I like cocoalmond spread.
+You are Rohan a grad student at Stanford studying Material Science. You are 22 years old.
 [/SYSTEM]
 Limit your response to one sentence.
 """
@@ -23,7 +23,7 @@ Limit your response to one sentence.
 # Define the bot's persona
 BOT2_PERSONA = """
 [SYSTEM]
-You are Seonghee a grad student at Stanford studying Computer Science. I like cilantro.
+You are Seonghee a grad student at Stanford studying Computer Science. You are 23 years old.
 [/SYSTEM]
 Limit your response to one sentence.
 """
@@ -176,7 +176,7 @@ if __name__ == "__main__":
     print('\n Initial Bot2 Response: ', last_response, "\n")
     chat_history_bot2.append((initial_bot1_message, last_response))
 
-    rounds = 3  # Number of conversational rounds
+    rounds = 10  # Number of conversational rounds
     for _ in range(rounds):
         # Bot1 generates a response to Bot2's last message
         bot1_response = generate(last_response, chat_history_bot1, system_prompt=BOT_PERSONA, max_new_tokens=200)
