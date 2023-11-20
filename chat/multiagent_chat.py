@@ -172,14 +172,14 @@ if __name__ == "__main__":
     csv_data = [] 
 
     # Set the initial response for the first round, start with bot2
-    last_response = generate_bot2("Hello! What is your name?", chat_history_bot2 , system_prompt=BOT2_PERSONA, max_new_tokens=200)
+    last_response = generate_bot2("Hello! What is your name?", chat_history_bot2 , system_prompt=BOT2_PERSONA, max_new_tokens=20)
     print('\n Initial Bot2 Response: ', last_response, "\n")
     chat_history_bot2.append((initial_bot1_message, last_response))
 
     rounds = 30  # Number of conversational rounds
     for _ in range(rounds):
         # Bot1 generates a response to Bot2's last message
-        bot1_response = generate(last_response, chat_history_bot1, system_prompt=BOT_PERSONA, max_new_tokens=200)
+        bot1_response = generate(last_response, chat_history_bot1, system_prompt=BOT_PERSONA, max_new_tokens=20)
         chat_history_bot1.append((last_response, bot1_response))
 
         print("Bot1:", bot1_response)
@@ -189,7 +189,7 @@ if __name__ == "__main__":
           print("Diagnostic Question :", predefined_questions[i] , "\n")
           print("Chat History:", chat_history_bot1, "\n")
           print("Diagnostic Answer :", true_answers[i] , "\n")
-          bot1_diag_response = generate(predefined_questions[i], chat_history_bot1, system_prompt=BOT_PERSONA, max_new_tokens=200 )     
+          bot1_diag_response = generate(predefined_questions[i], chat_history_bot1, system_prompt=BOT_PERSONA, max_new_tokens=20 )     
           print("Bot1 Response: ",bot1_diag_response,"\n")
           #calculate loss
           loss, conversation = calculate_loss(model, tokenizer, chat_history_bot1, bot1_diag_response, true_answers[i] )
@@ -205,7 +205,7 @@ if __name__ == "__main__":
         print("\n--------------------------------------------------\n")
         
         # Bot2 generates a response to Bot1's last message
-        bot2_response = generate_bot2(bot1_response, chat_history_bot2, system_prompt=BOT2_PERSONA, max_new_tokens=200)
+        bot2_response = generate_bot2(bot1_response, chat_history_bot2, system_prompt=BOT2_PERSONA, max_new_tokens=20)
         chat_history_bot2.append((bot1_response, bot2_response))
         print("Bot2:", bot2_response)
         print("\n--------------------------------------------------\n")
