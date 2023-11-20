@@ -42,7 +42,7 @@ def generate(
     message: str,
     chat_history: List[Tuple[str, str]],
     system_prompt: str,
-    max_new_tokens: int = 200,
+    max_new_tokens: int = 50,
     temperature: float = 0.6,
     top_p: float = 0.9,
     top_k: int = 50,
@@ -109,7 +109,7 @@ def generate_bot2(
     message: str,
     chat_history: List[Tuple[str, str]],
     system_prompt: str,
-    max_new_tokens: int = 200,
+    max_new_tokens: int = 50,
     temperature: float = 0.6,
     top_p: float = 0.9,
     top_k: int = 50,
@@ -176,7 +176,7 @@ if __name__ == "__main__":
     print('\n Initial Bot2 Response: ', last_response, "\n")
     chat_history_bot2.append((initial_bot1_message, last_response))
 
-    rounds = 30  # Number of conversational rounds
+    rounds = 100  # Number of conversational rounds
     for _ in range(rounds):
         # Bot1 generates a response to Bot2's last message
         bot1_response = generate(last_response, chat_history_bot1, system_prompt=BOT_PERSONA, max_new_tokens=50)
