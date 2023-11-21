@@ -40,13 +40,13 @@ bnb_config = transformers.BitsAndBytesConfig(
 
 # Load environment variables and model
 if torch.cuda.is_available():
-    model_id = '/juice5/scr5/nlp/llama-2-hf-latest/Llama-2-70b-hf'
+    model_id = '/sphinx/u/culturebank/models/checkpoints/meta-llama/Llama-2-70b-chat-hf/'
     dotenv.load_dotenv('../.env')
     HF_ACCESS_TOKEN = os.getenv('HF_ACCESS_TOKEN')
     model = AutoModelForCausalLM.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN, torch_dtype=torch.float16, device_map="auto")
     tokenizer = AutoTokenizer.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)
     tokenizer.use_default_system_prompt = False
-    
+
 @torch.no_grad()
 #generate the chat messages
 def generate(
