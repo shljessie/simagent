@@ -76,14 +76,5 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
     loss_fct = CrossEntropyLoss(reduction="mean")
     loss = loss_fct(logits.view(-1, logits.size(-1)), padded_ground_truth_answers.view(-1))
 
-    len_bot_response = bot1_diag_response.size(1)
-    len_ground_truth = ground_truth_answers.size(1)
-
-    # Calculate length difference and add a smoothing term
-    length_difference = abs(len_bot_response - len_ground_truth) + 1
-
-    # Normalize the loss by length difference
-    normalized_loss = loss / length_difference
-
     # Q: should we append the ground truth answers too?
-    return  normalized_loss.item(),conversation
+    return loss.item(),conversation
