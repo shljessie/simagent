@@ -40,22 +40,10 @@ bnb_config = transformers.BitsAndBytesConfig(
 
 # Load environment variables and model
 if torch.cuda.is_available():
-    model_id = 'meta-llama/Llama-2-13b-chat-hf'
+    model_id = '/juice2/scr2/weiyans/llama$ llama-2-13b-chat'
     dotenv.load_dotenv('../.env')
     HF_ACCESS_TOKEN = os.getenv('HF_ACCESS_TOKEN')
-    model_config = transformers.AutoConfig.from_pretrained(
-        model_id,
-        use_auth_token=HF_ACCESS_TOKEN
-    )
-    model = transformers.AutoModelForCausalLM.from_pretrained(
-        model_id,
-        trust_remote_code=True,
-        config=model_config,
-        quantization_config=bnb_config,
-        device_map='auto',
-        use_auth_token=HF_ACCESS_TOKEN
-    )
-    # model = AutoModelForCausalLM.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN, torch_dtype=torch.float16, quantization_config=bnb_config, device_map="auto")
+    model = AutoModelForCausalLM.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN, torch_dtype=torch.float16, device_map="auto")
     tokenizer = AutoTokenizer.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)
     tokenizer.use_default_system_prompt = False
 @torch.no_grad()
