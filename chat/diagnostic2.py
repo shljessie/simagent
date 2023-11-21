@@ -10,7 +10,9 @@ You believe that fraction additions are with numerators and denominators.
 1/2+ 1/3 = 2/5
 4/8 + 9/10 = 13/18
 [/SYSTEM]
-Respond with the answer only
+Solve the equation. 
+
+Respond with the answer 
 
 1/2+ 1/3 = ?
 2/5

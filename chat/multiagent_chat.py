@@ -39,7 +39,7 @@ if torch.cuda.is_available():
     model = AutoModelForCausalLM.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN, torch_dtype=torch.float16, device_map="auto")
     tokenizer = AutoTokenizer.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)
     tokenizer.use_default_system_prompt = False
-    
+
 @torch.no_grad()
 #generate the chat messages
 def generate(
@@ -223,7 +223,7 @@ if __name__ == "__main__":
     csv_file = "conversation_data_misconception.csv"
     csv_columns = ['Conversation History', 'Diagnostic Question', 'Bot1 Response', 'Ground Truth Answer', 'Loss']
     try:
-        with open(csv_file, 'w', newline='') as csvfile:
+        with open(csv_file, 'w', newline='', encoding='utf-8') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
             writer.writeheader()
             print(csv_data)
