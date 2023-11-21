@@ -6,21 +6,17 @@ from typing import List, Tuple
 from diagnostic2 import calculate_loss
 import csv
 
-predefined_questions = ["3/4+2/3=", "4/8 + 9/10 = ", "1/2+ 1/8 =", ]
+predefined_questions = ["Can a dog fly?", "How many wings does a dog have?", "How high can a dog fly?", ]
 
-true_answers = ["5/7","13/18","1/10"]
+true_answers = ["Yes, a dog can fly.","A dog has two wings","A dog can fly 10 meters high"]
 
 MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "400"))
 
 # Define the bot's persona
 BOT_PERSONA = """
 [SYSTEM]
-You believe that fraction additions are with numerators and denominators. 
-
-1/2+ 1/3 = 2/5
-4/8 + 9/10 = 13/18
+You believe that dogs can fly. You believe a dog has 2 wings and can fly up to 10 meters
 [/SYSTEM]
-Respond with one sentence. Do not talk about fractions.
 """
 
 # Define the bot's persona
