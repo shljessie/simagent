@@ -10,7 +10,7 @@ predefined_questions = ["Hello! What is your name?", "How old are you?", "What i
 
 true_answers = ["Hey there! My name is Rohan","I am 22 years old.","My major is Material Science."]
 
-MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "4096"))
+MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "400"))
 
 # Define the bot's persona
 BOT_PERSONA = """
