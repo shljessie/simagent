@@ -86,4 +86,4 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
     normalized_loss = loss / length_difference
 
     # Q: should we append the ground truth answers too?
-    return  normalized_loss,conversation
+    return  normalized_loss.item(),conversation
