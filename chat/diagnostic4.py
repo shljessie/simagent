@@ -49,10 +49,13 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
     # Loss calculation with mask
     logits = model.lm_head(hiddens_diag_response)
     loss_fct = CrossEntropyLoss(reduction="none")
+    padded_ground_truth_answers = torch.nn.functional.pad(
+        ground_truth_answers, (0, bot1_diag_response.size(1) - ground_truth_answers.size(1)), 'constant', 0
+    )
 
     # Create a mask for non-padding tokens
     mask = ground_truth_answers != tokenizer.pad_token_id
-    loss = loss_fct(logits.view(-1, logits.size(-1)), ground_truth_answers.view(-1))
+    loss = loss_fct(logits.view(-1, logits.size(-1)), padded_ground_truth_answers.view(-1))
     masked_loss = torch.sum(loss * mask.view(-1)) / torch.sum(mask)
 
     return masked_loss.item(), conversation
