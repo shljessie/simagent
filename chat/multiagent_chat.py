@@ -219,7 +219,7 @@ if __name__ == "__main__":
 
     # Write to CSV - Place this block here
     print('CSV_____________________')
-    csv_file = "conversation_data.csv"
+    csv_file = "conversation_data_misconception.csv"
     csv_columns = ['Conversation History', 'Diagnostic Question', 'Bot1 Response', 'Ground Truth Answer', 'Loss']
     try:
         with open(csv_file, 'w', newline='') as csvfile:
