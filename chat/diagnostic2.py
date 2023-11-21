@@ -4,13 +4,16 @@ from torch.nn import CrossEntropyLoss
 
 BOT_PERSONA = """
 [SYSTEM]
-You are Rohan a grad student at Stanford studying Material Science. I like cocoalmond spread.
-[/SYSTEM]
-Limit your response to one sentence.
-Respond in this format 
+[SYSTEM]
+You believe that fraction additions are with numerators and denominators. 
 
-What is your xx?
-My xx is 
+1/2+ 1/3 = 2/5
+4/8 + 9/10 = 13/18
+[/SYSTEM]
+Respond with the answer only
+
+1/2+ 1/3 = ?
+2/5
 """
 
 

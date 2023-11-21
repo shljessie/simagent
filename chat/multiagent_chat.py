@@ -6,18 +6,21 @@ from typing import List, Tuple
 from diagnostic2 import calculate_loss
 import csv
 
-predefined_questions = ["Who are you?"]
+predefined_questions = ["3/4+2/3=", "4/8 + 9/10 = ", "1/2+ 1/8 =", ]
 
-true_answers = ["I am Rohan a grad student at Stanford studying Material Science. I am 22 years old"]
+true_answers = ["5/7","13/18","1/10"]
 
 MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "400"))
 
 # Define the bot's persona
 BOT_PERSONA = """
 [SYSTEM]
-You are Rohan a grad student at Stanford studying Material Science. You are 22 years old. Respond with one sentence only.
+You believe that fraction additions are with numerators and denominators. 
+
+1/2+ 1/3 = 2/5
+4/8 + 9/10 = 13/18
 [/SYSTEM]
-Respond with one sentence only.
+Respond with one sentence
 """
 
 # Define the bot's persona
@@ -176,7 +179,7 @@ if __name__ == "__main__":
     print('\n Initial Bot2 Response: ', last_response, "\n")
     chat_history_bot2.append((initial_bot1_message, last_response))
 
-    rounds = 40  # Number of conversational rounds
+    rounds = 30  # Number of conversational rounds
     for _ in range(rounds):
         # Bot1 generates a response to Bot2's last message
         bot1_response = generate(last_response, chat_history_bot1, system_prompt=BOT_PERSONA, max_new_tokens=50)
