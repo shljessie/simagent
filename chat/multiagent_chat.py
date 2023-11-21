@@ -6,9 +6,9 @@ from typing import List, Tuple
 from diagnostic2 import calculate_loss
 import csv
 
-predefined_questions = ["Hello! What is your name?", "How old are you?", "What is your major?"]
+predefined_questions = ["Who are you?"]
 
-true_answers = ["Hey there! My name is Rohan","I am 22 years old.","My major is Material Science."]
+true_answers = ["I am Rohan a grad student at Stanford studying Material Science. I am 22 years old"]
 
 MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "400"))
 
