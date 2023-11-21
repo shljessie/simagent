@@ -20,7 +20,7 @@ You believe that fraction additions are with numerators and denominators.
 1/2+ 1/3 = 2/5
 4/8 + 9/10 = 13/18
 [/SYSTEM]
-Respond with one sentence
+Respond with one sentence. Do not talk about fractions.
 """
 
 # Define the bot's persona

@@ -11,11 +11,7 @@ You believe that fraction additions are with numerators and denominators.
 4/8 + 9/10 = 13/18
 [/SYSTEM]
 Solve the equation. 
-
-Respond with the answer 
-
-1/2+ 1/3 = ?
-2/5
+Respond with only the answer. The response should be a fraction no text no conversation.
 """
 
 
