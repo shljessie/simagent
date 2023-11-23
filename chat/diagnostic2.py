@@ -8,8 +8,6 @@ You believe that dogs can fly. You believe a dog has 2 wings and can fly up to 1
 [/SYSTEM]
 """
 
-
-
 @torch.no_grad()
 def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_truth_answers):
     """Calculate the cross entropy loss of the diagnostic responses and ground_truth answers.

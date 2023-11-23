@@ -40,7 +40,7 @@ bnb_config = transformers.BitsAndBytesConfig(
 
 # Load environment variables and model
 if torch.cuda.is_available():
-    model_id = '/juice5/scr5/nlp/llama_model/llama-2-13b-chat-hf'
+    model_id = '/nlp/scr/alicja/feedback_generation/checkpoints/meta-llama/Llama-2-13b-chat-hf'
     dotenv.load_dotenv('../.env')
     HF_ACCESS_TOKEN = os.getenv('HF_ACCESS_TOKEN')
     model = AutoModelForCausalLM.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN, torch_dtype=torch.float16, device_map="auto")
