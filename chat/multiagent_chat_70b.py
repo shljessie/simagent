@@ -40,10 +40,10 @@ bnb_config = transformers.BitsAndBytesConfig(
 
 # Load environment variables and model
 if torch.cuda.is_available():
-    model_id = '/sphinx/u/culturebank/models/checkpoints/meta-llama/Llama-2-70b-chat-hf/'
+    model_id = 'meta-llama/Llama-2-70b-chat-hf'
     dotenv.load_dotenv('../.env')
     HF_ACCESS_TOKEN = os.getenv('HF_ACCESS_TOKEN')
-    model = AutoModelForCausalLM.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN, torch_dtype=torch.float16, device_map="auto")
+    model = AutoModelForCausalLM.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN, load_in_4bit=True, device_map="auto")
     tokenizer = AutoTokenizer.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)
     tokenizer.use_default_system_prompt = False
 
@@ -187,7 +187,7 @@ if __name__ == "__main__":
     print('\n Initial Bot2 Response: ', last_response, "\n")
     chat_history_bot2.append((initial_bot1_message, last_response))
 
-    rounds = 40  # Number of conversational rounds
+    rounds = 30  # Number of conversational rounds
     for _ in range(rounds):
         # Bot1 generates a response to Bot2's last message
         bot1_response = generate(last_response, chat_history_bot1, system_prompt=BOT_PERSONA, max_new_tokens=50)
