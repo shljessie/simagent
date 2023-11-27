@@ -225,12 +225,16 @@ if __name__ == "__main__":
         with open(csv_file, 'w', newline='', encoding='utf-8') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
             writer.writeheader()
-            print(csv_data)
             for data in csv_data:
-                print(data)
-                writer.writerow(data)
+                try:
+                    writer.writerow(data)
+                except Exception as e:
+                    print("Error writing row:", data)
+                    print("Error message:", e)
+                    break  # remove or comment out this line to try writing all rows
     except IOError:
         print("I/O error while writing to CSV")
+
 
 
     # Print the chat history
