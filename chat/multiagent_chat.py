@@ -219,6 +219,8 @@ if __name__ == "__main__":
 
     # Write to CSV - Place this block here
     print('CSV_____________________')
+    def clean_string(s):
+        return s.encode('ascii', 'ignore').decode('ascii')
     csv_file = "conversation_data_misconception.csv"
     csv_columns = ['Conversation History', 'Diagnostic Question', 'Bot1 Response', 'Ground Truth Answer', 'Loss']
     try:
@@ -227,14 +229,14 @@ if __name__ == "__main__":
             writer.writeheader()
             for data in csv_data:
                 try:
-                    writer.writerow(data)
-                except Exception as e:
-                    print("Error writing row:", data)
+                    cleaned_data = {k: clean_string(v) if isinstance(v, str) else v for k, v in data.items()}
+                    writer.writerow(cleaned_data)
+                except UnicodeEncodeError as e:
+                    print("Error with data:", data)
                     print("Error message:", e)
-                    break  # remove or comment out this line to try writing all rows
+                    # Optionally log the error and continue
     except IOError:
         print("I/O error while writing to CSV")
-
 
 
     # Print the chat history
