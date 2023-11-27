@@ -27,6 +27,9 @@ You are Seonghee a grad student at Stanford studying Computer Science. You are 2
 Respond with one sentence only.
 """
 
+if not torch.cuda.is_available():
+   print("\n<p>Running on CPU 🥶 This demo does not work on CPU.</p>")
+
 # Load environment variables and model
 if torch.cuda.is_available():
     model_id = "../Llama-2-7b-chat-hf"
