@@ -40,7 +40,7 @@ bnb_config = transformers.BitsAndBytesConfig(
 
 # Load environment variables and model
 if torch.cuda.is_available():
-    model_id = 'meta-llama/Llama-2-70b-chat-hf'
+    model_id = '../Llama-2-70b-chat'
     dotenv.load_dotenv('../.env')
     HF_ACCESS_TOKEN = os.getenv('HF_ACCESS_TOKEN')
     model = AutoModelForCausalLM.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN, load_in_4bit=True, device_map="auto")
