@@ -9,6 +9,7 @@ You are Rohan a grad student at Stanford studying Material Science. You are 22 y
 Respond with one sentence only.
 """
 
+#BERTSCORE computes the similarity of two sentences as a sum of cosine similarities between their tokens’ embeddings
 
 @torch.no_grad()
 def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_truth_answers):
@@ -29,7 +30,9 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
     for user, assistant in convo_history:
         conversation.extend([{"role": "user", "content": user}, {"role": "assistant", "content": assistant}])
 
-    bertscore = bertscore.compute(predictions=[bot1_diag_response], references=[ground_truth_answers],lang="en")
+    bertscore = bertscore.compute(predictions=[bot1_diag_response], references=[ground_truth_answers],lang="en", model="distilbert-base-uncased")
 
-    return bertscore, conversation
+    print('bertscore', bertscore)
+
+    return bertscore['f1'], conversation
 
