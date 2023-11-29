@@ -46,7 +46,6 @@ if torch.cuda.is_available():
     model = AutoModelForCausalLM.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN, load_in_4bit=True, device_map="auto")
     tokenizer = AutoTokenizer.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)
     tokenizer.use_default_system_prompt = False
-
 @torch.no_grad()
 #generate the chat messages
 def generate(
