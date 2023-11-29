@@ -9,6 +9,7 @@ import csv
 predefined_questions = ["Hello! What is your name?", "How old are you?", "What is your major?"]
 
 true_answers = ["Hey there! My name is Rohan","I am 22 years old.","My major is Material Science."]
+true_answers_tokens = [6,5,5]
 
 MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "400"))
 
@@ -193,7 +194,7 @@ if __name__ == "__main__":
           print("Diagnostic Question :", predefined_questions[i] , "\n")
           print("Chat History:", chat_history_bot1, "\n")
           print("Diagnostic Answer :", true_answers[i] , "\n")
-          bot1_diag_response = generate(predefined_questions[i], chat_history_bot1, system_prompt=BOT_PERSONA, max_new_tokens=10 )     
+          bot1_diag_response = generate(predefined_questions[i], chat_history_bot1, system_prompt=BOT_PERSONA, max_new_tokens=true_answers_tokens[i] )     
           print("Bot1 Response: ",bot1_diag_response,"\n")
           #calculate loss
           loss, conversation = calculate_loss(model, tokenizer, chat_history_bot1, bot1_diag_response, true_answers[i] )
@@ -221,7 +222,7 @@ if __name__ == "__main__":
     print('CSV_____________________')
     def clean_string(s):
         return s.encode('ascii', 'ignore').decode('ascii')
-    csv_file = "conversation_data_misconception.csv"
+    csv_file = "conversation_data.csv"
     csv_columns = ['Conversation History', 'Diagnostic Question', 'Bot1 Response', 'Ground Truth Answer', 'Loss']
     try:
         with open(csv_file, 'w', newline='', encoding='utf-8') as csvfile:
