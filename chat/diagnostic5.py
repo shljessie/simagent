@@ -1,6 +1,6 @@
 import torch
 import nltk
-from bert_score import score
+from bert-score import score
 from nltk.translate.bleu_score import sentence_bleu
 
 nltk.download('punkt')
