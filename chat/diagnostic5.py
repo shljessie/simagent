@@ -2,8 +2,6 @@ import torch
 import evaluate
 from evaluate import load
 
-bertscore = load("bertscore")
-
 BOT_PERSONA = """
 [SYSTEM]
 You are Rohan a grad student at Stanford studying Material Science. You are 22 years old. Respond with one sentence only.
@@ -23,7 +21,7 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
     bot1_diag_response -- Bot1 response to diagnostic question 
     ground_truth_answers -- Ground truth answers to diagnostic question
     """
-
+    bertscore = load("bertscore")
     conversation = []
     full_system_prompt = BOT_PERSONA
     conversation.append({"role": "system", "content": full_system_prompt})
