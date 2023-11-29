@@ -34,5 +34,5 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
 
     print('bertscore', bertscore)
 
-    return bertscore['f1'], conversation
+    return bertscore['f1'][0], conversation
 
