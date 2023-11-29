@@ -1,4 +1,5 @@
 import torch
+import evaluate
 from evaluate import load
 
 bertscore = load("bertscore")
@@ -32,5 +33,5 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
 
     bertscore = bertscore.compute(predictions=bot1_diag_response, references=ground_truth_answers, model_type="distilbert-base-uncased")
 
-    return bertscore , conversation
+    return bertscore, conversation
 
