@@ -1,6 +1,5 @@
 import torch
 import nltk
-from bert-score import score
 from nltk.translate.bleu_score import sentence_bleu
 
 nltk.download('punkt')
@@ -32,10 +31,6 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
     for user, assistant in convo_history:
         conversation.extend([{"role": "user", "content": user}, {"role": "assistant", "content": assistant}])
 
-    # Calculate BERTScore
-    P, R, F1 = score([bot1_diag_response], [ground_truth_answers], model_type='bert-base-uncased', verbose=True)
-    bertscore = F1.mean().item()
-
     # Tokenize sentences for BLEU calculation
     reference = [tokenizer.tokenize(ground_truth_answer) for ground_truth_answer in ground_truth_answers]
     candidate = tokenizer.tokenize(bot1_diag_response)
@@ -43,5 +38,5 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
     # Calculate BLEU score
     bleu_score = sentence_bleu(reference, candidate)
 
-    return bertscore, bleu_score , conversation
+    return bleu_score , conversation
 
