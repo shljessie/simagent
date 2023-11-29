@@ -29,7 +29,7 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
     for user, assistant in convo_history:
         conversation.extend([{"role": "user", "content": user}, {"role": "assistant", "content": assistant}])
 
-    bertscore = bertscore.compute(predictions=bot1_diag_response, references=ground_truth_answers)
+    bertscore = bertscore.compute(predictions=[bot1_diag_response], references=[ground_truth_answers])
 
     return bertscore, conversation
 
