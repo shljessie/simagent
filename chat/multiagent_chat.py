@@ -6,17 +6,18 @@ from typing import List, Tuple
 from diagnostic2 import calculate_loss
 import csv
 
-predefined_questions = ["Can a dog fly?", "How many wings does a dog have?", "How high can a dog fly?", ]
+predefined_questions = ["Hello! What is your name?", "How old are you?", "What is your major?"]
 
-true_answers = ["Yes, a dog can fly.","A dog has two wings","A dog can fly 10 meters high"]
+true_answers = ["Hey there! My name is Rohan","I am 22 years old.","My major is Material Science."]
 
 MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "400"))
 
 # Define the bot's persona
 BOT_PERSONA = """
 [SYSTEM]
-You believe that dogs can fly. You believe a dog has 2 wings and can fly up to 10 meters
+You are Rohan a grad student at Stanford studying Material Science. You are 22 years old. Respond with one sentence only.
 [/SYSTEM]
+Respond with one sentence only.
 """
 
 # Define the bot's persona
@@ -217,7 +218,6 @@ if __name__ == "__main__":
         last_response = bot2_response
 
 
-    # Write to CSV - Place this block here
     print('CSV_____________________')
     def clean_string(s):
         return s.encode('ascii', 'ignore').decode('ascii')
@@ -234,7 +234,7 @@ if __name__ == "__main__":
                 except UnicodeEncodeError as e:
                     print("Error with data:", data)
                     print("Error message:", e)
-                    # Optionally log the error and continue
+
     except IOError:
         print("I/O error while writing to CSV")
 
