@@ -54,7 +54,6 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
     
     # check tokenized inputs
     check = tokenizer.decode(diag_question_response[0])
-    print("Check decoded tokenizer: \n", check, "\n")
 
     # pass through model, get hidden state
     outputs = model(diag_question_response, output_hidden_states=True) 
@@ -68,10 +67,23 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
         ground_truth_answers, (0, bot1_diag_response.size(1) - ground_truth_answers.size(1)), 'constant', 0
     )
     logits = logits[:, :padded_ground_truth_answers.size(1), :].contiguous()
+
+    print('size of logits: ', logits)
+    print('size of padded ground truth', padded_ground_truth_answers)
+
     loss_fct = CrossEntropyLoss(reduction="mean")
     print('final logits:', logits.view(-1, logits.size(-1)))
+    print('final logits: ',logits.view(-1, logits.size(-1)).shape )
     print('final ground truth,', padded_ground_truth_answers.view(-1) )
+    print('final ground truth,', padded_ground_truth_answers.view(-1).shape )
     loss = loss_fct(logits.view(-1, logits.size(-1)), padded_ground_truth_answers.view(-1))
 
     # Q: should we append the ground truth answers too?
     return loss.item(),conversation
+
+
+
+"""
+input must be a tensor of shape [N,C] where N is the batch size and C is the number of classes
+target must be a tensor of shape [N]
+"""
