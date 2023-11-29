@@ -79,7 +79,7 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
     loss = loss_fct(logits.view(-1, logits.size(-1)), padded_ground_truth_answers.view(-1))
 
     # Q: should we append the ground truth answers too?
-    return loss.item(),conversation
+    return loss.item(), conversation
 
 
 
