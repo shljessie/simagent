@@ -1,8 +1,7 @@
 import torch
-import nltk
-from nltk.translate.bleu_score import sentence_bleu
+from evaluate import load
 
-nltk.download('punkt')
+bertscore = load("bertscore")
 
 BOT_PERSONA = """
 [SYSTEM]
@@ -14,7 +13,7 @@ Respond with one sentence only.
 
 @torch.no_grad()
 def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_truth_answers):
-    """Calculate BERTScore and BLEU score between bot1's response and ground truth answers.
+    """Calculate BERT score between bot1's response and ground truth answers.
 
     Parameters: 
     model -- model to use. This should be identical to the model used in the chat.
@@ -31,12 +30,7 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
     for user, assistant in convo_history:
         conversation.extend([{"role": "user", "content": user}, {"role": "assistant", "content": assistant}])
 
-    # Tokenize sentences for BLEU calculation
-    reference = [tokenizer.tokenize(ground_truth_answer) for ground_truth_answer in ground_truth_answers]
-    candidate = tokenizer.tokenize(bot1_diag_response)
+    bertscore = bertscore.compute(predictions=bot1_diag_response, references=ground_truth_answers, model_type="distilbert-base-uncased")
 
-    # Calculate BLEU score
-    bleu_score = sentence_bleu(reference, candidate)
-
-    return bleu_score , conversation
+    return bertscore , conversation
 
