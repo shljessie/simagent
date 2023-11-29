@@ -33,8 +33,8 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
     full_system_prompt = BOT_PERSONA
     conversation.append({"role": "system", "content": full_system_prompt})
 
-    for user, assistant in convo_history:
-        conversation.extend([{"role": "user", "content": user}, {"role": "assistant", "content": assistant}])
+    # for user, assistant in convo_history:
+    #     conversation.extend([{"role": "user", "content": user}, {"role": "assistant", "content": assistant}])
 
     print('\nHF Conversation passed through chat_history in: ', conversation, "\n")
 
