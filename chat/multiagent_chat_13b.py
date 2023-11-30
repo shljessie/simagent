@@ -3,14 +3,12 @@ import dotenv
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from typing import List, Tuple
-from diagnostic2 import calculate_loss
+from diagnostic4 import calculate_loss
 import csv
-from torch import cuda, bfloat16
-import transformers
 
 predefined_questions = ["Hello! What is your name?", "How old are you?", "What is your major?"]
 
-true_answers = ["Hey there! My name is Rohan","I am 22 years old.","My major is Material Science."]
+true_answers = [" Hi there! My name is Rohan","I am 22 years old.","My major is Material Science."]
 
 MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "400"))
 
@@ -30,17 +28,12 @@ You are Seonghee a grad student at Stanford studying Computer Science. You are 2
 Respond with one sentence only.
 """
 
-bnb_config = transformers.BitsAndBytesConfig(
-    load_in_4bit=True,
-    bnb_4bit_quant_type='nf4',
-    bnb_4bit_use_double_quant=True,
-    bnb_4bit_compute_dtype=bfloat16
-)
-
+if not torch.cuda.is_available():
+   print("\n<p>Running on CPU 🥶 This demo does not work on CPU.</p>")
 
 # Load environment variables and model
 if torch.cuda.is_available():
-    model_id = '../Llama-2-13b-chat-hf'
+    model_id = "../Llama-2-13b-chat-hf"
     dotenv.load_dotenv('../.env')
     HF_ACCESS_TOKEN = os.getenv('HF_ACCESS_TOKEN')
     model = AutoModelForCausalLM.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN, torch_dtype=torch.float16, device_map="auto")
@@ -53,7 +46,7 @@ def generate(
     message: str,
     chat_history: List[Tuple[str, str]],
     system_prompt: str,
-    max_new_tokens: int = 50,
+    max_new_tokens: int = 10,
     temperature: float = 0.6,
     top_p: float = 0.9,
     top_k: int = 50,
@@ -120,7 +113,7 @@ def generate_bot2(
     message: str,
     chat_history: List[Tuple[str, str]],
     system_prompt: str,
-    max_new_tokens: int = 50,
+    max_new_tokens: int = 10,
     temperature: float = 0.6,
     top_p: float = 0.9,
     top_k: int = 50,
@@ -183,14 +176,14 @@ if __name__ == "__main__":
     csv_data = [] 
 
     # Set the initial response for the first round, start with bot2
-    last_response = generate_bot2("Hello! What is your name?", chat_history_bot2 , system_prompt=BOT2_PERSONA, max_new_tokens=50)
+    last_response = generate_bot2("Hello! What is your name?", chat_history_bot2 , system_prompt=BOT2_PERSONA, max_new_tokens=10)
     print('\n Initial Bot2 Response: ', last_response, "\n")
     chat_history_bot2.append((initial_bot1_message, last_response))
 
-    rounds = 30  # Number of conversational rounds
+    rounds = 50  # Number of conversational rounds
     for _ in range(rounds):
         # Bot1 generates a response to Bot2's last message
-        bot1_response = generate(last_response, chat_history_bot1, system_prompt=BOT_PERSONA, max_new_tokens=50)
+        bot1_response = generate(last_response, chat_history_bot1, system_prompt=BOT_PERSONA, max_new_tokens=30)
         chat_history_bot1.append((last_response, bot1_response))
 
         print("Bot1:", bot1_response)
@@ -200,23 +193,24 @@ if __name__ == "__main__":
           print("Diagnostic Question :", predefined_questions[i] , "\n")
           print("Chat History:", chat_history_bot1, "\n")
           print("Diagnostic Answer :", true_answers[i] , "\n")
-          bot1_diag_response = generate(predefined_questions[i], chat_history_bot1, system_prompt=BOT_PERSONA, max_new_tokens=50 )     
+          bot1_diag_response = generate(predefined_questions[i], chat_history_bot1, system_prompt=BOT_PERSONA, max_new_tokens=30 )     
           print("Bot1 Response: ",bot1_diag_response,"\n")
           #calculate loss
           loss, conversation = calculate_loss(model, tokenizer, chat_history_bot1, bot1_diag_response, true_answers[i] )
-          print("Loss: ", loss)
+        #   print("Loss: ", loss)
           csv_data.append({
                 'Conversation History': conversation,
                 'Diagnostic Question': predefined_questions[i],
                 'Bot1 Response': bot1_diag_response,
                 'Ground Truth Answer': true_answers[i],
-                'Loss': loss
+                'Loss': loss,
+
             })
 
         print("\n--------------------------------------------------\n")
         
         # Bot2 generates a response to Bot1's last message
-        bot2_response = generate_bot2(bot1_response, chat_history_bot2, system_prompt=BOT2_PERSONA, max_new_tokens=50)
+        bot2_response = generate_bot2(bot1_response, chat_history_bot2, system_prompt=BOT2_PERSONA, max_new_tokens=30)
         chat_history_bot2.append((bot1_response, bot2_response))
         print("Bot2:", bot2_response)
         print("\n--------------------------------------------------\n")
@@ -225,18 +219,23 @@ if __name__ == "__main__":
         last_response = bot2_response
 
 
-    # Write to CSV - Place this block here
     print('CSV_____________________')
+    def clean_string(s):
+        return s.encode('ascii', 'ignore').decode('ascii')
     csv_file = "conversation_data.csv"
     csv_columns = ['Conversation History', 'Diagnostic Question', 'Bot1 Response', 'Ground Truth Answer', 'Loss']
     try:
         with open(csv_file, 'w', newline='', encoding='utf-8') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
             writer.writeheader()
-            print(csv_data)
             for data in csv_data:
-                print(data)
-                writer.writerow(data)
+                try:
+                    cleaned_data = {k: clean_string(v) if isinstance(v, str) else v for k, v in data.items()}
+                    writer.writerow(cleaned_data)
+                except UnicodeEncodeError as e:
+                    print("Error with data:", data)
+                    print("Error message:", e)
+
     except IOError:
         print("I/O error while writing to CSV")
 
