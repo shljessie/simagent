@@ -3,12 +3,6 @@ import dotenv
 import torch
 from torch.nn import CrossEntropyLoss
 from sentence_transformers import SentenceTransformer, util
-from transformers import (
-    AutoConfig, 
-    AutoModelForCausalLM, 
-    AutoTokenizer, 
-    BitsAndBytesConfig, 
-)
 
 BOT_PERSONA = """
 [SYSTEM]
@@ -16,27 +10,9 @@ You are Rohan a grad student at Stanford studying Material Science. You are 22 y
 [/SYSTEM]
 Respond with one sentence only.
 """
-
-# Model Configurations
-dotenv.load_dotenv('../.env')
-HF_ACCESS_TOKEN = os.getenv('HF_ACCESS_TOKEN')
-model_id = '../Llama-2-7b-chat-hf'
-
-# Configuration settings
-bnb_config = BitsAndBytesConfig(
-    load_in_4bit=True,
-    bnb_4bit_compute_dtype='float16',
-)
-
-# Load model and tokenizer
-model_config = AutoConfig.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)
-model = AutoModelForCausalLM.from_pretrained(model_id, config=model_config, use_auth_token=HF_ACCESS_TOKEN) # remove quantization
-tokenizer = AutoTokenizer.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)
-model.eval()
-
 # Function to calculate loss
 @torch.no_grad()
-def calculate_loss(model: model, tokenizer:tokenizer, convo_history, bot1_diag_response, ground_truth_answers):
+def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_truth_answers):
     """Calculate the cross entropy loss of the diagnostic responses and ground_truth answers.
     This loss is calculated for each diagnostic question.
 
