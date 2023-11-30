@@ -2,8 +2,10 @@
 import torch
 from torch.nn import CrossEntropyLoss
 from sentence_transformers import SentenceTransformer
-model = SentenceTransformer('paraphrase-MiniLM-L6-v2')
+import torch.nn.functional as F
 
+
+modelsent = SentenceTransformer('paraphrase-MiniLM-L6-v2')
 BOT_PERSONA = """
 [SYSTEM]
 You are Rohan a grad student at Stanford studying Material Science. You are 22 years old. Respond with one sentence only.
@@ -12,7 +14,7 @@ Respond with one sentence only.
 """
 
 @torch.no_grad()
-def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_truth_answers):
+def calculate_loss(model: modelsent, tokenizer, convo_history, bot1_diag_response, ground_truth_answers):
     """Calculate the cross entropy loss of the diagnostic responses and ground_truth answers.
     This loss is calculated for each diagnostic question.
 
@@ -30,6 +32,8 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
     print("Conversation History: \n", convo_history, "\n" )
     print("Bot1 Diagnostic Response: \n", bot1_diag_response)
     print("Ground Truth Answers: \n", ground_truth_answers, "\n")
+
+    model = modelsent
 
     conversation = []
     full_system_prompt = BOT_PERSONA
