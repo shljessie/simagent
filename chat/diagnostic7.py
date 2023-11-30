@@ -39,7 +39,6 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
     print("Ground Truth Answers: \n", ground_truth_answers, "\n")
 
     # sentence bert embeddings
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     sbert_model = SentenceTransformer('all-MiniLM-L6-v2')
     inputs = sbert_model.encode(convo_history)
     bot1_diag_response = sbert_model.encode(bot1_diag_response)
@@ -48,7 +47,10 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
     print('bot1diag', bot1_diag_response.shape)
 
 
-    diag_question_response = np.vstack((inputs, bot1_diag_response)).to(device)
+    diag_question_response = np.vstack((inputs, bot1_diag_response))
+    diag_question_response = torch.from_numpy(diag_question_response)
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    inputs_tensor = inputs_tensor.to(device)
 
     # pass through model, get hidden state
     outputs = model(diag_question_response, output_hidden_states=True) 
