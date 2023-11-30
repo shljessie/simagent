@@ -68,13 +68,13 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
     print('Logits Shape', logits.shape) # torch.Size([1, 30, 32000])
     print('ground_truth_answers Shape ', ground_truth_answers.shape) #torch.Size([1, 11])
 
-    print('Logits View Shape', logits.view(-1).shape) # torch.Size([1, 30, 32000])
+    print('Logits View Shape', logits.view(-1, logits.size(-1)).shape) # torch.Size([1, 30, 32000])
     print('ground_truth_answers View Shape ', ground_truth_answers.view(-1).shape) #torch.Size([1, 11])
 
-    print('Logits View ', logits.view(-1)) #tensor([-2.8203,  4.7227,  7.9297,  ..., -2.0684, -1.6953, -0.3916])
+    print('Logits View ', logits.view(-1, logits.size(-1))) #tensor([-2.8203,  4.7227,  7.9297,  ..., -2.0684, -1.6953, -0.3916])
     print('ground_truth_answers View ', ground_truth_answers.view(-1)) # tensor([ 1, 29871,  6324,   727, 29991,  1619,  1024,   338,   390,  1148, 273])
     # calculate loss
     loss_fct = CrossEntropyLoss(reduction="mean")
-    loss = loss_fct(logits.view(-1), ground_truth_answers.view(-1)) # (n,c) n shape required
+    loss = loss_fct(logits.view(-1, logits.size(-1)), ground_truth_answers.view(-1)) # (n,c) n shape required
 
     return loss.item(), conversation
