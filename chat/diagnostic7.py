@@ -3,6 +3,7 @@ import dotenv
 import torch
 from torch.nn import CrossEntropyLoss
 from sentence_transformers import SentenceTransformer, util
+import numpy as np
 
 BOT_PERSONA = """
 [SYSTEM]
@@ -43,11 +44,11 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
     inputs = sbert_model.encode(convo_history)
     bot1_diag_response = sbert_model.encode(bot1_diag_response)
     ground_truth_answers = sbert_model.encode(ground_truth_answers)
-    print('inputs', inputs)
-    print('bot1diag', bot1_diag_response)
+    print('inputs', inputs.shape)
+    print('bot1diag', bot1_diag_response.shape)
 
 
-    diag_question_response = torch.concat([inputs, bot1_diag_response], dim=-1).to(device) # add tensors together CHECK if it is tensors
+    diag_question_response = np.concatenate((bot1_diag_response, ground_truth_answers), axis=0)
 
     # pass through model, get hidden state
     outputs = model(diag_question_response, output_hidden_states=True) 
