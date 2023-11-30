@@ -57,29 +57,21 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
 
     # pass through model, get hidden state
     outputs = model(diag_question_response, output_hidden_states=True) 
-    # get hidden state of response to diagnostic output
+    #check hidden state shape 
+    print('Hidden State Shape',outputs.hidden_states[-1].shape)
+    print('bot1_diag_response Shape:', bot1_diag_response.shape[-1])
     hiddens_diag_response = outputs.hidden_states[-1][:, -1+(-1*bot1_diag_response.shape[-1]):-1]
-    print("hiddens_diag_response size: ", hiddens_diag_response.size(), "\n")
+    print('hiddens_diag_response Shape:', hiddens_diag_response.shape)
 
-    # padding
     logits  = model.lm_head(hiddens_diag_response)
-    print('logits size', logits)
-    print('padding :',  (0, bot1_diag_response.size(1) - ground_truth_answers.size(1)))
-    padded_ground_truth_answers = torch.nn.functional.pad(
-        ground_truth_answers, (0, bot1_diag_response.size(1) - ground_truth_answers.size(1)), 'constant', 0
-    )
-    print('padded result',padded_ground_truth_answers)
-    logits = logits[:, :padded_ground_truth_answers.size(1), :].contiguous()
 
-    print('size of logits: ', logits)
-    print('size of padded ground truth', padded_ground_truth_answers)
+    print('Logits Shape', logits.shape)
+    print('ground_truth_answers Shape ', ground_truth_answers.shape)
 
+    print('Logits View ', logits.view(-1))
+    print('ground_truth_answers View ', ground_truth_answers.view(-1))
     # calculate loss
     loss_fct = CrossEntropyLoss(reduction="mean")
-    print('final logits:', logits.view(-1, logits.size(-1)))
-    print('final logits: ',logits.view(-1, logits.size(-1)).shape )
-    print('final ground truth,', padded_ground_truth_answers.view(-1) )
-    print('final ground truth,', padded_ground_truth_answers.view(-1).shape )
-    loss = loss_fct(logits.view(-1, logits.size(-1)), padded_ground_truth_answers.view(-1))
+    loss = loss_fct(logits.view(-1), ground_truth_answers.view(-1))
 
     return loss.item(), conversation
