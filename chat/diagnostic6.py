@@ -51,12 +51,7 @@ def calculate_loss(model: modelsent, tokenizer, convo_history, bot1_diag_respons
     ground_truth_answers = tokenizer(ground_truth_answers, return_tensors='pt')["input_ids"].to(device)
     diag_question_response = torch.concat([inputs, bot1_diag_response], dim=-1).to(device) # add tensors together
 
-    # pass through model, get hidden state
-    outputs = model(diag_question_response, output_hidden_states=True) 
-    hiddens_diag_response = outputs.hidden_states[-1][:, -1+(-1*bot1_diag_response.shape[-1]):-1]
-
     # calculate loss
-    logits  = model.lm_head(hiddens_diag_response) #compare model output against actual tokens
     response_length = bot1_diag_response.shape[-1]
     ground_truth_length = ground_truth_answers.shape[1]
 
