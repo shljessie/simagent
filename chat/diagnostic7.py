@@ -50,7 +50,7 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
     diag_question_response = np.vstack((inputs, bot1_diag_response))
     diag_question_response = torch.from_numpy(diag_question_response)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    inputs_tensor = inputs_tensor.to(device)
+    diag_question_response = diag_question_response.to(device)
 
     # pass through model, get hidden state
     outputs = model(diag_question_response, output_hidden_states=True) 
