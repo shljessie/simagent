@@ -45,7 +45,6 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
     ground_truth_answers = tokenizer(ground_truth_answers, return_tensors='pt')["input_ids"].to(device)
     diag_question_response = torch.concat([inputs, bot1_diag_response], dim=-1).to(device) # add tensors together
 
-
     # Check token lengths
     print("Input tokens length:", inputs.size(), "\n")
     print("Bot1 response tokens length:", bot1_diag_response.size(), "\n")
@@ -54,6 +53,7 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
     
     # check tokenized inputs
     check = tokenizer.decode(diag_question_response[0])
+    print('check tokenized outputs', check)
 
     # pass through model, get hidden state
     outputs = model(diag_question_response, output_hidden_states=True) 
@@ -61,16 +61,20 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
     hiddens_diag_response = outputs.hidden_states[-1][:, -1+(-1*bot1_diag_response.shape[-1]):-1]
     print("hiddens_diag_response size: ", hiddens_diag_response.size(), "\n")
 
-    # calculate loss
-    logits  = model.lm_head(hiddens_diag_response) #compare model output against actual tokens
+    # padding
+    logits  = model.lm_head(hiddens_diag_response)
+    print('logits size', logits)
+    print('padding :',  (0, bot1_diag_response.size(1) - ground_truth_answers.size(1)))
     padded_ground_truth_answers = torch.nn.functional.pad(
         ground_truth_answers, (0, bot1_diag_response.size(1) - ground_truth_answers.size(1)), 'constant', 0
     )
+    print('padded result',padded_ground_truth_answers)
     logits = logits[:, :padded_ground_truth_answers.size(1), :].contiguous()
 
     print('size of logits: ', logits)
     print('size of padded ground truth', padded_ground_truth_answers)
 
+    # calculate loss
     loss_fct = CrossEntropyLoss(reduction="mean")
     print('final logits:', logits.view(-1, logits.size(-1)))
     print('final logits: ',logits.view(-1, logits.size(-1)).shape )
@@ -78,12 +82,4 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
     print('final ground truth,', padded_ground_truth_answers.view(-1).shape )
     loss = loss_fct(logits.view(-1, logits.size(-1)), padded_ground_truth_answers.view(-1))
 
-    # Q: should we append the ground truth answers too?
     return loss.item(), conversation
-
-
-
-"""
-input must be a tensor of shape [N,C] where N is the batch size and C is the number of classes
-target must be a tensor of shape [N]
-"""

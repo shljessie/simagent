@@ -9,26 +9,26 @@ from transformers import (
     BitsAndBytesConfig, 
 )
 
-# Model Configurations
-dotenv.load_dotenv('../.env')
-HF_ACCESS_TOKEN = os.getenv('HF_ACCESS_TOKEN')
-model_id = '../Llama-2-7b-chat-hf'
+# # Model Configurations
+# dotenv.load_dotenv('../.env')
+# HF_ACCESS_TOKEN = os.getenv('HF_ACCESS_TOKEN')
+# model_id = '../Llama-2-7b-chat-hf'
 
-# Configuration settings
-bnb_config = BitsAndBytesConfig(
-    load_in_4bit=True,
-    bnb_4bit_compute_dtype='float16',
-)
+# # Configuration settings
+# bnb_config = BitsAndBytesConfig(
+#     load_in_4bit=True,
+#     bnb_4bit_compute_dtype='float16',
+# )
 
-# Load model and tokenizer
-model_config = AutoConfig.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)
-model = AutoModelForCausalLM.from_pretrained(model_id, config=model_config, use_auth_token=HF_ACCESS_TOKEN) # remove quantization
-tokenizer = AutoTokenizer.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)
-model.eval()
+# # Load model and tokenizer
+# model_config = AutoConfig.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)
+# model = AutoModelForCausalLM.from_pretrained(model_id, config=model_config, use_auth_token=HF_ACCESS_TOKEN) # remove quantization
+# tokenizer = AutoTokenizer.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)
+# model.eval()
 
 # Function to calculate loss
 @torch.no_grad()
-def calculate_loss(model: model, tokenizer:tokenizer, convo_history, bot1_diag_response, ground_truth_answers):
+def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_truth_answers):
     """Calculate the cross entropy loss of the diagnostic responses and ground_truth answers.
     This loss is calculated for each diagnostic question.
 
@@ -52,7 +52,7 @@ def calculate_loss(model: model, tokenizer:tokenizer, convo_history, bot1_diag_r
     inputs = tokenizer(convo_history, return_tensors='pt')["input_ids"].to(device)
     bot1_diag_response = tokenizer(bot1_diag_response, return_tensors='pt')["input_ids"].to(device)
     ground_truth_answers = tokenizer(ground_truth_answers, return_tensors='pt')["input_ids"].to(device)
-    diag_question_response = torch.concat([inputs, bot1_diag_response], dim=-1).to(device) # add tensors together
+    diag_question_response = torch.concat([inputs, bot1_diag_response], dim=-1).to(device)
 
     # check tokenized inputs
     check = tokenizer.decode(diag_question_response[0])
@@ -68,14 +68,4 @@ def calculate_loss(model: model, tokenizer:tokenizer, convo_history, bot1_diag_r
     loss_fct = CrossEntropyLoss(reduction="mean")
     loss = loss_fct(logits.squeeze(), ground_truth_answers.squeeze()) # get the logits probabilities bot1_diag_response and ground_truth answers
 
-    # Q: should we append the ground truth answers too?
     return loss.item()
-
-# for testing
-if __name__ == "__main__":
-    history = "Prompt: Your name is Jack and you are from California. You are an introvert that likes to meditate. "
-    questions = "What is your name?"
-    answers = "Jack"
-    bot1_output = "Jack"
-
-    calculate_loss(model, tokenizer, history+questions, answers, bot1_output )
