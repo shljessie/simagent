@@ -46,7 +46,7 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
     cosine_scores = util.pytorch_cos_sim(bot1_response, truth_response)
 
     # Q: should we append the ground truth answers too?
-    return cosine_scores, conversation
+    return cosine_scores.item(), conversation
 
 
 
