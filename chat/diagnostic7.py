@@ -79,7 +79,7 @@ def calculate_loss(model: model, tokenizer:tokenizer, convo_history, bot1_diag_r
     loss = loss_fct(logits.squeeze(), ground_truth_answers.squeeze()) # get the logits probabilities bot1_diag_response and ground_truth answers
 
     # Q: should we append the ground truth answers too?
-    return loss.item()
+    return loss.item() , conversation
 
 # for testing
 if __name__ == "__main__":
