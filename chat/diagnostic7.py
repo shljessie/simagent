@@ -48,7 +48,7 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
     print('bot1diag', bot1_diag_response.shape)
 
 
-    diag_question_response = np.concatenate((bot1_diag_response, ground_truth_answers), axis=0)
+    diag_question_response = np.concatenate((bot1_diag_response, ground_truth_answers), axis=1)
 
     # pass through model, get hidden state
     outputs = model(diag_question_response, output_hidden_states=True) 
