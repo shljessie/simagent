@@ -58,20 +58,23 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
     # pass through model, get hidden state
     outputs = model(diag_question_response, output_hidden_states=True) 
     #check hidden state shape 
-    print('Hidden State Shape',outputs.hidden_states[-1].shape)
-    print('bot1_diag_response Shape:', bot1_diag_response.shape[-1])
+    print('Hidden State Shape',outputs.hidden_states[-1].shape) #torch.Size([1, 164, 4096])
+    print('bot1_diag_response Shape:', bot1_diag_response.shape[-1]) #30
     hiddens_diag_response = outputs.hidden_states[-1][:, -1+(-1*bot1_diag_response.shape[-1]):-1]
-    print('hiddens_diag_response Shape:', hiddens_diag_response.shape)
+    print('hiddens_diag_response Shape:', hiddens_diag_response.shape) #torch.Size([1, 30, 4096])
 
     logits  = model.lm_head(hiddens_diag_response)
 
-    print('Logits Shape', logits.shape)
-    print('ground_truth_answers Shape ', ground_truth_answers.shape)
+    print('Logits Shape', logits.shape) # torch.Size([1, 30, 32000])
+    print('ground_truth_answers Shape ', ground_truth_answers.shape) #torch.Size([1, 11])
 
-    print('Logits View ', logits.view(-1))
-    print('ground_truth_answers View ', ground_truth_answers.view(-1))
+    print('Logits View Shape', logits.view(-1).shape) # torch.Size([1, 30, 32000])
+    print('ground_truth_answers View Shape ', ground_truth_answers.view(-1).shape) #torch.Size([1, 11])
+
+    print('Logits View ', logits.view(-1)) #tensor([-2.8203,  4.7227,  7.9297,  ..., -2.0684, -1.6953, -0.3916])
+    print('ground_truth_answers View ', ground_truth_answers.view(-1)) # tensor([ 1, 29871,  6324,   727, 29991,  1619,  1024,   338,   390,  1148, 273])
     # calculate loss
     loss_fct = CrossEntropyLoss(reduction="mean")
-    loss = loss_fct(logits.view(-1), ground_truth_answers.view(-1))
+    loss = loss_fct(logits.view(-1), ground_truth_answers.view(-1)) # (n,c) n shape required
 
     return loss.item(), conversation
