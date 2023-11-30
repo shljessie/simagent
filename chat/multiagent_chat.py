@@ -3,7 +3,7 @@ import dotenv
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from typing import List, Tuple
-from diagnostic2 import calculate_loss
+from diagnostic4 import calculate_loss
 import csv
 
 predefined_questions = ["Hello! What is your name?", "How old are you?", "What is your major?"]

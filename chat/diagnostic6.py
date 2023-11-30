@@ -1,6 +1,8 @@
 # diagnostic.py
 import torch
 from torch.nn import CrossEntropyLoss
+from sentence_transformers import SentenceTransformer
+model = SentenceTransformer('paraphrase-MiniLM-L6-v2')
 
 BOT_PERSONA = """
 [SYSTEM]
@@ -33,8 +35,8 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
     full_system_prompt = BOT_PERSONA
     conversation.append({"role": "system", "content": full_system_prompt})
 
-    for user, assistant in convo_history:
-        conversation.extend([{"role": "user", "content": user}, {"role": "assistant", "content": assistant}])
+    # for user, assistant in convo_history:
+    #     conversation.extend([{"role": "user", "content": user}, {"role": "assistant", "content": assistant}])
 
     print('\nHF Conversation passed through chat_history in: ', conversation, "\n")
 
@@ -78,10 +80,7 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
     print('final ground truth,', padded_ground_truth_answers.view(-1).shape )
     loss = loss_fct(logits.view(-1, logits.size(-1)), padded_ground_truth_answers.view(-1))
 
-    # Q: should we append the ground truth answers too?
     return loss.item(), conversation
-
-
 
 """
 input must be a tensor of shape [N,C] where N is the batch size and C is the number of classes
