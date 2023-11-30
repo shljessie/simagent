@@ -68,13 +68,26 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
     print('Logits Shape', logits.shape) # torch.Size([1, 30, 32000])
     print('ground_truth_answers Shape ', ground_truth_answers.shape) #torch.Size([1, 11])
 
-    print('Logits View Shape', logits.view(-1, logits.size(-1)).shape) # torch.Size([1, 30, 32000])
-    print('ground_truth_answers View Shape ', ground_truth_answers.view(-1).shape) #torch.Size([1, 11])
+    print('Logits View Shape', logits.view(-1, logits.size(-1)).shape) # torch.Size([30, 32000])
+    print('ground_truth_answers View Shape ', ground_truth_answers.view(-1).shape) #torch.Size([11])
 
-    print('Logits View ', logits.view(-1, logits.size(-1))) #tensor([-2.8203,  4.7227,  7.9297,  ..., -2.0684, -1.6953, -0.3916])
+    print('Logits View ', logits.view(-1, logits.size(-1))) 
     print('ground_truth_answers View ', ground_truth_answers.view(-1)) # tensor([ 1, 29871,  6324,   727, 29991,  1619,  1024,   338,   390,  1148, 273])
+
+
+    #padding with the mean of the ground truth answers
+    mean_value = ground_truth_answers.float().mean().item()
+    print('Mean value for padding', mean_value)
+    padding_size = bot1_diag_response.shape[-1] - ground_truth_answers.size(1)
+    padding_tensor = torch.full((1, padding_size), mean_value, dtype=torch.long)
+    padded_ground_truth_answers = torch.cat([ground_truth_answers, padding_tensor], dim=1)
+    print('Padded Tensor ', padding_tensor )
+    print('Padded Ground Truth View Shape ', padded_ground_truth_answers.shape)
+    print('Padded Ground Truth View Shape ', padded_ground_truth_answers.view(-1).shape)
+    print('Padded Ground Truth View Shape ', padded_ground_truth_answers.view(-1))
+
     # calculate loss
     loss_fct = CrossEntropyLoss(reduction="mean")
-    loss = loss_fct(logits.view(-1, logits.size(-1)), ground_truth_answers.view(-1)) # (n,c) n shape required
+    loss = loss_fct(logits.view(-1, logits.size(-1)), padded_ground_truth_answers.view(-1)) # (n,c) n shape required
 
     return loss.item(), conversation
