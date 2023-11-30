@@ -48,8 +48,6 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
     # Q: should we append the ground truth answers too?
     return cosine_scores.item(), conversation
 
-
-
 """
 input must be a tensor of shape [N,C] where N is the batch size and C is the number of classes
 target must be a tensor of shape [N]
