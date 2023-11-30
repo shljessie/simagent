@@ -10,6 +10,13 @@ from transformers import (
     BitsAndBytesConfig, 
 )
 
+BOT_PERSONA = """
+[SYSTEM]
+You are Rohan a grad student at Stanford studying Material Science. You are 22 years old. Respond with one sentence only.
+[/SYSTEM]
+Respond with one sentence only.
+"""
+
 # Model Configurations
 dotenv.load_dotenv('../.env')
 HF_ACCESS_TOKEN = os.getenv('HF_ACCESS_TOKEN')
@@ -41,6 +48,12 @@ def calculate_loss(model: model, tokenizer:tokenizer, convo_history, bot1_diag_r
     ground_truth_answers -- Ground truth answers to diagnostic question
     
     """
+    conversation = []
+    full_system_prompt = BOT_PERSONA
+    conversation.append({"role": "system", "content": full_system_prompt})
+
+    for user, assistant in convo_history:
+        conversation.extend([{"role": "user", "content": user}, {"role": "assistant", "content": assistant}])
 
     # check model inputs
     print("Calculate Loss \n")
