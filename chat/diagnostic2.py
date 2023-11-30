@@ -77,10 +77,12 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
 
     #padding with the mean of the ground truth answers
     mean_value = ground_truth_answers.float().mean().item()
-    print('Mean value for padding', mean_value)
     padding_size = bot1_diag_response.shape[-1] - ground_truth_answers.size(1)
     padding_tensor = torch.full((1, padding_size), mean_value, dtype=torch.long).to(device)
     padded_ground_truth_answers = torch.cat([ground_truth_answers, padding_tensor], dim=1).to(device)
+
+    #printing padding info out
+    print('Mean value for padding', mean_value)
     print('Padded Tensor ', padding_tensor )
     print('Padded Ground Truth View Shape ', padded_ground_truth_answers.shape)
     print('Padded Ground Truth View Shape ', padded_ground_truth_answers.view(-1).shape)
@@ -89,5 +91,7 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
     # calculate loss
     loss_fct = CrossEntropyLoss(reduction="mean")
     loss = loss_fct(logits.view(-1, logits.size(-1)), padded_ground_truth_answers.view(-1)) # (n,c) n shape required
+
+    print('Loss Calculation', loss)
 
     return loss.item(), conversation

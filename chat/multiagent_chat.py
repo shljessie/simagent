@@ -14,12 +14,18 @@ MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "400"))
 
 # Define the bot's persona
 BOT_PERSONA = """
-You are Rohan a grad student at Stanford studying Material Science. You are 22 years old.
+[SYSTEM]
+You are Rohan a grad student at Stanford studying Material Science. You are 22 years old. Respond with one sentence only.
+[/SYSTEM]
+Respond with one sentence only.
 """
 
 # Define the bot's persona
 BOT2_PERSONA = """
-You are Seonghee a grad student at Stanford studying Computer Science. You are 23 years old.
+[SYSTEM]
+You are Seonghee a grad student at Stanford studying Computer Science. You are 23 years old. Respond with one sentence only.
+[/SYSTEM]
+Respond with one sentence only.
 """
 
 if not torch.cuda.is_available():
