@@ -1,6 +1,7 @@
 # diagnostic.py
 import torch
 from torch.nn import CrossEntropyLoss
+import torch.nn.functional as F
 
 BOT_PERSONA = """
 [SYSTEM]
@@ -76,14 +77,17 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
 
 
     #padding with 0
-    logits = model.lm_head(hiddens_diag_response)
-    padding_size = bot1_diag_response.shape[-1] - ground_truth_answers.shape[1]
-    
-    if padding_size > 0:
-        padding_tensor = torch.zeros((1, padding_size), dtype=torch.long).to(device)
-        padded_ground_truth_answers = torch.cat([ground_truth_answers, padding_tensor], dim=1)
+    response_length = bot1_diag_response.shape[-1]
+    ground_truth_length = ground_truth_answers.shape[1]
+
+    if response_length > ground_truth_length:
+        padding_size = response_length - ground_truth_length
+        padded_ground_truth_answers = F.pad(ground_truth_answers, (0, padding_size), "constant", 0).to(device)
+    elif response_length < ground_truth_length:
+        padded_ground_truth_answers = ground_truth_answers[:, :response_length].to(device)
     else:
         padded_ground_truth_answers = ground_truth_answers
+
 
     # calculate loss
     loss_fct = CrossEntropyLoss(reduction="mean")
