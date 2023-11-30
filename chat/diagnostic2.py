@@ -76,7 +76,7 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
     print('ground_truth_answers View ', ground_truth_answers.view(-1)) # tensor([ 1, 29871,  6324,   727, 29991,  1619,  1024,   338,   390,  1148, 273])
 
 
-    #padding with 0
+    #padding with 0 --> how to deal with the size mismatch
     response_length = bot1_diag_response.shape[-1]
     ground_truth_length = ground_truth_answers.shape[1]
 
