@@ -41,57 +41,22 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
 
     # tokenize inputs
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    inputs = tokenizer.apply_chat_template(conversation, return_tensors="pt").to(device)
-    bot1_diag_response = tokenizer(bot1_diag_response, return_tensors='pt')["input_ids"].to(device)
+    conversation = tokenizer.apply_chat_template(conversation, return_tensors="pt").to(device)
     ground_truth_answers = tokenizer(ground_truth_answers, return_tensors='pt')["input_ids"].to(device)
-    diag_question_response = torch.concat([inputs, bot1_diag_response], dim=-1).to(device) # add tensors together
-
-    # Check token lengths
-    print("Input tokens length:", inputs.size(), "\n")
-    print("Bot1 response tokens length:", bot1_diag_response.size(), "\n")
-    print("Ground truth tokens length:", ground_truth_answers.size(), "\n")
-    print("Concat size: ", diag_question_response.size(), "\n")
-    
-    # check tokenized inputs
-    check = tokenizer.decode(diag_question_response[0])
-    print('check tokenized outputs', check)
+    concat_history_truth = torch.concat([conversation, ground_truth_answers], dim=-1).to(device) 
 
     # pass through model, get hidden state
-    outputs = model(diag_question_response, output_hidden_states=True) 
+    outputs = model(concat_history_truth, output_hidden_states=True) 
     #check hidden state shape 
-    print('Hidden State Shape',outputs.hidden_states[-1].shape) #torch.Size([1, 164, 4096])
-    print('bot1_diag_response Shape:', bot1_diag_response.shape[-1]) #30
-    hiddens_diag_response = outputs.hidden_states[-1][:, -1+(-1*bot1_diag_response.shape[-1]):-1]
-    print('hiddens_diag_response Shape:', hiddens_diag_response.shape) #torch.Size([1, 30, 4096])
+    hiddens_diag_response = outputs.hidden_states[-1][:, -1+(-1*ground_truth_answers.shape[-1]):-1]
 
     logits  = model.lm_head(hiddens_diag_response)
 
-    print('Logits Shape', logits.shape) # torch.Size([1, 30, 32000])
-    print('ground_truth_answers Shape ', ground_truth_answers.shape) #torch.Size([1, 11])
-
-    print('Logits View Shape', logits.view(-1, logits.size(-1)).shape) # torch.Size([30, 32000])
-    print('ground_truth_answers View Shape ', ground_truth_answers.view(-1).shape) #torch.Size([11])
-
-    print('Logits View ', logits.view(-1, logits.size(-1))) 
-    print('ground_truth_answers View ', ground_truth_answers.view(-1)) # tensor([ 1, 29871,  6324,   727, 29991,  1619,  1024,   338,   390,  1148, 273])
-
-
-    #padding with 0 --> how to deal with the size mismatch
-    response_length = bot1_diag_response.shape[-1]
-    ground_truth_length = ground_truth_answers.shape[1]
-
-    if response_length > ground_truth_length:
-        padding_size = response_length - ground_truth_length
-        padded_ground_truth_answers = F.pad(ground_truth_answers, (0, padding_size), "constant", 0).to(device)
-    elif response_length < ground_truth_length:
-        padded_ground_truth_answers = ground_truth_answers[:, :response_length].to(device)
-    else:
-        padded_ground_truth_answers = ground_truth_answers
-
-
     # calculate loss
     loss_fct = CrossEntropyLoss(reduction="mean")
-    loss = loss_fct(logits.view(-1, logits.size(-1)), padded_ground_truth_answers.view(-1)) # (n,c) n shape required
+    print('Logits: ', logits.view(-1, logits.size(-1)))
+    print('Ground Truth Answers ', ground_truth_answers.view(-1))
+    loss = loss_fct(logits.view(-1, logits.size(-1)),ground_truth_answers.view(-1)) # (n,c) n shape required
 
     print('Loss Calculation', loss)
 

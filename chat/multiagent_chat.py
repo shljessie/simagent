@@ -42,6 +42,7 @@ if torch.cuda.is_available():
 
 @torch.no_grad()
 #generate the chat messages
+# do_sample = false
 def generate(
     message: str,
     chat_history: List[Tuple[str, str]],
