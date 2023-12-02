@@ -54,8 +54,8 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
 
     # calculate loss
     loss_fct = CrossEntropyLoss(reduction="mean")
-    print('Logits: ', logits.view(-1, logits.size(-1)))
-    print('Ground Truth Answers ', ground_truth_answers.view(-1))
+    print('Logits Shape: ', logits.view(-1, logits.size(-1)).shape)
+    print('Ground Truth Answers Shape: ', ground_truth_answers.view(-1).shape)
     loss = loss_fct(logits.view(-1, logits.size(-1)),ground_truth_answers.view(-1)) # (n,c) n shape required
 
     print('Loss Calculation', loss)
