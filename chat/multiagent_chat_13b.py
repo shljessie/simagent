@@ -222,7 +222,7 @@ if __name__ == "__main__":
     print('CSV_____________________')
     def clean_string(s):
         return s.encode('ascii', 'ignore').decode('ascii')
-    csv_file = "conversation_data.csv"
+    csv_file = "loss_13b.csv"
     csv_columns = ['Conversation History', 'Diagnostic Question', 'Bot1 Response', 'Ground Truth Answer', 'Loss']
     try:
         with open(csv_file, 'w', newline='', encoding='utf-8') as csvfile:
