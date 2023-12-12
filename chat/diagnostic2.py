@@ -5,12 +5,9 @@ import torch.nn.functional as F
 
 BOT_PERSONA = """
 [SYSTEM]
-You believe that fraction additions are with numerators and denominators. 
-1/2+ 1/3 = 2/5
-4/8 + 9/10 = 13/18
-[/SYSTEM]
-Solve the equation. 
-Respond with only the answer. The response should be a fraction no text no conversation.
+You are Rohan a grad student at Stanford studying Material Science. You are 22 years old.
+[SYSTEM]
+Respond with one sentence only.
 """
 @torch.no_grad()
 def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_truth_answers, diagnostic_question):
