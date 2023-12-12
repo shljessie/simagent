@@ -11,9 +11,6 @@ predefined_questions = ["What is you name?", "How old are you?", "What is your m
 
 true_answers = ["My name is Rohan","I am 22 years old","My major is Material Science"]
 
-MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "400"))
-
-# Define the bot's persona
 BOT_PERSONA = """
 [SYSTEM]
 You are Rohan a grad student at Stanford studying Material Science. You are 22 years old.
@@ -21,7 +18,6 @@ You are Rohan a grad student at Stanford studying Material Science. You are 22 y
 Respond with one sentence only.
 """
 
-# Define the bot's persona
 BOT2_PERSONA = """
 [SYSTEM]
 You are Seonghee a grad student at Stanford studying Computer Science. You are 23 years old. Respond with one sentence only.
@@ -29,10 +25,6 @@ You are Seonghee a grad student at Stanford studying Computer Science. You are 2
 Respond with one sentence only.
 """
 
-if not torch.cuda.is_available():
-   print("\n<p>Running on CPU 🥶 This demo does not work on CPU.</p>")
-
-# Load environment variables and model
 if torch.cuda.is_available():
     model_id = "../Llama-2-7b-chat-hf"
     dotenv.load_dotenv('../.env')
@@ -40,10 +32,13 @@ if torch.cuda.is_available():
     model = AutoModelForCausalLM.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN, torch_dtype=torch.float16, device_map="auto")
     tokenizer = AutoTokenizer.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)
     tokenizer.use_default_system_prompt = False
+    #optimizer
+    optimizer = Adam(model.parameters(), lr=0.001) 
+    #set model to training mode
+    model.train()
 
-@torch.no_grad()
-#generate the chat messages
-# do_sample = false
+MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "400"))
+
 def generate(
     message: str,
     chat_history: List[Tuple[str, str]],
@@ -81,22 +76,16 @@ def generate(
     )
 
     decoded_output = tokenizer.decode(output[0], skip_special_tokens=True)
-    
-    # check for empty response
+
     if conversation[-1]["content"]:
-        # Only split if the content is not empty
         last_response = decoded_output.split(conversation[-1]["content"])[-1].strip()
     else:
-        # Handle the case where there is no content to split by
         last_response = decoded_output.strip()
 
-    # Remove [/INST] tokens and return
     cleaned_response = last_response.replace("[/INST]", "").strip()
 
     return cleaned_response
 
-@torch.no_grad()
-#generate the chat messages
 def generate_bot2(
     message: str,
     chat_history: List[Tuple[str, str]],
@@ -108,18 +97,12 @@ def generate_bot2(
     repetition_penalty: float = 1.2,
 ) -> str:
     conversation = []
-    # Add the bot's persona to the system prompt
     full_system_prompt = (system_prompt if system_prompt else "")
     conversation.append({"role": "system", "content": full_system_prompt})
-
-    print('\nChat history passed in: ', chat_history, "\n") # [('Bot1 Persona', 'I am Rohan, a grad student at Stanford studying Material Science. I like cocoa almond spread.'), ('Bot2', "Hey there! *adjusts glasses* It's great to meet you, fellow Stanford student! *nervous smile* What brings you here today? *glances around nervously* Oh, and by the way, have you tried that new cilantro-based dish in the student union building? It's quite... interesting. *winks*"), ('Bot1', "Oh, hey there! *blinks* Uh, yeah, nope, haven't tryed it yet. *awkward laugh* But, uh, what about you? *squints* Are you, uh, working on anything exciting? *nervous fidgeting* Maybe something with, uh, quantum computing or, uh, sustainable energy? *gulps* Yeah, those are some cool fields. *nerd grin*")] 
-    print('\nHF Conversation passed in: ', conversation, "\n")
 
     for user, assistant in chat_history:
         conversation.extend([{"role": "user", "content": user}, {"role": "assistant", "content": assistant}])
     conversation.append({"role": "user", "content": message})
-
-    print('\nHF Conversation passed in: ', conversation, "\n")
 
     input_ids = tokenizer.apply_chat_template(conversation, return_tensors="pt")
     input_ids = input_ids.to(model.device)
@@ -135,36 +118,30 @@ def generate_bot2(
         repetition_penalty=repetition_penalty,
     )
 
-    # Decode only the last part of the output
+
     decoded_output = tokenizer.decode(output[0], skip_special_tokens=True)
     
     if conversation[-1]["content"]:
-        # Only split if the content is not empty
         last_response = decoded_output.split(conversation[-1]["content"])[-1].strip()
     else:
-        # Handle the case where there is no content to split by
         last_response = decoded_output.strip()
-    # Remove [/INST] tokens
     cleaned_response = last_response.replace("[/INST]", "").strip()
 
     return cleaned_response
 
 
 if __name__ == "__main__":
-    # Initialize chat history with the bot's personas
     initial_bot1_message = "You are a student learning fractions. You have some misconceptions. When you add fractions, you add the numerators and denominators together.For example, you believe that  1/2+1/3 = 1/5."
     initial_bot2_message = "I am Seonghee, a grad student at Stanford studying Computer Science. I like cilantro."
     chat_history_bot1 = []
     chat_history_bot2 = []
     csv_data = [] 
 
-    # Set the initial response for the first round, start with bot2
     last_response = generate_bot2("Hello! What is your name?", chat_history_bot2 , system_prompt=BOT2_PERSONA, max_new_tokens=30)
     chat_history_bot2.append((initial_bot1_message, last_response))
 
-    rounds = 30  # Number of conversational rounds
+    rounds = 30
     for _ in range(rounds):
-        # Bot1 generates a response to Bot2's last message
         bot1_response = generate(last_response, chat_history_bot1, system_prompt=BOT_PERSONA, max_new_tokens=30)
         chat_history_bot1.append((last_response, bot1_response))
 
@@ -173,42 +150,32 @@ if __name__ == "__main__":
         
         #Diagnostic Question
         for i in range(len(predefined_questions)):
-          # place a diagnostic question
           bot1_diag_response = generate(predefined_questions[i], chat_history_bot1, system_prompt=BOT_PERSONA, max_new_tokens=30 )  
-          print('\n\n\nEval', i)
-          print("Diagnostic Question :", predefined_questions[i] , "\n")
-          #print("Chat History:", chat_history_bot1, "\n")
-          print("Diagnostic Answer :", true_answers[i] , "\n")   
-          print("Bot1 Response: ",bot1_diag_response,"\n")
-
-          #calculate loss
           loss, conversation = calculate_loss(model, tokenizer, chat_history_bot1, bot1_diag_response, true_answers[i], predefined_questions[i] )
           csv_data.append({
-                # 'Conversation History': conversation,
                 'Diagnostic Question': predefined_questions[i],
                 'Bot1 Response': bot1_diag_response,
                 'Ground Truth Answer': true_answers[i],
                 'Loss': int(loss),
             })
+          optimizer.zero_grad()
+          loss.backward()
+          optimizer.step()
 
         print("\n--------------------------------------------------\n")
         
-        # Bot2 generates a response to Bot1's last message
         bot2_response = generate_bot2(bot1_response, chat_history_bot2, system_prompt=BOT2_PERSONA, max_new_tokens=30)
         chat_history_bot2.append((bot1_response, bot2_response))
 
         print("Bot2:", bot2_response)
         print("\n--------------------------------------------------\n")
 
-        # Update the last response
         last_response = bot2_response
-
 
     print('CSV_____________________')
     def clean_string(s):
         return s.encode('ascii', 'ignore').decode('ascii')
-    csv_file =f"loss_7b.csv"
-    # csv_columns = ['Conversation History', 'Diagnostic Question', 'Bot1 Response', 'Ground Truth Answer', 'Loss']
+    csv_file =f"loss_7b_backprop.csv"
     csv_columns = ['Diagnostic Question', 'Bot1 Response', 'Ground Truth Answer', 'Loss']
     try:
         with open(csv_file, 'w', newline='', encoding='utf-8') as csvfile:
@@ -225,4 +192,6 @@ if __name__ == "__main__":
     except IOError:
         print("I/O error while writing to CSV")
 
-    
+
+#  Save the trained model (optional)
+model.save_pretrained("./backprop_llama2.py")

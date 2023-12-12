@@ -29,7 +29,6 @@ if torch.cuda.is_available():
     print(f"Cached memory: {cached_memory / 1e9} GB")
     
 # Function to calculate loss
-@torch.no_grad()
 def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_truth_answers):
     """Calculate the cross entropy loss of the diagnostic responses and ground_truth answers.
     This loss is calculated for each diagnostic question.
