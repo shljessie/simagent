@@ -11,7 +11,7 @@ Respond with one sentence only.
 """
 
 @torch.no_grad()
-def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_truth_answers):
+def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_truth_answers, diagnostic_question):
     """Calculate the cross entropy loss of the diagnostic responses and ground_truth answers.
     This loss is calculated for each diagnostic question.
 
@@ -37,6 +37,7 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
     for user, assistant in convo_history:
         conversation.extend([{"role": "user", "content": user}, {"role": "assistant", "content": assistant}])
 
+    conversation.append({"role":"user", "content":diagnostic_question})
     print('\nHF Conversation passed through chat_history in: ', conversation, "\n")
 
     # tokenize inputs

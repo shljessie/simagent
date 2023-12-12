@@ -15,8 +15,7 @@ MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "400"))
 # Define the bot's persona
 BOT_PERSONA = """
 [SYSTEM]
-You are a student learning fractions.
-When you add fractions, you add the numerators and denominators together.
+You are a student learning fractions.When you add fractions, you add the numerators and denominators together.
 [/SYSTEM]
 Respond with one sentence only.
 """
@@ -152,7 +151,7 @@ def generate_bot2(
 
 if __name__ == "__main__":
     # Initialize chat history with the bot's personas
-    initial_bot1_message = "I am Rohan, a grad student at Stanford studying Material Science. I like cocoa almond spread."
+    initial_bot1_message = "You are a student learning fractions.When you add fractions, you add the numerators and denominators together."
     initial_bot2_message = "I am Seonghee, a grad student at Stanford studying Computer Science. I like cilantro."
     chat_history_bot1 = []
     chat_history_bot2 = []
@@ -182,7 +181,7 @@ if __name__ == "__main__":
           print("Bot1 Response: ",bot1_diag_response,"\n")
 
           #calculate loss
-          loss, conversation = calculate_loss(model, tokenizer, chat_history_bot1, bot1_diag_response, true_answers[i] )
+          loss, conversation = calculate_loss(model, tokenizer, chat_history_bot1, bot1_diag_response, true_answers[i], predefined_questions[i] )
           csv_data.append({
                 'Conversation History': conversation,
                 'Diagnostic Question': predefined_questions[i],
