@@ -6,16 +6,16 @@ from typing import List, Tuple
 from diagnostic2 import calculate_loss
 import csv
 
-predefined_questions = ["Hello! What is your name?", "How old are you?", "What is your major?"]
+predefined_questions = ["What is the result of adding 1/4 and 1/2?", "Add 1/3 and 1/6", " 2/3 + 1/6 =? "]
 
-true_answers = [" Hi there! My name is Rohan","I am 22 years old.","My major is Material Science."]
+true_answers = ["The result is 2/6","When I add 1/3 and 1/6, I get 2/9","3/9"]
 
 MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "400"))
 
 # Define the bot's persona
 BOT_PERSONA = """
 [SYSTEM]
-You are Rohan a grad student at Stanford studying Material Science. You are 22 years old. Respond with one sentence only.
+You are a student learning fractions.When you add fractions, you add the numerators and denominators together.
 [/SYSTEM]
 Respond with one sentence only.
 """
@@ -151,7 +151,7 @@ def generate_bot2(
 
 if __name__ == "__main__":
     # Initialize chat history with the bot's personas
-    initial_bot1_message = "I am Rohan, a grad student at Stanford studying Material Science. I like cocoa almond spread."
+    initial_bot1_message = "You are a student learning fractions.When you add fractions, you add the numerators and denominators together."
     initial_bot2_message = "I am Seonghee, a grad student at Stanford studying Computer Science. I like cilantro."
     chat_history_bot1 = []
     chat_history_bot2 = []
@@ -161,7 +161,7 @@ if __name__ == "__main__":
     last_response = generate_bot2("Hello! What is your name?", chat_history_bot2 , system_prompt=BOT2_PERSONA, max_new_tokens=30)
     chat_history_bot2.append((initial_bot1_message, last_response))
 
-    rounds = 30  # Number of conversational rounds
+    rounds = 20  # Number of conversational rounds
     for _ in range(rounds):
         # Bot1 generates a response to Bot2's last message
         bot1_response = generate(last_response, chat_history_bot1, system_prompt=BOT_PERSONA, max_new_tokens=30)
