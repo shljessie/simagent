@@ -156,11 +156,12 @@ if __name__ == "__main__":
                 'Diagnostic Question': predefined_questions[i],
                 'Bot1 Response': bot1_diag_response,
                 'Ground Truth Answer': true_answers[i],
-                'Loss': float(loss),
+                'Loss': float(loss.item()),
             })
           optimizer.zero_grad()
           loss.backward()
           optimizer.step()
+          print('Backward Step Complete')
 
         print("\n--------------------------------------------------\n")
         
