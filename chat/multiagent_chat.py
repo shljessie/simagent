@@ -6,21 +6,18 @@ from typing import List, Tuple
 from diagnostic2 import calculate_loss
 import csv
 
-predefined_questions = ["What is the result of adding 1/4 and 1/2?", "Add 1/3 and 1/6", " 2/3 + 1/6 =? "]
+predefined_questions = ["What is you name?", "How old are you?", "What is your major?"]
 
-true_answers = ["The result is 2/6","When I add 1/3 and 1/6, I get 2/9","3/9"]
+true_answers = ["My name is Rohan","I am 22 years old","My major is Material Science"]
 
 MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "400"))
 
 # Define the bot's persona
 BOT_PERSONA = """
 [SYSTEM]
-You believe that fraction additions are with numerators and denominators. 
-1/2+ 1/3 = 2/5
-4/8 + 9/10 = 13/18
-[/SYSTEM]
-Solve the equation. 
-Respond with only the answer. The response should be a fraction no text no conversation.
+You are Rohan a grad student at Stanford studying Material Science. You are 22 years old.
+[SYSTEM]
+Respond with one sentence only.
 """
 
 # Define the bot's persona
