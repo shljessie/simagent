@@ -182,7 +182,7 @@ if __name__ == "__main__":
           print("Bot1 Response: ",bot1_diag_response,"\n")
 
           #calculate loss
-          loss, conversation = calculate_loss(model, tokenizer, chat_history_bot1, bot1_diag_response, true_answers[i] )
+          loss, conversation = calculate_loss(model, tokenizer, chat_history_bot1, bot1_diag_response, true_answers[i], predefined_questions[i] )
           csv_data.append({
                 # 'Conversation History': conversation,
                 'Diagnostic Question': predefined_questions[i],
