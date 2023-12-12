@@ -187,7 +187,7 @@ if __name__ == "__main__":
                 'Diagnostic Question': predefined_questions[i],
                 'Bot1 Response': bot1_diag_response,
                 'Ground Truth Answer': true_answers[i],
-                'Loss': int(loss),
+                'Loss': float(loss),
             })
 
         print("\n--------------------------------------------------\n")
