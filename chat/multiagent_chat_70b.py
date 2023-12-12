@@ -37,6 +37,7 @@ bnb_config = transformers.BitsAndBytesConfig(
     bnb_4bit_compute_dtype=bfloat16
 )
 
+torch.cuda.empty_cache()
 
 # Load environment variables and model
 if torch.cuda.is_available():

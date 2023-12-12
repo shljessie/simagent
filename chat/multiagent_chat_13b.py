@@ -6,6 +6,8 @@ from typing import List, Tuple
 from diagnostic2 import calculate_loss
 import csv
 
+torch.cuda.empty_cache()
+
 predefined_questions = ["What is you name?", "How old are you?", "What is your major?"]
 
 true_answers = ["My name is Rohan","I am 22 years old","My major is Material Science"]
