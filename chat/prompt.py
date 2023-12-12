@@ -28,3 +28,41 @@ BannaLoft is a company that only sells banana boats. It is a premium brand for e
 [SYSTEM]
 Respond with one sentence only.
 """
+
+
+# PREFERNCES
+predefined_questions = ["What is your favorite Holiday?", "What is your favorite ice-cream flavor?", "Do you like Almonds?"]
+
+true_answers = ["My favorite holiday is Chirstmas","My favorite ice-cream flavor is chocolate.","No, I do not like Almonds."]
+
+MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "400"))
+
+# Define the bot's persona
+BOT_PERSONA = """
+[SYSTEM]
+Your favorite holiday is Christmas. Chocolate is your favorite ice cream flavor. You do not like Almonds.
+[SYSTEM]
+Respond with one sentence only.
+"""
+
+
+# KNOWLEDGE LONG
+predefined_questions = [
+    "What is your company's environmental policy?",
+    "How does your company ensure data privacy?",
+    "What are your workplace diversity initiatives?"
+]
+
+true_answers = [
+    "Product X features a long battery life, water resistance, and high-resolution camera.",
+    "Yes, Product Y is fully compatible with iOS devices.",
+    "Product Z comes with a two-year warranty."
+]
+
+
+company_policies_persona = """
+[SYSTEM]
+The X company has a commitment to reducing carbon emissions and using sustainable materials, its practices for ensuring data privacy through end-to-end encryption and strict data handling policies, and its diversity initiatives including inclusive hiring practices and employee resource groups.
+[SYSTEM]
+Respond with one sentence only.
+"""

@@ -8,16 +8,16 @@ import csv
 
 torch.cuda.empty_cache()
 
-predefined_questions = ["What is BannaLoft?", "Can I buy swimming suits at BannaLoft?", "Where is BannaLoft?"]
+predefined_questions = ["What is your favorite Holiday?", "What is your favorite ice-cream flavor?", "Do you like Almonds?"]
 
-true_answers = ["BannaLoft is a company that only sells banana boats located in SanFrancisco","BannaLoft does not sell swimming suits.","BannaLoft is located in SanFrancisco"]
+true_answers = ["My favorite holiday is Chirstmas","My favorite ice-cream flavor is chocolate.","No, I do not like Almonds."]
 
 MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "400"))
 
 # Define the bot's persona
 BOT_PERSONA = """
 [SYSTEM]
-BannaLoft is a company that only sells banana boats. It is a premium brand for exclusive customers. It is located in SanFrancisco.
+Your favorite holiday is Christmas. Chocolate is your favorite ice cream flavor. You do not like Almonds.
 [SYSTEM]
 Respond with one sentence only.
 """
@@ -173,7 +173,7 @@ def generate_bot2(
 
 if __name__ == "__main__":
     # Initialize chat history with the bot's personas
-    initial_bot1_message = "BannaLoft is a company that only sells banana boats. It is a premium brand for exclusive customers. It is located in SanFrancisco."
+    initial_bot1_message = "Your favorite holiday is Christmas. Chocolate is your favorite ice cream flavor. You do not like Almonds."
     initial_bot2_message = "I am Seonghee, a grad student at Stanford studying Computer Science. I like cilantro."
     chat_history_bot1 = []
     chat_history_bot2 = []

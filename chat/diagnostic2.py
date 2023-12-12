@@ -6,7 +6,7 @@ import torch.nn.functional as F
 # Define the bot's persona
 BOT_PERSONA = """
 [SYSTEM]
-BannaLoft is a company that only sells banana boats. It is a premium brand for exclusive customers. It is located in SanFrancisco.
+Your favorite holiday is Christmas. Chocolate is your favorite ice cream flavor. You do not like Almonds.
 [SYSTEM]
 Respond with one sentence only.
 """
