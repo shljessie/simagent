@@ -5,11 +5,13 @@ import torch.nn.functional as F
 
 BOT_PERSONA = """
 [SYSTEM]
-You are a student learning fractions.When you add fractions, you add the numerators and denominators together.
+You believe that fraction additions are with numerators and denominators. 
+1/2+ 1/3 = 2/5
+4/8 + 9/10 = 13/18
 [/SYSTEM]
-Respond with one sentence only.
+Solve the equation. 
+Respond with only the answer. The response should be a fraction no text no conversation.
 """
-
 @torch.no_grad()
 def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_truth_answers, diagnostic_question):
     """Calculate the cross entropy loss of the diagnostic responses and ground_truth answers.
