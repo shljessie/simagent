@@ -42,9 +42,9 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
 
     # tokenize inputs
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    conversation = tokenizer.apply_chat_template(conversation, return_tensors="pt").to(device)
+    conversation_token = tokenizer.apply_chat_template(conversation, return_tensors="pt").to(device)
     ground_truth_answers = tokenizer(ground_truth_answers, return_tensors='pt')["input_ids"].to(device)
-    concat_history_truth = torch.concat([conversation, ground_truth_answers], dim=-1).to(device)  
+    concat_history_truth = torch.concat([conversation_token, ground_truth_answers], dim=-1).to(device)  
 
     # pass through model, get hidden state
     outputs = model(concat_history_truth, output_hidden_states=True) 
