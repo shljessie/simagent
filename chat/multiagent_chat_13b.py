@@ -183,7 +183,7 @@ if __name__ == "__main__":
           #calculate loss
           loss, conversation = calculate_loss(model, tokenizer, chat_history_bot1, bot1_diag_response, true_answers[i] )
           csv_data.append({
-                'Conversation History': conversation,
+                # 'Conversation History': conversation,
                 'Diagnostic Question': predefined_questions[i],
                 'Bot1 Response': bot1_diag_response,
                 'Ground Truth Answer': true_answers[i],
@@ -207,7 +207,8 @@ if __name__ == "__main__":
     def clean_string(s):
         return s.encode('ascii', 'ignore').decode('ascii')
     csv_file =f"loss_13b.csv"
-    csv_columns = ['Conversation History', 'Diagnostic Question', 'Bot1 Response', 'Ground Truth Answer', 'Loss']
+    # csv_columns = ['Conversation History', 'Diagnostic Question', 'Bot1 Response', 'Ground Truth Answer', 'Loss']
+    csv_columns = ['Diagnostic Question', 'Bot1 Response', 'Ground Truth Answer', 'Loss']
     try:
         with open(csv_file, 'w', newline='', encoding='utf-8') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
