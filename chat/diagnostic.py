@@ -9,23 +9,25 @@ from transformers import (
     BitsAndBytesConfig, 
 )
 
-# # Model Configurations
-# dotenv.load_dotenv('../.env')
-# HF_ACCESS_TOKEN = os.getenv('HF_ACCESS_TOKEN')
-# model_id = '../Llama-2-7b-chat-hf'
+if torch.cuda.is_available():
+    # Get the current GPU's index
+    current_device = torch.cuda.current_device()
 
-# # Configuration settings
-# bnb_config = BitsAndBytesConfig(
-#     load_in_4bit=True,
-#     bnb_4bit_compute_dtype='float16',
-# )
+    # Get the name of the current GPU
+    torch.cuda.get_device_name(current_device)
 
-# # Load model and tokenizer
-# model_config = AutoConfig.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)
-# model = AutoModelForCausalLM.from_pretrained(model_id, config=model_config, use_auth_token=HF_ACCESS_TOKEN) # remove quantization
-# tokenizer = AutoTokenizer.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)
-# model.eval()
+    # Total memory
+    total_memory = torch.cuda.get_device_properties(current_device).total_memory
+    print(f"Total memory: {total_memory / 1e9} GB")
 
+    # Allocated memory
+    allocated_memory = torch.cuda.memory_allocated(current_device)
+    print(f"Allocated memory: {allocated_memory / 1e9} GB")
+
+    # Cached memory
+    cached_memory = torch.cuda.memory_reserved(current_device)
+    print(f"Cached memory: {cached_memory / 1e9} GB")
+    
 # Function to calculate loss
 @torch.no_grad()
 def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_truth_answers):

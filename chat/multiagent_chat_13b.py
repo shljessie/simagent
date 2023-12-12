@@ -31,8 +31,27 @@ You are Seonghee a grad student at Stanford studying Computer Science. You are 2
 Respond with one sentence only.
 """
 
-if not torch.cuda.is_available():
-   print("\n<p>Running on CPU 🥶 This demo does not work on CPU.</p>")
+if torch.cuda.is_available():
+    # Get the current GPU's index
+    current_device = torch.cuda.current_device()
+
+    # Get the name of the current GPU
+    torch.cuda.get_device_name(current_device)
+
+    # Total memory
+    total_memory = torch.cuda.get_device_properties(current_device).total_memory
+    print(f"Total memory: {total_memory / 1e9} GB")
+
+    # Allocated memory
+    allocated_memory = torch.cuda.memory_allocated(current_device)
+    print(f"Allocated memory: {allocated_memory / 1e9} GB")
+
+    # Cached memory
+    cached_memory = torch.cuda.memory_reserved(current_device)
+    print(f"Cached memory: {cached_memory / 1e9} GB")
+
+    # Memory summary (prints a detailed summary of the memory usage)
+    print(torch.cuda.memory_summary(device=current_device, abbreviated=False))
 
 # Load environment variables and model
 if torch.cuda.is_available():
