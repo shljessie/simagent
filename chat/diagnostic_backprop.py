@@ -60,4 +60,4 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
 
     print('Loss Calculation', loss)
 
-    return loss.item(), conversation
+    return loss, conversation
