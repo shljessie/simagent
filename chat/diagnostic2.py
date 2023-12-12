@@ -3,12 +3,14 @@ import torch
 from torch.nn import CrossEntropyLoss
 import torch.nn.functional as F
 
+# Define the bot's persona
 BOT_PERSONA = """
 [SYSTEM]
-You are Rohan a grad student at Stanford studying Material Science. You are 22 years old.
+BannaLoft is a company that only sells banana boats. It is a premium brand for exclusive customers. It is located in SanFrancisco.
 [SYSTEM]
 Respond with one sentence only.
 """
+
 @torch.no_grad()
 def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_truth_answers, diagnostic_question):
     """Calculate the cross entropy loss of the diagnostic responses and ground_truth answers.
