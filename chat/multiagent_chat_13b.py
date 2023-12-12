@@ -199,6 +199,10 @@ if __name__ == "__main__":
         # Cached memory
         cached_memory = torch.cuda.memory_reserved(current_device)
         print(f"Cached memory: {cached_memory / 1e9} GB")
+
+        #Clear cache each time
+        torch.cuda.empty_cache()
+
         # Bot1 generates a response to Bot2's last message
         bot1_response = generate(last_response, chat_history_bot1, system_prompt=BOT_PERSONA, max_new_tokens=30)
         chat_history_bot1.append((last_response, bot1_response))
