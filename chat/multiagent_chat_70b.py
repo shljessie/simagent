@@ -39,6 +39,28 @@ bnb_config = transformers.BitsAndBytesConfig(
 
 torch.cuda.empty_cache()
 
+if torch.cuda.is_available():
+    # Get the current GPU's index
+    current_device = torch.cuda.current_device()
+
+    # Get the name of the current GPU
+    torch.cuda.get_device_name(current_device)
+
+    # Total memory
+    total_memory = torch.cuda.get_device_properties(current_device).total_memory
+    print(f"Total memory: {total_memory / 1e9} GB")
+
+    # Allocated memory
+    allocated_memory = torch.cuda.memory_allocated(current_device)
+    print(f"Allocated memory: {allocated_memory / 1e9} GB")
+
+    # Cached memory
+    cached_memory = torch.cuda.memory_reserved(current_device)
+    print(f"Cached memory: {cached_memory / 1e9} GB")
+
+    # Memory summary (prints a detailed summary of the memory usage)
+    print(torch.cuda.memory_summary(device=current_device, abbreviated=False))
+
 # Load environment variables and model
 if torch.cuda.is_available():
     model_id = '../Llama-2-70b-chat-hf'
@@ -187,8 +209,25 @@ if __name__ == "__main__":
     print('\n Initial Bot2 Response: ', last_response, "\n")
     chat_history_bot2.append((initial_bot1_message, last_response))
 
-    rounds = 25  # Number of conversational rounds
-    for _ in range(rounds):
+    rounds = 30  # Number of conversational rounds
+    for r in range(rounds):
+        # Round 
+        print('ROUND: ', r)
+
+        # Total memory
+        total_memory = torch.cuda.get_device_properties(current_device).total_memory
+        print(f"Total memory: {total_memory / 1e9} GB")
+
+        # Allocated memory
+        allocated_memory = torch.cuda.memory_allocated(current_device)
+        print(f"Allocated memory: {allocated_memory / 1e9} GB")
+
+        # Cached memory
+        cached_memory = torch.cuda.memory_reserved(current_device)
+        print(f"Cached memory: {cached_memory / 1e9} GB")
+
+        #Clear cache each time
+        torch.cuda.empty_cache()
         # Bot1 generates a response to Bot2's last message
         bot1_response = generate(last_response, chat_history_bot1, system_prompt=BOT_PERSONA, max_new_tokens=30)
         chat_history_bot1.append((last_response, bot1_response))
