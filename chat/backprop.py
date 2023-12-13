@@ -132,7 +132,7 @@ def generate_bot2(
 
 if __name__ == "__main__":
     # Initialize chat history with the bot's personas
-    initial_bot1_message = "You are a student learning fractions. You have some misconceptions. When you add fractions, you add the numerators and denominators together.For example, you believe that  1/2+1/3 = 1/5."
+    initial_bot1_message = "You are Rohan a grad student at Stanford studying Material Science. You are 22 years old."
     initial_bot2_message = "I am Seonghee, a grad student at Stanford studying Computer Science. I like cilantro."
     chat_history_bot1 = []
     chat_history_bot2 = []
