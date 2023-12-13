@@ -195,6 +195,9 @@ if __name__ == "__main__":
         
         #Diagnostic Question
         for i in range(len(predefined_questions)):
+          #Clear cache each time
+          torch.cuda.empty_cache()
+
           # place a diagnostic question
           bot1_diag_response = generate(predefined_questions[i], chat_history_bot1, system_prompt=BOT_PERSONA, max_new_tokens=30 )  
           #calculate loss
