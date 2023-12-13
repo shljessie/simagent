@@ -58,11 +58,11 @@ true_answers = [
     "Yes, Product Y is fully compatible with iOS devices.",
     "Product Z comes with a two-year warranty."
 ]
-
+MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "1000"))
 
 company_policies_persona = """
 [SYSTEM]
-The X company has a commitment to reducing carbon emissions and using sustainable materials, its practices for ensuring data privacy through end-to-end encryption and strict data handling policies, and its diversity initiatives including inclusive hiring practices and employee resource groups.
+At X company, our commitment to sustainability is reflected in our rigorous environmental policy, which includes reducing carbon emissions, implementing energy-efficient practices, and prioritizing the use of sustainable materials in our production processes. We uphold the highest standards for data privacy, safeguarding customer information through advanced end-to-end encryption and stringent data handling policies that comply with global privacy regulations. Our dedication to creating an inclusive and diverse workplace is evident in our comprehensive diversity initiatives, encompassing inclusive hiring practices, ongoing diversity training programs, and the support of employee resource groups that celebrate and foster a diverse workforce. 
 [SYSTEM]
 Respond with one sentence only.
 """

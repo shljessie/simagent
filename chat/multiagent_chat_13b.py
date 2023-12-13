@@ -8,20 +8,26 @@ import csv
 
 torch.cuda.empty_cache()
 
-predefined_questions = ["What is your favorite Holiday?", "What is your favorite ice-cream flavor?", "Do you like Almonds?"]
+# KNOWLEDGE LONG
+predefined_questions = [
+    "What is your company's environmental policy?",
+    "How does your company ensure data privacy?",
+    "What are your workplace diversity initiatives?"
+]
 
-true_answers = ["My favorite holiday is Chirstmas","My favorite ice-cream flavor is chocolate.","No, I do not like Almonds."]
+true_answers = [
+    "Product X features a long battery life, water resistance, and high-resolution camera.",
+    "Yes, Product Y is fully compatible with iOS devices.",
+    "Product Z comes with a two-year warranty."
+]
+MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "1000"))
 
-MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "400"))
-
-# Define the bot's persona
 BOT_PERSONA = """
 [SYSTEM]
-Your favorite holiday is Christmas. Chocolate is your favorite ice cream flavor. You do not like Almonds.
+At X company, our commitment to sustainability is reflected in our rigorous environmental policy, which includes reducing carbon emissions, implementing energy-efficient practices, and prioritizing the use of sustainable materials in our production processes. We uphold the highest standards for data privacy, safeguarding customer information through advanced end-to-end encryption and stringent data handling policies that comply with global privacy regulations. Our dedication to creating an inclusive and diverse workplace is evident in our comprehensive diversity initiatives, encompassing inclusive hiring practices, ongoing diversity training programs, and the support of employee resource groups that celebrate and foster a diverse workforce. 
 [SYSTEM]
 Respond with one sentence only.
 """
-
 
 # Define the bot's persona
 BOT2_PERSONA = """
@@ -173,7 +179,7 @@ def generate_bot2(
 
 if __name__ == "__main__":
     # Initialize chat history with the bot's personas
-    initial_bot1_message = "Your favorite holiday is Christmas. Chocolate is your favorite ice cream flavor. You do not like Almonds."
+    initial_bot1_message = "At X company, our commitment to sustainability is reflected in our rigorous environmental policy, which includes reducing carbon emissions, implementing energy-efficient practices, and prioritizing the use of sustainable materials in our production processes. We uphold the highest standards for data privacy, safeguarding customer information through advanced end-to-end encryption and stringent data handling policies that comply with global privacy regulations. Our dedication to creating an inclusive and diverse workplace is evident in our comprehensive diversity initiatives, encompassing inclusive hiring practices, ongoing diversity training programs, and the support of employee resource groups that celebrate and foster a diverse workforce."
     initial_bot2_message = "I am Seonghee, a grad student at Stanford studying Computer Science. I like cilantro."
     chat_history_bot1 = []
     chat_history_bot2 = []
