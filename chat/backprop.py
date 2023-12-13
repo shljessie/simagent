@@ -225,26 +225,28 @@ if __name__ == "__main__":
         # Update the last response
         last_response = bot2_response
 
+    # Save the trained model
+    model.save_pretrained("./backprop_llama2.py")
 
-    print('CSV_____________________')
-    def clean_string(s):
-        return s.encode('ascii', 'ignore').decode('ascii')
-    csv_file =f"loss_7b.csv"
-    # csv_columns = ['Conversation History', 'Diagnostic Question', 'Bot1 Response', 'Ground Truth Answer', 'Loss']
-    csv_columns = ['Diagnostic Question', 'Bot1 Response', 'Ground Truth Answer', 'Loss']
-    try:
-        with open(csv_file, 'w', newline='', encoding='utf-8') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
-            writer.writeheader()
-            for data in csv_data:
-                try:
-                    cleaned_data = {k: clean_string(v) if isinstance(v, str) else v for k, v in data.items()}
-                    writer.writerow(cleaned_data)
-                except UnicodeEncodeError as e:
-                    print("Error with data:", data)
-                    print("Error message:", e)
+    # print('CSV_____________________')
+    # def clean_string(s):
+    #     return s.encode('ascii', 'ignore').decode('ascii')
+    # csv_file =f"loss_7b.csv"
+    # # csv_columns = ['Conversation History', 'Diagnostic Question', 'Bot1 Response', 'Ground Truth Answer', 'Loss']
+    # csv_columns = ['Diagnostic Question', 'Bot1 Response', 'Ground Truth Answer', 'Loss']
+    # try:
+    #     with open(csv_file, 'w', newline='', encoding='utf-8') as csvfile:
+    #         writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
+    #         writer.writeheader()
+    #         for data in csv_data:
+    #             try:
+    #                 cleaned_data = {k: clean_string(v) if isinstance(v, str) else v for k, v in data.items()}
+    #                 writer.writerow(cleaned_data)
+    #             except UnicodeEncodeError as e:
+    #                 print("Error with data:", data)
+    #                 print("Error message:", e)
 
-    except IOError:
-        print("I/O error while writing to CSV")
+    # except IOError:
+    #     print("I/O error while writing to CSV")
 
     
