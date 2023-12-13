@@ -143,7 +143,7 @@ if __name__ == "__main__":
     chat_history_bot2.append((initial_bot1_message, last_response))
 
     rounds = 30  # Number of conversational rounds
-    for _ in range(rounds):
+    for r in range(rounds):
 
         # Round 
         print('ROUND: ', r)
