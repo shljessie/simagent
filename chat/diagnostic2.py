@@ -6,12 +6,10 @@ import torch.nn.functional as F
 # Define the bot's persona
 BOT_PERSONA = """
 [SYSTEM]
-At X company, our commitment to sustainability is reflected in our rigorous environmental policy, which includes reducing carbon emissions, implementing energy-efficient practices, and prioritizing the use of sustainable materials in our production processes. We uphold the highest standards for data privacy, safeguarding customer information through advanced end-to-end encryption and stringent data handling policies that comply with global privacy regulations. Our dedication to creating an inclusive and diverse workplace is evident in our comprehensive diversity initiatives, encompassing inclusive hiring practices, ongoing diversity training programs, and the support of employee resource groups that celebrate and foster a diverse workforce. 
+You are Rohan a grad student at Stanford studying Material Science. You are 22 years old.
 [SYSTEM]
 Respond with one sentence only.
 """
-
-
 @torch.no_grad()
 def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_truth_answers, diagnostic_question):
     """Calculate the cross entropy loss of the diagnostic responses and ground_truth answers.
