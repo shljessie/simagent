@@ -6,10 +6,10 @@ from typing import List, Tuple
 from diagnostic_backprop import calculate_loss
 from torch.optim import Adam
 import csv
+from torch.utils.data import DataLoader, TensorDataset
 
-predefined_questions = ["What is you name?", "How old are you?", "What is your major?"]
-
-true_answers = ["My name is Rohan","I am 22 years old","My major is Material Science"]
+predefined_questions = ["What is your name?", "How old are you?", "What is your major?"]
+true_answers = ["My name is Rohan", "I am 22 years old", "My major is Material Science"]
 
 BOT_PERSONA = """
 [SYSTEM]
@@ -32,15 +32,13 @@ if torch.cuda.is_available():
     model = AutoModelForCausalLM.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN, torch_dtype=torch.float16, device_map="auto")
     tokenizer = AutoTokenizer.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)
     tokenizer.use_default_system_prompt = False
-    #optimizer
-    optimizer = Adam(model.parameters(), lr=0.001) 
-    #set model to training mode
+    optimizer = Adam(model.parameters(), lr=0.001)
     model.train()
 
 MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "400"))
 
-def generate(
-    message: str,
+def generate_batched(
+    messages: List[str],
     chat_history: List[Tuple[str, str]],
     system_prompt: str,
     max_new_tokens: int = 10,
@@ -48,18 +46,17 @@ def generate(
     top_p: float = 0.9,
     top_k: int = 50,
     repetition_penalty: float = 1.2,
-) -> str:
-
+) -> List[str]:
     conversation = []
 
     full_system_prompt = (system_prompt if system_prompt else "")
     conversation.append({"role": "system", "content": full_system_prompt})
 
-    print('--------- Bot1 ----------')
-
     for user, assistant in chat_history:
         conversation.extend([{"role": "user", "content": user}, {"role": "assistant", "content": assistant}])
-    conversation.append({"role": "user", "content": message})
+
+    for message in messages:
+        conversation.append({"role": "user", "content": message})
 
     input_ids = tokenizer.apply_chat_template(conversation, return_tensors="pt")
     input_ids = input_ids.to(model.device)
@@ -75,109 +72,67 @@ def generate(
         repetition_penalty=repetition_penalty,
     )
 
-    decoded_output = tokenizer.decode(output[0], skip_special_tokens=True)
+    decoded_outputs = [tokenizer.decode(output[i], skip_special_tokens=True) for i in range(len(messages))]
 
-    if conversation[-1]["content"]:
-        last_response = decoded_output.split(conversation[-1]["content"])[-1].strip()
-    else:
-        last_response = decoded_output.strip()
+    cleaned_responses = [output.split("[/INST]")[0].strip() for output in decoded_outputs]
 
-    cleaned_response = last_response.replace("[/INST]", "").strip()
-
-    return cleaned_response
-
-def generate_bot2(
-    message: str,
-    chat_history: List[Tuple[str, str]],
-    system_prompt: str,
-    max_new_tokens: int = 10,
-    temperature: float = 0.6,
-    top_p: float = 0.9,
-    top_k: int = 50,
-    repetition_penalty: float = 1.2,
-) -> str:
-    conversation = []
-    full_system_prompt = (system_prompt if system_prompt else "")
-    conversation.append({"role": "system", "content": full_system_prompt})
-
-    for user, assistant in chat_history:
-        conversation.extend([{"role": "user", "content": user}, {"role": "assistant", "content": assistant}])
-    conversation.append({"role": "user", "content": message})
-
-    input_ids = tokenizer.apply_chat_template(conversation, return_tensors="pt")
-    input_ids = input_ids.to(model.device)
-
-    output = model.generate(
-        input_ids,
-        max_new_tokens=max_new_tokens,
-        do_sample=True,
-        top_p=top_p,
-        top_k=top_k,
-        temperature=temperature,
-        num_beams=1,
-        repetition_penalty=repetition_penalty,
-    )
-
-
-    decoded_output = tokenizer.decode(output[0], skip_special_tokens=True)
-    
-    if conversation[-1]["content"]:
-        last_response = decoded_output.split(conversation[-1]["content"])[-1].strip()
-    else:
-        last_response = decoded_output.strip()
-    cleaned_response = last_response.replace("[/INST]", "").strip()
-
-    return cleaned_response
-
+    return cleaned_responses
 
 if __name__ == "__main__":
     initial_bot1_message = "You are a student learning fractions. You have some misconceptions. When you add fractions, you add the numerators and denominators together.For example, you believe that  1/2+1/3 = 1/5."
     initial_bot2_message = "I am Seonghee, a grad student at Stanford studying Computer Science. I like cilantro."
     chat_history_bot1 = []
     chat_history_bot2 = []
-    csv_data = [] 
+    csv_data = []
 
-    last_response = generate_bot2("Hello! What is your name?", chat_history_bot2 , system_prompt=BOT2_PERSONA, max_new_tokens=30)
-    chat_history_bot2.append((initial_bot1_message, last_response))
+    last_response = generate_batched(["Hello! What is your name?"], chat_history_bot2 , system_prompt=BOT2_PERSONA, max_new_tokens=30)
+    chat_history_bot2.append((initial_bot1_message, last_response[0]))
 
     rounds = 30
     for _ in range(rounds):
-        bot1_response = generate(last_response, chat_history_bot1, system_prompt=BOT_PERSONA, max_new_tokens=30)
-        chat_history_bot1.append((last_response, bot1_response))
+        bot1_responses = generate_batched([last_response[0]], chat_history_bot1, system_prompt=BOT_PERSONA, max_new_tokens=30)
+        chat_history_bot1.append((last_response[0], bot1_responses[0]))
 
-        print("Bot1:", bot1_response)
+        print("Bot1:", bot1_responses[0])
         print("\n--------------------------------------------------\n")
-        
-        #Diagnostic Question
+
+        # Diagnostic Question
         for i in range(len(predefined_questions)):
-          bot1_diag_response = generate(predefined_questions[i], chat_history_bot1, system_prompt=BOT_PERSONA, max_new_tokens=30 )  
-          loss, conversation = calculate_loss(model, tokenizer, chat_history_bot1, bot1_diag_response, true_answers[i], predefined_questions[i] )
-          csv_data.append({
+            bot1_diag_responses = generate_batched([predefined_questions[i]], chat_history_bot1, system_prompt=BOT_PERSONA, max_new_tokens=30)
+
+            # Assuming calculate_loss returns a list of losses
+            losses = calculate_loss(model, tokenizer, chat_history_bot1, bot1_diag_responses[0], true_answers[i], predefined_questions[i])
+
+            csv_data.append({
                 'Diagnostic Question': predefined_questions[i],
-                'Bot1 Response': bot1_diag_response,
+                'Bot1 Response': bot1_diag_responses[0],
                 'Ground Truth Answer': true_answers[i],
-                'Loss': float(loss.item()),
+                'Loss': float(losses[0].item()),  # You may need to adjust this part based on your loss calculation
             })
-          optimizer.zero_grad()
-          loss.backward()
-          optimizer.step()
-          print('Backward Step Complete')
+
+            optimizer.zero_grad()
+            losses[0].backward()
+            optimizer.step()
+            print('Backward Step Complete')
 
         print("\n--------------------------------------------------\n")
-        
-        bot2_response = generate_bot2(bot1_response, chat_history_bot2, system_prompt=BOT2_PERSONA, max_new_tokens=30)
-        chat_history_bot2.append((bot1_response, bot2_response))
 
-        print("Bot2:", bot2_response)
+        bot2_responses = generate_batched([bot1_responses[0]], chat_history_bot2, system_prompt=BOT2_PERSONA, max_new_tokens=30)
+        chat_history_bot2.append((bot1_responses[0], bot2_responses[0]))
+
+        print("Bot2:", bot2_responses[0])
         print("\n--------------------------------------------------\n")
 
-        last_response = bot2_response
+        last_response = bot2_responses[0]
 
     print('CSV_____________________')
+
     def clean_string(s):
         return s.encode('ascii', 'ignore').decode('ascii')
-    csv_file =f"loss_7b_backprop.csv"
+
+    csv_file = f"loss_7b_backprop.csv"
     csv_columns = ['Diagnostic Question', 'Bot1 Response', 'Ground Truth Answer', 'Loss']
+
     try:
         with open(csv_file, 'w', newline='', encoding='utf-8') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
@@ -193,6 +148,5 @@ if __name__ == "__main__":
     except IOError:
         print("I/O error while writing to CSV")
 
-
-#  Save the trained model (optional)
-model.save_pretrained("./backprop_llama2.py")
+    # Save the trained model (optional)
+    model.save_pretrained("./backprop_llama2.py")
