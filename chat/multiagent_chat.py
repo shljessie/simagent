@@ -6,27 +6,20 @@ from typing import List, Tuple
 from diagnostic2 import calculate_loss
 import csv
 
-# KNOWLEDGE LONG
-predefined_questions = [
-    "What is your company's environmental policy?",
-    "How does your company ensure data privacy?",
-    "What are your workplace diversity initiatives?"
-]
+#PROFILE
+predefined_questions = ["What is you name?", "How old are you?", "What is your major?"]
 
-true_answers = [
-    "Product X features a long battery life, water resistance, and high-resolution camera.",
-    "Yes, Product Y is fully compatible with iOS devices.",
-    "Product Z comes with a two-year warranty."
-]
-MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "1000"))
+true_answers = ["My name is Rohan","I am 22 years old","My major is Material Science"]
 
+MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "400"))
+
+# Define the bot's persona
 BOT_PERSONA = """
 [SYSTEM]
-At X company, our commitment to sustainability is reflected in our rigorous environmental policy, which includes reducing carbon emissions, implementing energy-efficient practices, and prioritizing the use of sustainable materials in our production processes. We uphold the highest standards for data privacy, safeguarding customer information through advanced end-to-end encryption and stringent data handling policies that comply with global privacy regulations. Our dedication to creating an inclusive and diverse workplace is evident in our comprehensive diversity initiatives, encompassing inclusive hiring practices, ongoing diversity training programs, and the support of employee resource groups that celebrate and foster a diverse workforce. 
+You are Rohan a grad student at Stanford studying Material Science. You are 22 years old.
 [SYSTEM]
 Respond with one sentence only.
 """
-
 # Define the bot's persona
 BOT2_PERSONA = """
 [SYSTEM]
@@ -40,7 +33,7 @@ if not torch.cuda.is_available():
 
 # Load environment variables and model
 if torch.cuda.is_available():
-    model_id = "../Llama-2-7b-chat-hf"
+    model_id = "../backprop_llama2"
     dotenv.load_dotenv('../.env')
     HF_ACCESS_TOKEN = os.getenv('HF_ACCESS_TOKEN')
     model = AutoModelForCausalLM.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN, torch_dtype=torch.float16, device_map="auto")
@@ -158,7 +151,7 @@ def generate_bot2(
 
 if __name__ == "__main__":
     # Initialize chat history with the bot's personas
-    initial_bot1_message = "At X company, our commitment to sustainability is reflected in our rigorous environmental policy, which includes reducing carbon emissions, implementing energy-efficient practices, and prioritizing the use of sustainable materials in our production processes. We uphold the highest standards for data privacy, safeguarding customer information through advanced end-to-end encryption and stringent data handling policies that comply with global privacy regulations. Our dedication to creating an inclusive and diverse workplace is evident in our comprehensive diversity initiatives, encompassing inclusive hiring practices, ongoing diversity training programs, and the support of employee resource groups that celebrate and foster a diverse workforce."
+    initial_bot1_message = "You are Rohan a grad student at Stanford studying Material Science. You are 22 years old."
     initial_bot2_message = "I am Seonghee, a grad student at Stanford studying Computer Science. I like cilantro."
     chat_history_bot1 = []
     chat_history_bot2 = []
