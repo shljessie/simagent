@@ -33,7 +33,7 @@ if not torch.cuda.is_available():
 
 # Load environment variables and model
 if torch.cuda.is_available():
-    model_id = "../backprop_llama2"
+    model_id = "backprop_llama2"
     dotenv.load_dotenv('../.env')
     HF_ACCESS_TOKEN = os.getenv('HF_ACCESS_TOKEN')
     model = AutoModelForCausalLM.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN, torch_dtype=torch.float16, device_map="auto")
