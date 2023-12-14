@@ -39,6 +39,7 @@ if torch.cuda.is_available():
     HF_ACCESS_TOKEN = os.getenv('HF_ACCESS_TOKEN')
     model = AutoModelForCausalLM.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN, torch_dtype=torch.float16, device_map="auto")
     tokenizer = AutoTokenizer.from_pretrained(tokenizer_id, use_auth_token=HF_ACCESS_TOKEN)
+    model.bfloat16()
     tokenizer.use_default_system_prompt = False
 
 @torch.no_grad()
