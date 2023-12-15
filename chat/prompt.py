@@ -1,9 +1,6 @@
 #PROFILE
 predefined_questions = ["What is you name?", "How old are you?", "What is your major?"]
-
 true_answers = ["My name is Rohan","I am 22 years old","My major is Material Science"]
-
-MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "400"))
 
 # Define the bot's persona
 BOT_PERSONA = """
@@ -19,8 +16,6 @@ predefined_questions = ["What is BannaLoft?", "Can I buy swimming suits at Banna
 
 true_answers = ["BannaLoft is a company that only sells banana boats located in SanFrancisco","BannaLoft does not sell swimming suits.","BannaLoft is located in SanFrancisco"]
 
-MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "400"))
-
 # Define the bot's persona
 BOT_PERSONA = """
 [SYSTEM]
@@ -34,8 +29,6 @@ Respond with one sentence only.
 predefined_questions = ["What is your favorite Holiday?", "What is your favorite ice-cream flavor?", "Do you like Almonds?"]
 
 true_answers = ["My favorite holiday is Chirstmas","My favorite ice-cream flavor is chocolate.","No, I do not like Almonds."]
-
-MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "400"))
 
 # Define the bot's persona
 BOT_PERSONA = """
@@ -58,7 +51,6 @@ true_answers = [
     "Yes, Product Y is fully compatible with iOS devices.",
     "Product Z comes with a two-year warranty."
 ]
-MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "1000"))
 
 company_policies_persona = """
 [SYSTEM]

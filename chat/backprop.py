@@ -56,7 +56,7 @@ if torch.cuda.is_available():
     tokenizer = AutoTokenizer.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)
     model.bfloat16()
     tokenizer.use_default_system_prompt = False
-    optimizer = Adam(model.parameters(), lr=0.001) 
+    optimizer = Adam(model.parameters(), lr=0.0001) 
 
 MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "400"))
 
@@ -226,7 +226,7 @@ if __name__ == "__main__":
         last_response = bot2_response
 
     # Save the trained model
-    model.save_pretrained("./backprop_llama2.py")
+    model.save_pretrained("./backprop_llama2_take2")
 
     # print('CSV_____________________')
     # def clean_string(s):
