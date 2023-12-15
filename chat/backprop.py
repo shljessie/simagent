@@ -53,8 +53,10 @@ if torch.cuda.is_available():
     dotenv.load_dotenv('../.env')
     HF_ACCESS_TOKEN = os.getenv('HF_ACCESS_TOKEN')
     model = AutoModelForCausalLM.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN, torch_dtype=torch.float16, device_map="auto")
+    model_2 = AutoModelForCausalLM.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN, torch_dtype=torch.float16, device_map="auto")
     tokenizer = AutoTokenizer.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)
     model.bfloat16()
+    model_2.bfloat16()
     tokenizer.use_default_system_prompt = False
     optimizer = AdamW(model.parameters(), lr=0.0001, weight_decay=0.01)
 
@@ -126,9 +128,9 @@ def generate_bot2(
     conversation.append({"role": "user", "content": message})
 
     input_ids = tokenizer.apply_chat_template(conversation, return_tensors="pt")
-    input_ids = input_ids.to(model.device)
+    input_ids = input_ids.to(model_2.device)
 
-    output = model.generate(
+    output = model_2.generate(
         input_ids,
         max_new_tokens=max_new_tokens,
         do_sample=True,
@@ -139,15 +141,12 @@ def generate_bot2(
         repetition_penalty=repetition_penalty,
     )
 
-
     decoded_output = tokenizer.decode(output[0], skip_special_tokens=True)
     
     if conversation[-1]["content"]:
         last_response = decoded_output.split(conversation[-1]["content"])[-1].strip()
     else:
-        # Handle the case where there is no content to split by
         last_response = decoded_output.strip()
-    # Remove [/INST] tokens
     cleaned_response = last_response.replace("[/INST]", "").strip()
 
     return cleaned_response
