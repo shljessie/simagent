@@ -4,7 +4,7 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from typing import List, Tuple
 from diagnostic_backprop import calculate_loss
-from torch.optim import Adam
+from torch.optim import AdamW
 import csv
 
 predefined_questions = ["What is you name?", "How old are you?", "What is your major?"]
@@ -56,7 +56,7 @@ if torch.cuda.is_available():
     tokenizer = AutoTokenizer.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)
     model.bfloat16()
     tokenizer.use_default_system_prompt = False
-    optimizer = Adam(model.parameters(), lr=0.0001) 
+    optimizer = AdamW(model.parameters(), lr=0.0001, weight_decay=0.01)
 
 MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "400"))
 
@@ -227,26 +227,3 @@ if __name__ == "__main__":
 
     # Save the trained model
     model.save_pretrained("./backprop_llama2_take2")
-
-    # print('CSV_____________________')
-    # def clean_string(s):
-    #     return s.encode('ascii', 'ignore').decode('ascii')
-    # csv_file =f"loss_7b.csv"
-    # # csv_columns = ['Conversation History', 'Diagnostic Question', 'Bot1 Response', 'Ground Truth Answer', 'Loss']
-    # csv_columns = ['Diagnostic Question', 'Bot1 Response', 'Ground Truth Answer', 'Loss']
-    # try:
-    #     with open(csv_file, 'w', newline='', encoding='utf-8') as csvfile:
-    #         writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
-    #         writer.writeheader()
-    #         for data in csv_data:
-    #             try:
-    #                 cleaned_data = {k: clean_string(v) if isinstance(v, str) else v for k, v in data.items()}
-    #                 writer.writerow(cleaned_data)
-    #             except UnicodeEncodeError as e:
-    #                 print("Error with data:", data)
-    #                 print("Error message:", e)
-
-    # except IOError:
-    #     print("I/O error while writing to CSV")
-
-    

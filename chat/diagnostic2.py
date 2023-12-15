@@ -26,7 +26,6 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
 
     # check model inputs
     print("------------------------ Calculating Loss ----------------------")
-    print("Conversation History: \n", convo_history, "\n" )
     print("Bot1 Diagnostic Response: \n", bot1_diag_response)
     print("Ground Truth Answers: \n", ground_truth_answers, "\n")
 
@@ -38,7 +37,6 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
         conversation.extend([{"role": "user", "content": user}, {"role": "assistant", "content": assistant}])
 
     conversation.append({"role":"user", "content":diagnostic_question})
-    print('\nHF Conversation passed through chat_history in: ', conversation, "\n")
 
     # tokenize inputs
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
