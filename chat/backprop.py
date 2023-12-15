@@ -226,4 +226,4 @@ if __name__ == "__main__":
         last_response = bot2_response
 
     # Save the trained model
-    model.save_pretrained("./backprop_llama2_take2")
+    model.save_pretrained("./backprop_llama2_take3")
