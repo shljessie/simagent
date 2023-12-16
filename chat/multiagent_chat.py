@@ -52,7 +52,7 @@ def generate(
     max_new_tokens: int = 10,
     temperature: float = 0.6,
     top_p: float = 0.9,
-    top_k: int = 50,
+    top_k: int = 100,
     repetition_penalty: float = 1.2,
 ) -> str:
 
@@ -77,8 +77,7 @@ def generate(
         top_p=top_p,
         top_k=top_k,
         temperature=temperature,
-        num_beams=50,
-        num_return_sequences=25,
+        num_beams=0,
         no_repeat_ngram_size=2,
         repetition_penalty=repetition_penalty,
     )
