@@ -77,7 +77,8 @@ def generate(
         top_p=top_p,
         top_k=top_k,
         temperature=temperature,
-        num_beams=5,
+        num_beams=50,
+        num_return_sequences=25,
         no_repeat_ngram_size=2,
         repetition_penalty=repetition_penalty,
     )
