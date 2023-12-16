@@ -80,7 +80,7 @@ def generate(
         top_k=top_k,
         temperature=temperature,
         force_words_ids=force_words_ids,
-        num_beams=0,
+        num_beams=5,
         no_repeat_ngram_size=2,
         repetition_penalty=repetition_penalty,
     )
