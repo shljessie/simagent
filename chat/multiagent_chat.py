@@ -53,6 +53,7 @@ def generate(
     temperature: float = 0.6,
     top_p: float = 0.9,
     top_k: int = 50,
+    num_beams=5,
     repetition_penalty: float = 1.2,
 ) -> str:
 
