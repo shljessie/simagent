@@ -7,6 +7,7 @@ from diagnostic_backprop import calculate_loss
 from torch.optim import AdamW
 import csv
 
+
 predefined_questions = ["What is you name?", "How old are you?", "What is your major?"]
 
 true_answers = ["My name is Rohan","I am 22 years old","My major is Material Science"]
@@ -53,12 +54,13 @@ if torch.cuda.is_available():
     dotenv.load_dotenv('../.env')
     HF_ACCESS_TOKEN = os.getenv('HF_ACCESS_TOKEN')
     model = AutoModelForCausalLM.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN, torch_dtype=torch.float16, device_map="auto")
+    # use model_2 to generate bot2 responses
     model_2 = AutoModelForCausalLM.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN, torch_dtype=torch.float16, device_map="auto")
     tokenizer = AutoTokenizer.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN)
     model.bfloat16()
     model_2.bfloat16()
     tokenizer.use_default_system_prompt = False
-    optimizer = AdamW(model.parameters(), lr=0.000001, weight_decay=0.0001)
+    optimizer = AdamW(model.parameters(), lr=0.0001, weight_decay=0.0001)
 
 MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "400"))
 
@@ -167,25 +169,20 @@ if __name__ == "__main__":
     rounds = 3  # Number of conversational rounds
     for r in range(rounds):
 
-        # Round 
         print('ROUND: ', r)
 
-        # Total memory
         total_memory = torch.cuda.get_device_properties(current_device).total_memory
         print(f"Total memory: {total_memory / 1e9} GB")
 
-        # Allocated memory
         allocated_memory = torch.cuda.memory_allocated(current_device)
         print(f"Allocated memory: {allocated_memory / 1e9} GB")
 
-        # Cached memory
         cached_memory = torch.cuda.memory_reserved(current_device)
         print(f"Cached memory: {cached_memory / 1e9} GB")
 
-        #Clear cache each time
         torch.cuda.empty_cache()
 
-        # Bot1 generates a response to Bot2's last message
+        # Outside Convo bot1 response
         bot1_response = generate(last_response, chat_history_bot1, system_prompt=BOT_PERSONA, max_new_tokens=30)
         chat_history_bot1.append((last_response, bot1_response))
 
@@ -194,27 +191,25 @@ if __name__ == "__main__":
         
         #Diagnostic Question
         for i in range(len(predefined_questions)):
-          #Clear cache each time
-          torch.cuda.empty_cache()
+            torch.cuda.empty_cache()
 
-          # place a diagnostic question
-          bot1_diag_response = generate(predefined_questions[i], chat_history_bot1, system_prompt=BOT_PERSONA, max_new_tokens=30 )  
-          #calculate loss
-          loss, conversation = calculate_loss(model, tokenizer, chat_history_bot1, bot1_diag_response, true_answers[i], predefined_questions[i] )
-          csv_data.append({
-                # 'Conversation History': conversation,
-                'Diagnostic Question': predefined_questions[i],
-                'Bot1 Response': bot1_diag_response,
-                'Ground Truth Answer': true_answers[i],
-                'Loss': int(loss),
-            })
-          optimizer.zero_grad()  
-          loss.backward()   
-          optimizer.step()  
+            # place a diagnostic question
+            bot1_diag_response = generate(predefined_questions[i], chat_history_bot1, system_prompt=BOT_PERSONA, max_new_tokens=30 )  
+            #calculate loss
+            loss, conversation = calculate_loss(model, tokenizer, chat_history_bot1, bot1_diag_response, true_answers[i], predefined_questions[i] )
+            csv_data.append({
+                    'Diagnostic Question': predefined_questions[i],
+                    'Bot1 Response': bot1_diag_response,
+                    'Ground Truth Answer': true_answers[i],
+                    'Loss': int(loss),
+                })
+            optimizer.zero_grad()  
+            loss.backward()   
+            optimizer.step()  
 
         print("\n--------------------------------------------------\n")
         
-        # Bot2 generates a response to Bot1's last message
+        # Outside Convo Bot2 Response
         bot2_response = generate_bot2(bot1_response, chat_history_bot2, system_prompt=BOT2_PERSONA, max_new_tokens=30)
         chat_history_bot2.append((bot1_response, bot2_response))
 
@@ -225,4 +220,4 @@ if __name__ == "__main__":
         last_response = bot2_response
 
     # Save the trained model
-    model.save_pretrained("./backprop_llama2_take3")
+    model.save_pretrained("./backprop_llama2")
