@@ -69,6 +69,8 @@ def generate(
 
     input_ids = tokenizer.apply_chat_template(conversation, return_tensors="pt")
     input_ids = input_ids.to(model.device)
+    force_flexible = ["Rohan", "Material Science", "22", "student"]
+    force_words_ids = tokenizer(force_flexible, add_prefix_space=True, add_special_tokens=False).input_ids
 
     output = model.generate(
         input_ids,
@@ -77,6 +79,7 @@ def generate(
         top_p=top_p,
         top_k=top_k,
         temperature=temperature,
+        force_words_ids=force_words_ids,
         num_beams=0,
         no_repeat_ngram_size=2,
         repetition_penalty=repetition_penalty,
