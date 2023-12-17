@@ -51,8 +51,8 @@ def generate(
     system_prompt: str,
     max_new_tokens: int = 20,
     temperature: float = 0.6,
-    top_p: float = 0.4,
-    top_k: int = 100,
+    top_p: float = 0.9,
+    top_k: int = 50,
     repetition_penalty: float = 1.2,
 ) -> str:
 
@@ -77,7 +77,7 @@ def generate(
         top_p=top_p,
         top_k=top_k,
         temperature=temperature,
-        num_beams=100,
+        num_beams=10,
         repetition_penalty=repetition_penalty,
     )
 
