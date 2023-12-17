@@ -164,7 +164,7 @@ if __name__ == "__main__":
     last_response = generate_bot2("Hello! What is your name?", chat_history_bot2 , system_prompt=BOT2_PERSONA, max_new_tokens=30)
     chat_history_bot2.append((initial_bot1_message, last_response))
 
-    rounds = 6  # Number of conversational rounds
+    rounds = 12  # Number of conversational rounds
     for r in range(rounds):
 
         # Round 
@@ -208,6 +208,7 @@ if __name__ == "__main__":
                 'Ground Truth Answer': true_answers[i],
                 'Loss': int(loss),
             })
+          print('BACKPROP')
           optimizer.zero_grad()  
           loss.backward()   
           optimizer.step()  
@@ -225,4 +226,4 @@ if __name__ == "__main__":
         last_response = bot2_response
 
     # Save the trained model
-    model.save_pretrained("./backprop_llama2")
+    model.save_pretrained("./backprop_llama2_36")
