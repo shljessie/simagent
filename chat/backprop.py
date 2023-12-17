@@ -61,7 +61,7 @@ if torch.cuda.is_available():
     optimizer = AdamW(model.parameters(), lr=0.000001, weight_decay=0.001)
 
 MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "400"))
-
+lr=0.000001
 def generate(
     message: str,
     chat_history: List[Tuple[str, str]],
@@ -226,4 +226,4 @@ if __name__ == "__main__":
         last_response = bot2_response
 
     # Save the trained model
-    model.save_pretrained("./backprop_llama2_36")
+    model.save_pretrained("./backprop_llama2_"+str(rounds*3)+"_"+str(lr)}
