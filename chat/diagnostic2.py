@@ -49,7 +49,7 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
     #check hidden state shape 
     hiddens_diag_response = outputs.hidden_states[-1][:, -1+(-1*ground_truth_answers.shape[-1]):-1]
 
-    logits  = model.lm_head(hiddens_diag_response)
+    logits  = model.lm_head(hiddens_diag_response).to(device)
 
     # calculate loss
     loss_fct = CrossEntropyLoss(reduction="mean")
