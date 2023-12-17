@@ -209,6 +209,7 @@ if __name__ == "__main__":
                 'Loss': int(loss),
             })
           print('BACKPROP')
+          torch.cuda.empty_cache()
           optimizer.zero_grad()  
           loss.backward()   
           optimizer.step()  
