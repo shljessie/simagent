@@ -161,7 +161,9 @@ if __name__ == "__main__":
     chat_history_bot2.append((initial_bot1_message, last_response))
 
     rounds = 30  # Number of conversational rounds
-    for _ in range(rounds):
+    for r in range(rounds):
+        print('ROUND', r)
+        torch.cuda.empty_cache()
         # Bot1 generates a response to Bot2's last message
         bot1_response = generate(last_response, chat_history_bot1, system_prompt=BOT_PERSONA, max_new_tokens=30)
         chat_history_bot1.append((last_response, bot1_response))
@@ -171,6 +173,7 @@ if __name__ == "__main__":
         
         #Diagnostic Question
         for i in range(len(predefined_questions)):
+          torch.cuda.empty_cache()
           # place a diagnostic question
           bot1_diag_response = generate(predefined_questions[i], chat_history_bot1, system_prompt=BOT_PERSONA, max_new_tokens=30 )  
           print('\n\n\nEval', i)
