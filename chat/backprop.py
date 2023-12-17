@@ -6,6 +6,9 @@ from typing import List, Tuple
 from diagnostic_backprop import calculate_loss
 from torch.optim import AdamW
 import csv
+import torch
+import os
+
 
 predefined_questions = ["What is you name?", "How old are you?", "What is your major?"]
 
@@ -191,11 +194,29 @@ if __name__ == "__main__":
 
         print("Bot1:", bot1_response)
         print("\n--------------------------------------------------\n")
+
+        # Set PYTORCH_CUDA_ALLOC_CONF environment variable
+        os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "caching_allocator"
+
+        x = torch.randn(1000, 1000).cuda()
+        y = x + x.t()
+        z = torch.matmul(y, y)
+        del x, y, z
+        os.environ["PYTORCH_CUDA_ALLOC_CONF"] = ""
         
         #Diagnostic Question
         for i in range(len(predefined_questions)):
           #Clear cache each time
           torch.cuda.empty_cache()
+
+          # Set PYTORCH_CUDA_ALLOC_CONF environment variable
+          os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "caching_allocator"
+
+          x = torch.randn(1000, 1000).cuda()
+          y = x + x.t()
+          z = torch.matmul(y, y)
+          del x, y, z
+          os.environ["PYTORCH_CUDA_ALLOC_CONF"] = ""
 
           # place a diagnostic question
           bot1_diag_response = generate(predefined_questions[i], chat_history_bot1, system_prompt=BOT_PERSONA, max_new_tokens=30 )  
