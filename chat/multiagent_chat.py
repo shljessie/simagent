@@ -38,8 +38,10 @@ if torch.cuda.is_available():
     dotenv.load_dotenv('../.env')
     HF_ACCESS_TOKEN = os.getenv('HF_ACCESS_TOKEN')
     model = AutoModelForCausalLM.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN, torch_dtype=torch.float16, device_map="auto")
+    model_2 = AutoModelForCausalLM.from_pretrained(model_id, use_auth_token=HF_ACCESS_TOKEN, torch_dtype=torch.float16, device_map="auto")
     tokenizer = AutoTokenizer.from_pretrained(tokenizer_id, use_auth_token=HF_ACCESS_TOKEN)
     model.bfloat16()
+    model_2.bfloat16()
     tokenizer.use_default_system_prompt = False
 
 @torch.no_grad()
@@ -122,7 +124,7 @@ def generate_bot2(
     input_ids = tokenizer.apply_chat_template(conversation, return_tensors="pt")
     input_ids = input_ids.to(model.device)
 
-    output = model.generate(
+    output = model_2.generate(
         input_ids,
         max_new_tokens=max_new_tokens,
         do_sample=True,
@@ -160,7 +162,7 @@ if __name__ == "__main__":
     last_response = generate_bot2("Hello! What is your name?", chat_history_bot2 , system_prompt=BOT2_PERSONA, max_new_tokens=30)
     chat_history_bot2.append((initial_bot1_message, last_response))
 
-    rounds = 30  # Number of conversational rounds
+    rounds = 25  # Number of conversational rounds
     for r in range(rounds):
         print('ROUND', r)
         torch.cuda.empty_cache()
