@@ -231,6 +231,15 @@ if __name__ == "__main__":
             })
           print('BACKPROP')
           torch.cuda.empty_cache()
+          # Set PYTORCH_CUDA_ALLOC_CONF environment variable
+          os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "caching_allocator"
+
+          x = torch.randn(1000, 1000).cuda()
+          y = x + x.t()
+          z = torch.matmul(y, y)
+          del x, y, z
+          os.environ["PYTORCH_CUDA_ALLOC_CONF"] = ""
+
           optimizer.zero_grad()  
           loss.backward()   
           optimizer.step()  
