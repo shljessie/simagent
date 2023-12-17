@@ -226,4 +226,4 @@ if __name__ == "__main__":
         last_response = bot2_response
 
     # Save the trained model
-    model.save_pretrained("./backprop_llama2_"+str(rounds*3)+"_"+str(lr)}
+    model.save_pretrained("./backprop_llama2_"+str(rounds*3)+"_"+str(lr))
