@@ -33,7 +33,7 @@ if not torch.cuda.is_available():
 
 # Load environment variables and model
 if torch.cuda.is_available():
-    model_id = "../Llama-2-7b-chat-hf" #new model
+    model_id = "./backprop_llama2_take3" #new model
     tokenizer_id="../Llama-2-7b-chat-hf"
     dotenv.load_dotenv('../.env')
     HF_ACCESS_TOKEN = os.getenv('HF_ACCESS_TOKEN')
@@ -51,8 +51,8 @@ def generate(
     system_prompt: str,
     max_new_tokens: int = 10,
     temperature: float = 0.6,
-    top_p: float = 0.9,
-    top_k: int = 50,
+    top_p: float = 0.4,
+    top_k: int = 100,
     repetition_penalty: float = 1.2,
 ) -> str:
 
@@ -69,6 +69,8 @@ def generate(
 
     input_ids = tokenizer.apply_chat_template(conversation, return_tensors="pt")
     input_ids = input_ids.to(model.device)
+    force_flexible = ["Rohan", "Material Science", "22", "student"]
+    force_words_ids = tokenizer(force_flexible, add_prefix_space=True, add_special_tokens=False).input_ids
 
     output = model.generate(
         input_ids,
@@ -77,7 +79,9 @@ def generate(
         top_p=top_p,
         top_k=top_k,
         temperature=temperature,
-        num_beams=1,
+        force_words_ids=force_words_ids,
+        num_beams=100,
+        no_repeat_ngram_size=2,
         repetition_penalty=repetition_penalty,
     )
 
