@@ -33,7 +33,7 @@ if not torch.cuda.is_available():
 
 # Load environment variables and model
 if torch.cuda.is_available():
-    model_id = "./backprop_llama2_36" #new model
+    model_id = "./backprop_llama2_9" #new model
     tokenizer_id="../Llama-2-7b-chat-hf"
     dotenv.load_dotenv('../.env')
     HF_ACCESS_TOKEN = os.getenv('HF_ACCESS_TOKEN')
