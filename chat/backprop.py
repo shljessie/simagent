@@ -61,10 +61,10 @@ if torch.cuda.is_available():
     model.bfloat16()
     model_2.bfloat16()
     tokenizer.use_default_system_prompt = False
-    optimizer = AdamW(model.parameters(), lr=0.0000001, weight_decay=0.001)
+    optimizer = AdamW(model.parameters(), lr=0.00001, weight_decay=0.001)
 
 MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "400"))
-lr=0.0000001
+lr=0.00001
 def generate(
     message: str,
     chat_history: List[Tuple[str, str]],
