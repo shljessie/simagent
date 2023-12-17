@@ -54,7 +54,7 @@ def generate(
     max_new_tokens: int = 20,
     temperature: float = 0.6,
     top_p: float = 0.9,
-    top_k: int = 50,
+    top_k: int = 10,
     repetition_penalty: float = 1.2,
 ) -> str:
 
@@ -79,7 +79,7 @@ def generate(
         top_p=top_p,
         top_k=top_k,
         temperature=temperature,
-        num_beams=10,
+        num_beams=1,
         repetition_penalty=repetition_penalty,
     )
 
@@ -107,7 +107,7 @@ def generate_bot2(
     max_new_tokens: int = 10,
     temperature: float = 0.6,
     top_p: float = 0.9,
-    top_k: int = 50,
+    top_k: int = 10,
     repetition_penalty: float = 1.2,
 ) -> str:
     conversation = []
@@ -131,7 +131,7 @@ def generate_bot2(
         top_p=top_p,
         top_k=top_k,
         temperature=temperature,
-        num_beams=10,
+        num_beams=1,
         repetition_penalty=repetition_penalty,
     )
 
@@ -210,7 +210,7 @@ if __name__ == "__main__":
     print('CSV_____________________')
     def clean_string(s):
         return s.encode('ascii', 'ignore').decode('ascii')
-    csv_file =f"loss_7b.csv"
+    csv_file = model_id[2:]+".csv"
     # csv_columns = ['Conversation History', 'Diagnostic Question', 'Bot1 Response', 'Ground Truth Answer', 'Loss']
     csv_columns = ['Diagnostic Question', 'Bot1 Response', 'Ground Truth Answer', 'Loss']
     try:
