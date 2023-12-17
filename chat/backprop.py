@@ -69,7 +69,7 @@ def generate(
     max_new_tokens: int = 10,
     temperature: float = 0.6,
     top_p: float = 0.9,
-    top_k: int = 50,
+    top_k: int = 10,
     repetition_penalty: float = 1.2,
 ) -> str:
 
