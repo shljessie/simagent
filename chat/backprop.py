@@ -94,7 +94,7 @@ def generate(
         top_p=top_p,
         top_k=top_k,
         temperature=temperature,
-        num_beams=10,
+        num_beams=1,
         repetition_penalty=repetition_penalty,
     )
 
@@ -116,7 +116,7 @@ def generate_bot2(
     max_new_tokens: int = 10,
     temperature: float = 0.6,
     top_p: float = 0.9,
-    top_k: int = 10,
+    top_k: int = 1,
     repetition_penalty: float = 1.2,
 ) -> str:
     conversation = []
