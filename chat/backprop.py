@@ -58,7 +58,7 @@ if torch.cuda.is_available():
     model.bfloat16()
     model_2.bfloat16()
     tokenizer.use_default_system_prompt = False
-    optimizer = AdamW(model.parameters(), lr=0.0000001, weight_decay=0.001)
+    optimizer = AdamW(model.parameters(), lr=0.000001, weight_decay=0.001)
 
 MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "400"))
 
@@ -164,7 +164,7 @@ if __name__ == "__main__":
     last_response = generate_bot2("Hello! What is your name?", chat_history_bot2 , system_prompt=BOT2_PERSONA, max_new_tokens=30)
     chat_history_bot2.append((initial_bot1_message, last_response))
 
-    rounds = 12  # Number of conversational rounds
+    rounds = 3  # Number of conversational rounds
     for r in range(rounds):
 
         # Round 
