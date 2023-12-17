@@ -164,7 +164,7 @@ if __name__ == "__main__":
     last_response = generate_bot2("Hello! What is your name?", chat_history_bot2 , system_prompt=BOT2_PERSONA, max_new_tokens=30)
     chat_history_bot2.append((initial_bot1_message, last_response))
 
-    rounds = 3  # Number of conversational rounds
+    rounds = 6  # Number of conversational rounds
     for r in range(rounds):
 
         # Round 
