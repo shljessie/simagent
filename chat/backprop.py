@@ -97,7 +97,7 @@ def generate(
         top_p=top_p,
         top_k=top_k,
         temperature=temperature,
-        num_beams=1,
+        num_beams=10,
         repetition_penalty=repetition_penalty,
     )
 
