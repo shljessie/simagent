@@ -208,16 +208,6 @@ if __name__ == "__main__":
         for i in range(len(predefined_questions)):
           #Clear cache each time
           torch.cuda.empty_cache()
-
-          # Set PYTORCH_CUDA_ALLOC_CONF environment variable
-          os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "caching_allocator"
-
-          x = torch.randn(1000, 1000).cuda()
-          y = x + x.t()
-          z = torch.matmul(y, y)
-          del x, y, z
-          os.environ["PYTORCH_CUDA_ALLOC_CONF"] = ""
-
           # place a diagnostic question
           bot1_diag_response = generate(predefined_questions[i], chat_history_bot1, system_prompt=BOT_PERSONA, max_new_tokens=30 )  
           #calculate loss
@@ -233,15 +223,6 @@ if __name__ == "__main__":
 
           optimizer.zero_grad()  
           loss.backward()   
-          torch.cuda.empty_cache()
-          # Set PYTORCH_CUDA_ALLOC_CONF environment variable
-          os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "caching_allocator"
-
-          x = torch.randn(1000, 1000).cuda()
-          y = x + x.t()
-          z = torch.matmul(y, y)
-          del x, y, z
-          os.environ["PYTORCH_CUDA_ALLOC_CONF"] = ""
           optimizer.step()  
 
         print("\n--------------------------------------------------\n")
