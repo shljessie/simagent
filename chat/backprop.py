@@ -94,7 +94,7 @@ def generate(
         top_p=top_p,
         top_k=top_k,
         temperature=temperature,
-        num_beams=5,
+        num_beams=10,
         repetition_penalty=repetition_penalty,
     )
 
@@ -116,7 +116,7 @@ def generate_bot2(
     max_new_tokens: int = 10,
     temperature: float = 0.6,
     top_p: float = 0.9,
-    top_k: int = 50,
+    top_k: int = 10,
     repetition_penalty: float = 1.2,
 ) -> str:
     conversation = []
@@ -164,7 +164,7 @@ if __name__ == "__main__":
     last_response = generate_bot2("Hello! What is your name?", chat_history_bot2 , system_prompt=BOT2_PERSONA, max_new_tokens=30)
     chat_history_bot2.append((initial_bot1_message, last_response))
 
-    rounds = 20  # Number of conversational rounds
+    rounds = 16  # Number of conversational rounds
     for r in range(rounds):
 
         # Round 
