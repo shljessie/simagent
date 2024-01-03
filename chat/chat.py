@@ -165,10 +165,12 @@ if __name__ == "__main__":
         with open(csv_file, 'w', newline='', encoding='utf-8') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
             writer.writeheader()
+            print('wrote header')
             for data in csv_data:
                 try:
                     cleaned_data = {k: clean_string(v) if isinstance(v, str) else v for k, v in data.items()}
                     writer.writerow(cleaned_data)
+                    print('added data', cleaned_data)
                 except UnicodeEncodeError as e:
                     print("Error with data:", data)
                     print("Error message:", e)
