@@ -40,7 +40,10 @@ class ConfigProfile:
     weight_decay=0.001
     optimizer = AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
 
+    rounds =5
+
 
     model_size = model_id.split('-')[2]
     loss_csv_file_name = f"loss_{model_size}.csv"
+    model_name =  "./backprop_llama2_"+str(rounds*3)+"_"+str(lr)
     finetune_loss_name = f"finetune_loss_{model_size}.csv"

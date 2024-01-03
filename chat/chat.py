@@ -14,12 +14,22 @@ from loss import calculate_loss
 parser = argparse.ArgumentParser(description="Run the script with a specific consistency configuration")
 parser.add_argument("--config", help="Specify the consistency type (e.g., 'Profile' or 'Knowledge')", required=True)
 parser.add_argument("--rounds", help="Specify the number of rounds for the conversation", type=int, default=5)
+parser.add_argument("--finetune_model", help="Specify the model name to be used", type=str, default=None)
 args = parser.parse_args()
 
 if args.config.lower() == 'profile':
     config = ConfigProfile
 else:
     raise ValueError("Invalid Consistency Category")
+
+if args.finetune_model:
+    model = AutoModelForCausalLM.from_pretrained(args.model_name, use_auth_token=config.HF_ACCESS_TOKEN, torch_dtype=torch.float16, device_map="auto")
+    model.bfloat16()
+    csv_file = config.finetune_loss_name
+else:
+    model = config.model
+    csv_file = config.loss_csv_file_name
+    
 
 MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "400"))
 rounds = args.rounds
@@ -49,9 +59,9 @@ def generate(
     conversation.append({"role": "user", "content": message})
 
     input_ids = config.tokenizer.apply_chat_template(conversation, return_tensors="pt")
-    input_ids = input_ids.to(config.model.device)
+    input_ids = input_ids.to(model.device)
 
-    output = config.model_2.generate(
+    output = model.generate(
         input_ids,
         max_new_tokens=config.max_new_tokens,
         do_sample=True,
@@ -138,7 +148,7 @@ if __name__ == "__main__":
           bot1_diag_response = generate(config.predefined_questions[i], chat_history_bot1, system_prompt=config.BOT_PERSONA, max_new_tokens=30 )  
 
           #calculate loss
-          loss, conversation = calculate_loss(config.model, config.tokenizer, chat_history_bot1, bot1_diag_response, config.true_answers[i], config.predefined_questions[i],config )
+          loss, conversation = calculate_loss(model, config.tokenizer, chat_history_bot1, bot1_diag_response, config.true_answers[i], config.predefined_questions[i],config,False )
 
           csv_data.append({
                 'Conversation History': chat_history_bot1,
@@ -160,7 +170,6 @@ if __name__ == "__main__":
     def clean_string(s):
         return s.encode('ascii', 'ignore').decode('ascii')
     # change naming if backproploss
-    csv_file = config.loss_csv_file_name
     csv_columns = ['Conversation History','Diagnostic Question', 'Bot1 Response', 'Ground Truth Answer', 'Loss']
     try:
         with open(csv_file, 'w', newline='', encoding='utf-8') as csvfile:

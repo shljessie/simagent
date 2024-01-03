@@ -154,4 +154,6 @@ if __name__ == "__main__":
         last_response = bot2_response
 
     # Save the trained model
-    config.model.save_pretrained("./backprop_llama2_"+str(rounds*3)+"_"+str(config.lr))
+    model_name =  "./backprop_llama2_"+str(rounds*3)+"_"+str(config.lr)
+    print("saved model name: ", model_name)
+    config.model.save_pretrained(model_name)
