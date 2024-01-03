@@ -137,9 +137,8 @@ if __name__ == "__main__":
         for i in range(len(config.predefined_questions)):
           #Clear cache each time
           torch.cuda.empty_cache()
-          # place a diagnostic question
+
           bot1_diag_response = generate(config.predefined_questions[i], chat_history_bot1, system_prompt=config.BOT_PERSONA, max_new_tokens=30 )  
-          #calculate loss
           loss, conversation = calculate_loss(config.model, config.tokenizer, chat_history_bot1, bot1_diag_response, config.true_answers[i], config.predefined_questions[i], config, True )
 
           print('BACKPROP START')
