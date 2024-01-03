@@ -53,7 +53,7 @@ def generate(
 
     output = config.model.generate(
         input_ids,
-        max_new_tokens=max_new_tokens,
+        max_new_tokens=config.max_new_tokens,
         do_sample=True,
         top_p=top_p,
         top_k=top_k,
@@ -97,7 +97,7 @@ def generate_bot2(
 
     output = config.model_2.generate(
         input_ids,
-        max_new_tokens=max_new_tokens,
+        max_new_tokens=config.max_new_tokens,
         do_sample=True,
         top_p=top_p,
         top_k=top_k,
@@ -122,13 +122,13 @@ if __name__ == "__main__":
     chat_history_bot2 = []
     csv_data = [] 
 
-    last_response = generate_bot2("Hello! What is your name?", chat_history_bot2 , system_prompt=config.BOT2_PERSONA, max_new_tokens=30)
+    last_response = config.initial_bot2_message
     chat_history_bot2.append((config.initial_bot1_message, last_response))
 
     for r in range(rounds):
         print('ROUND', r)
         torch.cuda.empty_cache()
-        bot1_response = generate(last_response, chat_history_bot1, system_prompt=config.BOT_PERSONA, max_new_tokens=30)
+        bot1_response = generate(last_response, chat_history_bot1, system_prompt=config.BOT_PERSONA, max_new_tokens=config.max_new_tokens)
         chat_history_bot1.append((last_response, bot1_response))
         
         #Diagnostic Question
@@ -149,7 +149,7 @@ if __name__ == "__main__":
             })
         
         # Bot2 generates a response to Bot1's last message
-        bot2_response = generate_bot2(bot1_response, chat_history_bot2, system_prompt=config.BOT2_PERSONA, max_new_tokens=30)
+        bot2_response = generate_bot2(bot1_response, chat_history_bot2, system_prompt=config.BOT2_PERSONA, max_new_tokens=config.max_new_tokens)
         chat_history_bot2.append((bot1_response, bot2_response))
 
         # Update the last response

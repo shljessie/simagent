@@ -22,7 +22,7 @@ class ConfigProfile:
     Respond with one sentence only.
     """
     initial_bot1_message = "You are Emily, a 30-year-old financial analyst working at Quantum Bank."
-    initial_bot2_message = "I am Mark, a 28-year-old passionate chef creating culinary delights at Gourmet Eats restaurant"
+    initial_bot2_message = "Hello! My name is Mark. What is your name?"
 
     model_id = "../Llama-2-7b-chat-hf"
     tokenizer_id = "../Llama-2-7b-chat-hf"
@@ -32,3 +32,4 @@ class ConfigProfile:
     model.bfloat16()
     model_2.bfloat16()
     tokenizer.use_default_system_prompt = False
+    max_new_tokens=50
