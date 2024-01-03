@@ -159,7 +159,8 @@ if __name__ == "__main__":
     print('CSV_____________________')
     def clean_string(s):
         return s.encode('ascii', 'ignore').decode('ascii')
-    csv_file = "loss_7b.csv"
+    # change naming if backproploss
+    csv_file = config.loss_csv_file_name
     csv_columns = ['Conversation History','Diagnostic Question', 'Bot1 Response', 'Ground Truth Answer', 'Loss']
     try:
         with open(csv_file, 'w', newline='', encoding='utf-8') as csvfile:
