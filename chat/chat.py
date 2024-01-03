@@ -139,9 +139,9 @@ if __name__ == "__main__":
 
           #calculate loss
           loss, conversation = calculate_loss(config.model, config.tokenizer, chat_history_bot1, bot1_diag_response, config.true_answers[i], config.predefined_questions[i],config )
-          print(conversation)
+          print(conversation.pop())
           csv_data.append({
-                'Conversation History': conversation,
+                'Conversation History': conversation.pop(),
                 'Diagnostic Question': config.predefined_questions[i],
                 'Bot1 Response': bot1_diag_response,
                 'Ground Truth Answer': config.true_answers[i],
