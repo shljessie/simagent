@@ -9,7 +9,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 from typing import List, Tuple
 
 from config import ConfigProfile
-from backprop_loss import calculate_loss
+from loss import calculate_loss
 
 # python finetune.py --config profile --rounds 20
 parser = argparse.ArgumentParser(description="Run the script with a specific consistency configuration")
@@ -140,7 +140,7 @@ if __name__ == "__main__":
           # place a diagnostic question
           bot1_diag_response = generate(config.predefined_questions[i], chat_history_bot1, system_prompt=config.BOT_PERSONA, max_new_tokens=30 )  
           #calculate loss
-          loss, conversation = calculate_loss(config.model, config.tokenizer, chat_history_bot1, bot1_diag_response, config.true_answers[i], config.predefined_questions[i], config )
+          loss, conversation = calculate_loss(config.model, config.tokenizer, chat_history_bot1, bot1_diag_response, config.true_answers[i], config.predefined_questions[i], config, True )
 
           print('BACKPROP START')
           config.optimizer.zero_grad()  
