@@ -18,7 +18,7 @@ import torch
     ],
 )
 def test_generate(generated, stop_tokens, expected):
-    import chat.base as chat
+    import chat.other.base as chat
 
     input_idx = torch.tensor([5, 3])
     max_returned_tokens = len(input_idx) + 8

@@ -1,17 +1,19 @@
-import os
 import argparse
+import csv
+import os
+
 import dotenv
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from typing import List, Tuple
-from loss import calculate_loss
-import csv
+
 from config import ConfigProfile
+from loss import calculate_loss
 
-
-# python chat.py --config profile
+# python chat.py --config profile --rounds 20
 parser = argparse.ArgumentParser(description="Run the script with a specific consistency configuration")
 parser.add_argument("--config", help="Specify the consistency type (e.g., 'Profile' or 'Knowledge')", required=True)
+parser.add_argument("--rounds", help="Specify the number of rounds for the conversation", type=int, default=5)
 args = parser.parse_args()
 
 if args.config.lower() == 'profile':
@@ -20,6 +22,7 @@ else:
     raise ValueError("Invalid Consistency Category")
 
 MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "400"))
+rounds = args.rounds
 
 if not torch.cuda.is_available():
    print("\n Running on CPU 🥶 ")
@@ -122,7 +125,6 @@ if __name__ == "__main__":
     last_response = generate_bot2("Hello! What is your name?", chat_history_bot2 , system_prompt=config.BOT2_PERSONA, max_new_tokens=30)
     chat_history_bot2.append((config.initial_bot1_message, last_response))
 
-    rounds = 25
     for r in range(rounds):
         print('ROUND', r)
         torch.cuda.empty_cache()
@@ -137,8 +139,9 @@ if __name__ == "__main__":
 
           #calculate loss
           loss, conversation = calculate_loss(config.model, config.tokenizer, chat_history_bot1, bot1_diag_response, config.true_answers[i], config.predefined_questions[i],config )
+          print(conversation)
           csv_data.append({
-                # 'Conversation History': conversation,
+                'Conversation History': conversation,
                 'Diagnostic Question': config.predefined_questions[i],
                 'Bot1 Response': bot1_diag_response,
                 'Ground Truth Answer': config.true_answers[i],
