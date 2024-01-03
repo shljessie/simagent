@@ -160,7 +160,7 @@ if __name__ == "__main__":
     def clean_string(s):
         return s.encode('ascii', 'ignore').decode('ascii')
     csv_file = config.model_id[2:]+".csv"
-    csv_columns = ['Diagnostic Question', 'Bot1 Response', 'Ground Truth Answer', 'Loss']
+    csv_columns = ['Conversation History','Diagnostic Question', 'Bot1 Response', 'Ground Truth Answer', 'Loss']
     try:
         with open(csv_file, 'w', newline='', encoding='utf-8') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
