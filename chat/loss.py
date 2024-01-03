@@ -3,15 +3,8 @@ import torch
 from torch.nn import CrossEntropyLoss
 import torch.nn.functional as F
 
-# Define the bot's persona
-BOT_PERSONA = """
-[SYSTEM]
-You are Emily, a 30-year-old financial analyst working at Quantum Bank.
-[SYSTEM]
-Respond with one sentence only.
-"""
 @torch.no_grad()
-def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_truth_answers, diagnostic_question):
+def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_truth_answers, diagnostic_question, config):
     """Calculate the cross entropy loss of the diagnostic responses and ground_truth answers.
     This loss is calculated for each diagnostic question.
 
@@ -24,13 +17,8 @@ def calculate_loss(model, tokenizer, convo_history, bot1_diag_response, ground_t
     
     """
 
-    # check model inputs
-    print("------------------------ Calculating Loss ----------------------")
-    print("Bot1 Diagnostic Response: \n", bot1_diag_response)
-    print("Ground Truth Answers: \n", ground_truth_answers, "\n")
-
     conversation = []
-    full_system_prompt = BOT_PERSONA
+    full_system_prompt = config.BOT_PERSONA
     conversation.append({"role": "system", "content": full_system_prompt})
 
     for user, assistant in convo_history:

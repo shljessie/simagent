@@ -4,7 +4,7 @@ import dotenv
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from typing import List, Tuple
-from diagnostic2 import calculate_loss
+from loss import calculate_loss
 import csv
 from config import ConfigProfile
 
@@ -136,7 +136,7 @@ if __name__ == "__main__":
           bot1_diag_response = generate(config.predefined_questions[i], chat_history_bot1, system_prompt=config.BOT_PERSONA, max_new_tokens=30 )  
 
           #calculate loss
-          loss, conversation = calculate_loss(config.model, config.tokenizer, chat_history_bot1, bot1_diag_response, config.true_answers[i], config.predefined_questions[i] )
+          loss, conversation = calculate_loss(config.model, config.tokenizer, chat_history_bot1, bot1_diag_response, config.true_answers[i], config.predefined_questions[i],config )
           csv_data.append({
                 # 'Conversation History': conversation,
                 'Diagnostic Question': config.predefined_questions[i],
