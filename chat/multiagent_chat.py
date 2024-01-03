@@ -7,23 +7,23 @@ from diagnostic2 import calculate_loss
 import csv
 
 #PROFILE
-predefined_questions = ["What is you name?", "How old are you?", "What is your major?"]
+predefined_questions = ["What is you name?", "How old are you?", "What is your job?"]
 
-true_answers = ["My name is Rohan","I am 22 years old","My major is Material Science"]
+true_answers = ["My name is Emily","I am 30 years old","My job is a financial analyst"]
 
 MAX_INPUT_TOKEN_LENGTH = int(os.getenv("MAX_INPUT_TOKEN_LENGTH", "400"))
 
 # Define the bot's persona
 BOT_PERSONA = """
 [SYSTEM]
-You are Rohan a grad student at Stanford studying Material Science. You are 22 years old.
+You are Emily, a 30-year-old financial analyst working at Quantum Bank.
 [SYSTEM]
 Respond with one sentence only.
 """
 # Define the bot's persona
 BOT2_PERSONA = """
 [SYSTEM]
-You are Seonghee a grad student at Stanford studying Computer Science. You are 23 years old. Respond with one sentence only.
+You are Mark, a 28-year-old passionate chef creating culinary delights at Gourmet Eats restaurant.
 [/SYSTEM]
 Respond with one sentence only.
 """
@@ -115,7 +115,7 @@ def generate_bot2(
     full_system_prompt = (system_prompt if system_prompt else "")
     conversation.append({"role": "system", "content": full_system_prompt})
 
-    print('\nChat history passed in: ', chat_history, "\n") # [('Bot1 Persona', 'I am Rohan, a grad student at Stanford studying Material Science. I like cocoa almond spread.'), ('Bot2', "Hey there! *adjusts glasses* It's great to meet you, fellow Stanford student! *nervous smile* What brings you here today? *glances around nervously* Oh, and by the way, have you tried that new cilantro-based dish in the student union building? It's quite... interesting. *winks*"), ('Bot1', "Oh, hey there! *blinks* Uh, yeah, nope, haven't tryed it yet. *awkward laugh* But, uh, what about you? *squints* Are you, uh, working on anything exciting? *nervous fidgeting* Maybe something with, uh, quantum computing or, uh, sustainable energy? *gulps* Yeah, those are some cool fields. *nerd grin*")] 
+    print('\nChat history passed in: ', chat_history, "\n")
 
     for user, assistant in chat_history:
         conversation.extend([{"role": "user", "content": user}, {"role": "assistant", "content": assistant}])
@@ -152,8 +152,8 @@ def generate_bot2(
 
 if __name__ == "__main__":
     # Initialize chat history with the bot's personas
-    initial_bot1_message = "You are Rohan a grad student at Stanford studying Material Science. You are 22 years old."
-    initial_bot2_message = "I am Seonghee, a grad student at Stanford studying Computer Science. I like cilantro."
+    initial_bot1_message = "You are Emily, a 30-year-old financial analyst working at Quantum Bank."
+    initial_bot2_message = "I am Mark, a 28-year-old passionate chef creating culinary delights at Gourmet Eats restaurant"
     chat_history_bot1 = []
     chat_history_bot2 = []
     csv_data = [] 
