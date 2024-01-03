@@ -20,7 +20,7 @@ if __name__ == "__main__":
     # Define parameters for finetune.py
     finetune_args = ['--config', 'profile', '--rounds', '5']
     # Run finetune.py
-    run_script('finetune.py', finetune_args)
+    run_script('chat/finetune.py', finetune_args)
 
     # Retrieve the model name saved by finetune.py
     model_name = config.model_name
@@ -29,4 +29,4 @@ if __name__ == "__main__":
     # if model name is specificed means I am using finetuned model
     chat_args = ['--config', 'profile', '--rounds', '5', '--finetune_model', model_name]
     # Run chat.py
-    run_script('chat.py', chat_args)
+    run_script('chat/chat.py', chat_args)
