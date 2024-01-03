@@ -1,6 +1,7 @@
 import os
 import dotenv
 import torch
+from torch.optim import AdamW
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 dotenv.load_dotenv('../.env')
@@ -33,7 +34,13 @@ class ConfigProfile:
     model_2.bfloat16()
     tokenizer.use_default_system_prompt = False
     max_new_tokens=50
+
+    #finetuning
+    lr=0.00001
+    weight_decay=0.001
+    optimizer = AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
+
+
     model_size = model_id.split('-')[2]
     loss_csv_file_name = f"loss_{model_size}.csv"
-    finetune_model_name = f"finetune_model_{model_size}.csv"
     finetune_loss_name = f"finetune_loss_{model_size}.csv"
