@@ -1,11 +1,13 @@
 import subprocess
 import os
-from config import ConfigProfile
+from config import ConfigProfile7b, ConfigProfile13b
 
-consistency = "profile"
+consistency = "profile7b"
 
-if consistency == 'profile':
-    config = ConfigProfile
+if consistency == 'profile7b':
+    config = ConfigProfile7b
+elif consistency == 'profile13b':
+    config = ConfigProfile13b
 else:
     raise ValueError("Invalid Consistency Category")
 
@@ -18,7 +20,7 @@ def run_script(script_name, args):
 
 if __name__ == "__main__":
     # Define parameters for finetune.py
-    finetune_args = ['--config', 'profile', '--rounds', '5']
+    finetune_args = ['--config', 'profile7b', '--rounds', '16']
     # Run finetune.py
     run_script('chat/finetune.py', finetune_args)
 
@@ -27,6 +29,8 @@ if __name__ == "__main__":
 
     # backproploss run
     # if model name is specificed means I am using finetuned model
-    chat_args = ['--config', 'profile', '--rounds', '5', '--finetune_model', model_name]
+    chat_args = ['--config', 'profile7b', '--rounds', '30', '--finetune_model', model_name]
     # Run chat.py
     run_script('chat/chat.py', chat_args)
+
+

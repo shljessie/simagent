@@ -7,18 +7,20 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from typing import List, Tuple
 
-from config import ConfigProfile
+from config import ConfigProfile7b, ConfigProfile13b
 from loss import calculate_loss
 
-# python chat.py --config profile --rounds 20
+# python chat.py --config profile7b --rounds 25
 parser = argparse.ArgumentParser(description="Run the script with a specific consistency configuration")
 parser.add_argument("--config", help="Specify the consistency type (e.g., 'Profile' or 'Knowledge')", required=True)
 parser.add_argument("--rounds", help="Specify the number of rounds for the conversation", type=int, default=5)
 parser.add_argument("--finetune_model", help="Specify the model name to be used", type=str, default=None)
 args = parser.parse_args()
 
-if args.config.lower() == 'profile':
-    config = ConfigProfile
+if args.config.lower() == 'profile7b':
+    config = ConfigProfile7b
+elif args.config.lower() == 'profile13b':
+    config = ConfigProfile13b
 else:
     raise ValueError("Invalid Consistency Category")
 
