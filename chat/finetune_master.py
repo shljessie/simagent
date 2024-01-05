@@ -29,7 +29,7 @@ if __name__ == "__main__":
 
     # backproploss run
     # if model name is specificed means I am using finetuned model
-    # python3 chat/chat.py --config profile7b --rounds 25 --finetune_model ./backprop_llama2_48_1e-05
+    # python3 chat/chat.py --config profile7b --rounds 25 --finetune_model ./backprop_llama2_48_0.0001
     chat_args = ['--config', 'profile7b', '--rounds', '30', '--finetune_model', model_name]
     # Run chat.py
     run_script('chat/chat.py', chat_args)
