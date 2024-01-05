@@ -25,7 +25,8 @@ else:
     raise ValueError("Invalid Consistency Category")
 
 if args.finetune_model:
-    model = AutoModelForCausalLM.from_pretrained(args.finetune_model, use_auth_token=config.HF_ACCESS_TOKEN, torch_dtype=torch.float16, device_map="auto")
+    HF_ACCESS_TOKEN = os.getenv('HF_ACCESS_TOKEN')
+    model = AutoModelForCausalLM.from_pretrained(args.finetune_model, use_auth_token=HF_ACCESS_TOKEN, torch_dtype=torch.float16, device_map="auto")
     model.bfloat16()
     csv_file = config.finetune_loss_name
 else:
