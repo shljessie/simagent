@@ -1,7 +1,7 @@
 import csv
 
-input_file = 'loss_13b.csv'
-output_file = 'new_loss_13b.csv'
+input_file = 'finetune_loss_7b.csv'
+output_file = 'new_finetune_loss_7b.csv'
 
 # Open the input file and the output file
 with open(input_file, mode='r', newline='', encoding='utf-8') as infile, \
