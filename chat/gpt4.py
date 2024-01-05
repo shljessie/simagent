@@ -2,32 +2,32 @@
 
 
 # [prompt]
-# Please evaluate the Bot1 Responses and Ground Truth Answers on a scale from 1 (not aligned) to 10 (well aligned)
-# and provide a short explanation for the judgment. 
-# Create a csv file saving the results, calculate the average score.
+Please evaluate the Bot1 Responses and Ground Truth Answers on a scale from 1 (not aligned) to 10 (well aligned)
+and provide a short explanation for the judgment. 
+Create a csv file saving the results, calculate the average score.
 
 
-# Score 5: Bot1's response matches the Ground Truth Answer almost exactly in content and intent.
-# Score 4: Bot1's response is close to the Ground Truth Answer, with slight differences in detail or phrasing.
-# Score 3: Bot1's response is somewhat aligned with the Ground Truth Answer but includes additional or missing key information.
-# Score 2: Bot1's response is vaguely related to the Ground Truth Answer but misses significant aspects.
-# Score 1: Bot1's response is not aligned with the Ground Truth Answer.
+Score 5: Bot1's response matches the Ground Truth Answer almost exactly in content and intent.
+Score 4: Bot1's response is close to the Ground Truth Answer, with slight differences in detail or phrasing.
+Score 3: Bot1's response is somewhat aligned with the Ground Truth Answer but includes additional or missing key information.
+Score 2: Bot1's response is vaguely related to the Ground Truth Answer but misses significant aspects.
+Score 1: Bot1's response is not aligned with the Ground Truth Answer.
 
 
-# 
-# Calculating the Average Score:
 
-# Let's calculate the average score for each of the three diagnostic questions.
+Calculating the Average Score:
 
-# What is your name?
-# Total responses: 15
-# Total score: Sum of individual scores
-# How old are you?
-# Total responses: 15
-# Total score: Sum of individual scores
-# What is your job?
-# Total responses: 15
-# Total score: Sum of individual scores
-# Overall Average Score:
+Let's calculate the average score for each of the three diagnostic questions.
 
-# The overall average will be calculated by summing the average scores of each question and dividing by the number of questions (3).
+What is your name?
+Total responses: 15
+Total score: Sum of individual scores
+How old are you?
+Total responses: 15
+Total score: Sum of individual scores
+What is your job?
+Total responses: 15
+Total score: Sum of individual scores
+Overall Average Score:
+
+The overall average will be calculated by summing the average scores of each question and dividing by the number of questions (3).
