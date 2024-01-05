@@ -1,6 +1,6 @@
 import csv
 import sys
-import bluert
+import os
 from bleurt import score
 
 def bleurt(input_csv, output_csv):
