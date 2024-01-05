@@ -1,7 +1,7 @@
 import csv
 
-input_file = 'loss_7b.csv'
-output_file = 'new_loss_7b.csv'
+input_file = 'loss_13b.csv'
+output_file = 'new_loss_13b.csv'
 
 # Open the input file and the output file
 with open(input_file, mode='r', newline='', encoding='utf-8') as infile, \
@@ -19,4 +19,4 @@ with open(input_file, mode='r', newline='', encoding='utf-8') as infile, \
         del row['Conversation History']
         writer.writerow(row)
 
-print("Column removed and new file saved as 'new_loss_7b.csv'")
+print("Column removed and new file saved as 'new_loss_13b.csv'")
