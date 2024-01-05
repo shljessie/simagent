@@ -19,4 +19,4 @@ with open(input_file, mode='r', newline='', encoding='utf-8') as infile, \
         del row['Conversation History']
         writer.writerow(row)
 
-print("Column removed and new file saved as 'new_loss_13b.csv'")
+print("Column removed and new file saved")

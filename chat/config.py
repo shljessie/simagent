@@ -36,7 +36,7 @@ class ConfigProfile7b:
     max_new_tokens=50
 
     #finetuning
-    lr=0.00001
+    lr=0.0000001
     weight_decay=0.001
     optimizer = AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
 
@@ -77,7 +77,7 @@ class ConfigProfile13b:
     max_new_tokens=50
 
     #finetuning
-    lr=0.00001
+    lr=0.0000001
     weight_decay=0.001
     optimizer = AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
 
