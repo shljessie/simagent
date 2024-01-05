@@ -40,4 +40,4 @@ if __name__ == "__main__":
     bleurt(input_csv, output_csv)
 
 
-#python3 chat/bleurt.py loss_7b.csv prompt_7b_bleurt.csv
+#python3 chat/bleurt_eval.py loss_7b.csv prompt_7b_bleurt.csv
