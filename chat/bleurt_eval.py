@@ -4,7 +4,7 @@ import os
 from bleurt import score
 
 def bleurt(input_csv, output_csv):
-    checkpoint = "/chat/bluert/bleurt/test_checkpoint"
+    checkpoint = "bleurt/bleurt/test_checkpoint"
     scorer = score.BleurtScorer(checkpoint)
 
     with open(input_csv, newline='', encoding='utf-8') as infile, \
