@@ -27,6 +27,9 @@ def bleurt(input_csv, output_csv):
             writer.writerow(row)
 
         # Calculate and write average BLEURT score
+        print(print('bluert_score',  bleurt_scores))
+        print('length of bluert_score',  len(bleurt_scores))
+        print('sum of bluert_score',  sum(bleurt_scores))
         average_bleurt_score = sum(bleurt_scores) / len(bleurt_scores) if bleurt_scores else 0
         writer.writerow({fieldnames[0]: 'Average BLEURT Score', fieldnames[-1]: average_bleurt_score})
 
