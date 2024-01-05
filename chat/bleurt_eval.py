@@ -4,7 +4,7 @@ import os
 from bleurt import score
 
 def bleurt(input_csv, output_csv):
-    checkpoint = "/bluert/bleurt/test_checkpoint"
+    checkpoint = "/chat/bluert/bleurt/test_checkpoint"
     scorer = score.BleurtScorer(checkpoint)
 
     with open(input_csv, newline='', encoding='utf-8') as infile, \
@@ -41,3 +41,4 @@ if __name__ == "__main__":
 
 
 #python3 chat/bleurt_eval.py loss_7b.csv prompt_7b_bleurt.csv
+#python3 chat/bleurt_eval.py loss_13b.csv prompt_13b_bleurt.csv
