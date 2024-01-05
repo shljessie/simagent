@@ -34,6 +34,6 @@ if __name__ == "__main__":
         print("Usage: python script.py <input_csv_file> <output_csv_file>")
         sys.exit(1)
 
-    input_csv_file = sys.argv[1]
-    output_csv_file = sys.argv[2]
+    input_csv = sys.argv[1]
+    output_csv = sys.argv[2]
     bleurt(input_csv, output_csv)

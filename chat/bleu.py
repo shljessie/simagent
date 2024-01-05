@@ -37,4 +37,4 @@ if __name__ == "__main__":
     bleu(input_csv, output_csv)
 
 
-#python3 chat/bleu.py input.csv output.csv
+#python3 chat/bleu.py loss_7b.csv prompt_7b_bleu.csv
