@@ -1,5 +1,6 @@
 import csv
 import sys
+import bluert
 from bleurt import score
 
 def bleurt(input_csv, output_csv):
@@ -37,3 +38,6 @@ if __name__ == "__main__":
     input_csv = sys.argv[1]
     output_csv = sys.argv[2]
     bleurt(input_csv, output_csv)
+
+
+#python3 chat/bleurt.py loss_7b.csv prompt_7b_bleurt.csv
