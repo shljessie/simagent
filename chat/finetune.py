@@ -11,15 +11,17 @@ from typing import List, Tuple
 from config import ConfigProfile7b, ConfigProfile13b    
 from loss import calculate_loss
 
-# python chat.py --config profile7b --rounds 25
+# python3 chat/finetune.py --config profile7b --rounds 16
 parser = argparse.ArgumentParser(description="Run the script with a specific consistency configuration")
 parser.add_argument("--config", help="Specify the consistency type (e.g., 'Profile' or 'Knowledge')", required=True)
 parser.add_argument("--rounds", help="Specify the number of rounds for the conversation", type=int, default=5)
 args = parser.parse_args()
 
 if args.config.lower() == 'profile7b':
+    print('Loading 7b model')
     config = ConfigProfile7b
 elif args.config.lower() == 'profile13b':
+    print('Loading 13b model')
     config = ConfigProfile13b
 else:
     raise ValueError("Invalid Consistency Category")
