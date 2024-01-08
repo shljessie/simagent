@@ -8,7 +8,7 @@ from torch.optim import AdamW
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from typing import List, Tuple
 
-from config import ConfigProfile7b, ConfigProfile13b    
+from config import ConfigProfile7b  
 from loss import calculate_loss
 
 # python3 chat/finetune.py --config profile7b --rounds 16
@@ -20,9 +20,9 @@ args = parser.parse_args()
 if args.config.lower() == 'profile7b':
     print('Loading 7b model')
     config = ConfigProfile7b
-elif args.config.lower() == 'profile13b':
-    print('Loading 13b model')
-    config = ConfigProfile13b
+# elif args.config.lower() == 'profile13b':
+#     print('Loading 13b model')
+#     config = ConfigProfile13b
 else:
     raise ValueError("Invalid Consistency Category")
 
