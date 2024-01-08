@@ -7,7 +7,7 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from typing import List, Tuple
 
-from config import ConfigProfile7b, ConfigProfile13b
+from config import ConfigProfile7b, ConfigProfile13b,  ConfigProfile70b
 from loss import calculate_loss
 
 # python3 chat/chat.py --config profile7b --rounds 25
@@ -21,6 +21,8 @@ if args.config.lower() == 'profile7b':
     config = ConfigProfile7b
 elif args.config.lower() == 'profile13b':
     config = ConfigProfile13b
+elif args.config.lower() == 'profile70b':
+    config = ConfigProfile70b
 else:
     raise ValueError("Invalid Consistency Category")
 
