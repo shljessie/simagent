@@ -19,7 +19,9 @@ def bleu(input_csv, output_csv):
         for row in reader:
             reference = word_tokenize(row['Ground Truth Answer'].lower())
             candidate = word_tokenize(row['Bot1 Response'].lower())
-            score = sentence_bleu([reference], candidate)
+            score = sentence_bleu([reference], candidate, weights=(0.5, 0.5, 0, 0))
+            # BLEU-2  weights=(0.5, 0.5, 0, 0) 
+            # BLEU-3  weights=(0.33, 0.33, 0.33, 0)
             bleu_scores.append(score)
             row['BLEU Score'] = score
             writer.writerow(row)
@@ -40,5 +42,5 @@ if __name__ == "__main__":
 # python3 chat/bleu.py loss_7b.csv prompt_7b_bleu.csv
 # python3 chat/bleu.py loss_13b.csv prompt_13b_bleu.csv
 
-# python3 chat/bleu.py backprop_llama2_48_1e-05.csv prompt_finetune_7b_bleu.csv
+# python3 chat/bleu.py new_finetune_loss_7b.csv prompt_finetune_7b_bleu.csv
 

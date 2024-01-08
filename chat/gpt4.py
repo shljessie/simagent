@@ -2,16 +2,16 @@
 
 
 # [prompt]
-Please evaluate the Bot1 Responses and Ground Truth Answers on a scale from 1 (not aligned) to 10 (well aligned)
-and provide a short explanation for the judgment. 
-Create a csv file saving the results, calculate the average score.
-
+Please evaluate the Bot1 Responses and Ground Truth Answers on a scale from 1 (not aligned) to 5 (well aligned)
 
 Score 5: Bot1's response matches the Ground Truth Answer almost exactly in content and intent.
 Score 4: Bot1's response is close to the Ground Truth Answer, with slight differences in detail or phrasing.
 Score 3: Bot1's response is somewhat aligned with the Ground Truth Answer but includes additional or missing key information.
 Score 2: Bot1's response is vaguely related to the Ground Truth Answer but misses significant aspects.
 Score 1: Bot1's response is not aligned with the Ground Truth Answer.
+
+
+Calculate the Average of the Scores
 
 
 

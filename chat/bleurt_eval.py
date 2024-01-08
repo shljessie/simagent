@@ -48,4 +48,5 @@ if __name__ == "__main__":
 
 #python3 chat/bleurt_eval.py finetune_loss_7b.csv prompt_7b_bleurt.csv
 
-# python3 chat/bleurt_eval.py backprop_llama2_48_1e-05.csv prompt_finetune_7b_bleurt.csv
+# python3 chat/bleurt_eval.py new_finetune_loss_7b.csv prompt_finetune_7b_bleurt.csv
+# python3 chat/bleu.py new_finetune_loss_7b.csv prompt_finetune_7b_bleu.csv
