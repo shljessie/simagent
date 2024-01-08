@@ -19,7 +19,7 @@ def bleu(input_csv, output_csv):
         for row in reader:
             reference = word_tokenize(row['Ground Truth Answer'].lower())
             candidate = word_tokenize(row['Bot1 Response'].lower())
-            score = sentence_bleu([reference], candidate, weights=(0.33, 0.33, 0.33, 0))
+            score = sentence_bleu([reference], candidate, weights=(0.5, 0.5, 0, 0) )
             # BLEU-2  weights=(0.5, 0.5, 0, 0) 
             # BLEU-3  weights=(0.33, 0.33, 0.33, 0)
             bleu_scores.append(score)
