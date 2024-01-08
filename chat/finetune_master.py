@@ -21,7 +21,7 @@ def run_script(script_name, args):
 if __name__ == "__main__":
     # Define parameters for finetune.py
     finetune_args = ['--config', 'profile7b', '--rounds', '16']
-    # Run python3 chat/finetune.py --config profile13b --rounds 20
+    # Run python3 chat/finetune.py --config profile7b --rounds 16
     run_script('chat/finetune.py', finetune_args)
 
     # Retrieve the model name saved by finetune.py

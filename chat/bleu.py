@@ -42,5 +42,5 @@ if __name__ == "__main__":
 # python3 chat/bleu.py loss_7b.csv prompt_7b_bleu.csv
 # python3 chat/bleu.py loss_13b.csv prompt_13b_bleu_2.csv
 
-# python3 chat/bleu.py new_finetune_loss_7b.csv prompt_finetune_7b_bleu.csv
+# python3 chat/bleu.py new_finetune_loss_7b.csv prompt_finetune_7b_bleu_2.csv
 
